@@ -30,9 +30,10 @@ $container['logger'] = function($c) {
 
 // Register Twig View helper
 $container['view'] = function ($c) {
-    $view = new \Slim\Views\Twig('path/to/templates', [
-        'cache' => 'path/to/cache'
-    ]);
+    //$view = new \Slim\Views\Twig('../templates', [
+    //    'cache' => '../cache'
+    //]);
+    $view = new \Slim\Views\Twig('../templates' );
     
     // Instantiate and add Slim specific extension
     $basePath = rtrim(str_ireplace('index.php', '', $c['request']->getUri()->getBasePath()), '/');
@@ -50,6 +51,10 @@ $app->get('/hello/{name}', function (Request $request, Response $response) {
     return $response;
 });
 
+
+$app->get('/', function ($request, $response) {
+    return $this->view->render($response, 'home.twig');
+});
 
 
 $app->run();
