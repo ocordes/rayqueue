@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use Cake\Event\Event;
 
 /**
  * Users Controller
@@ -108,4 +109,5 @@ class UsersController extends AppController
 
         return $this->redirect(['action' => 'index']);
     }
+
 }
