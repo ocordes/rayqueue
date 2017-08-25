@@ -82,6 +82,13 @@ class AppController extends Controller
         ) {
             $this->set('_serialize', true);
         }
+
+        if ($this->Auth->user()) {
+          $this->set('user', $this->Auth->user( 'username') );
+        }
+        else {
+          $this->set('user', 'blubber' );
+        }
     }
 
     public function beforeFilter(Event $event)
