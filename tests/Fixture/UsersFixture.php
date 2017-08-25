@@ -20,11 +20,11 @@ class UsersFixture extends TestFixture
         'id' => ['type' => 'integer', 'length' => null, 'unsigned' => false, 'null' => false, 'default' => null, 'autoIncrement' => true, 'precision' => null, 'comment' => null],
         'email' => ['type' => 'string', 'length' => 255, 'null' => false, 'default' => null, 'precision' => null, 'comment' => null, 'fixed' => null, 'collate' => null],
         'password' => ['type' => 'string', 'length' => 255, 'null' => false, 'default' => null, 'precision' => null, 'comment' => null, 'fixed' => null, 'collate' => null],
+        'role' => ['type' => 'string', 'length' => 20, 'null' => true, 'default' => null, 'precision' => null, 'comment' => null, 'fixed' => null, 'collate' => null],
         'created' => ['type' => 'datetime', 'length' => null, 'null' => true, 'default' => null, 'precision' => null, 'comment' => null],
         'modified' => ['type' => 'datetime', 'length' => null, 'null' => true, 'default' => null, 'precision' => null, 'comment' => null],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id'], 'length' => []],
-            'sqlite_autoindex_users_1' => ['type' => 'unique', 'columns' => ['id'], 'length' => []],
         ],
     ];
     // @codingStandardsIgnoreEnd
@@ -39,8 +39,9 @@ class UsersFixture extends TestFixture
             'id' => 1,
             'email' => 'Lorem ipsum dolor sit amet',
             'password' => 'Lorem ipsum dolor sit amet',
-            'created' => '2017-08-23 12:48:45',
-            'modified' => '2017-08-23 12:48:45'
+            'role' => 'Lorem ipsum dolor ',
+            'created' => '2017-08-25 09:09:25',
+            'modified' => '2017-08-25 09:09:25'
         ],
     ];
 }

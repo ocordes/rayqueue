@@ -49,18 +49,25 @@ class UsersTable extends Table
     {
         $validator
             ->integer('id')
-            ->allowEmpty('id', 'create')
-            ->add('id', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
+            ->allowEmpty('id', 'create');
 
         $validator
-            ->email('email')
-            ->requirePresence('email', 'create')
-            ->notEmpty('email');
+            ->scalar('username')
+            ->requirePresence('username', 'create')
+            ->notEmpty('username');
 
         $validator
             ->scalar('password')
             ->requirePresence('password', 'create')
             ->notEmpty('password');
+
+        $validator
+            ->scalar('role')
+            //->allowEmpty('role');
+            ->notEmpty('role', 'A role is required')
+            ->add('role', 'inList', [
+                'rule' => ['inList', ['admin', 'author']],
+                'message' => 'Please enter a valid role' ] );
 
         return $validator;
     }
@@ -74,8 +81,7 @@ class UsersTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->isUnique(['email']));
-        $rules->add($rules->isUnique(['id']));
+        $rules->add($rules->isUnique(['username']));
 
         return $rules;
     }
