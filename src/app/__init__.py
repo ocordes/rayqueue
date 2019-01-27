@@ -6,6 +6,8 @@ from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
+from flask_login import LoginManager
+
 # define the app in the module ;-)
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -16,6 +18,11 @@ bootstrap = Bootstrap(app)
 # all database inits
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
+
+# login manager
+login = LoginManager(app)
+login.login_view = 'login'
 
 
 

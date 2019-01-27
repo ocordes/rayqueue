@@ -1,1 +1,3 @@
 flask db init
+flask db migrate -m "users table"    # create migration
+flask db upgrade                     # do the upgrade
