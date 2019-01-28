@@ -9,8 +9,10 @@ changed by: Oliver Cordes 2019-01-27
 
 
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, EditProfileForm
+from app.forms import LoginForm, RegistrationForm, EditProfileForm, UpdatePasswordForm, ResetPasswordRequestForm, ResetPasswordForm
 from app.models import User
+
+from app.email import send_password_reset_email
 
 import os
 
@@ -96,7 +98,7 @@ def register():
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
 
-    form = EditProfileForm()
+    form = EditProfileForm(current_user.username)
     if form.validate_on_submit():
         current_user.username = form.username.data
         current_user.first_name = form.first_name.data
@@ -111,8 +113,56 @@ def user(username):
         form.last_name.data = current_user.last_name
         form.email.data = current_user.email
 
-    return render_template('user.html', user=user, form=form)
+    return render_template('user.html', user=user, form=form, pform=UpdatePasswordForm())
 
+
+@app.route('/update_password', methods=['POST'])
+def update_password():
+    #user = User.query.filter_by(username=username).first_or_404()
+
+    form = EditProfileForm()
+    pform=UpdatePasswordForm()
+
+    print(current_user.username)
+
+    if pform.validate_on_submit():
+        current_user.set_password(pform.password.data)
+        db.session.commit()
+        flash('Your new password has been saved.')
+
+    return redirect(url_for('user', username=current_user.username))
+    #return render_template('user.html', user=current_user, form=form, pform=pform)
+
+
+@app.route('/reset_password_request', methods=['GET', 'POST'])
+def reset_password_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = ResetPasswordRequestForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            send_password_reset_email(user)
+        flash('Check your email for the instructions to reset your password')
+        return redirect(url_for('login'))
+    return render_template('reset_password_request.html',
+                           title='Reset Password', form=form)
+
+
+@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    user = User.verify_reset_password_token(token)
+    if not user:
+        return redirect(url_for('index'))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        user.set_password(form.password.data)
+        db.session.commit()
+        flash('Your password has been reset.')
+        return redirect(url_for('login'))
+    return render_template('reset_password.html', form=form)
 
 
 @app.route("/upload", methods=['POST'])
