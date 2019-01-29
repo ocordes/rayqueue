@@ -3,7 +3,7 @@
 app/models.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-01-27
+changed by: Oliver Cordes 2019-01-29
 
 """
 
@@ -34,6 +34,11 @@ class User(UserMixin, db.Model):
     last_name = db.Column(db.String(120))
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
 
+    # some internal and private fields
+    email_verified = db.Column(db.Boolean, default=False)
+    administrator  = db.Column(db.Boolean, default=False)
+
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
@@ -59,6 +64,22 @@ class User(UserMixin, db.Model):
         try:
             id = jwt.decode(token, app.config['SECRET_KEY'],
                             algorithms=['HS256'])['reset_password']
+        except:
+            return
+        return User.query.get(id)
+
+
+    def get_email_verify_token(self, expires_in=600):
+        return jwt.encode(
+            {'email_verify': self.id, 'exp': time() + expires_in},
+            app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
+
+
+    @staticmethod
+    def verify_email_verify_token(token):
+        try:
+            id = jwt.decode(token, app.config['SECRET_KEY'],
+                            algorithms=['HS256'])['email_verify']
         except:
             return
         return User.query.get(id)

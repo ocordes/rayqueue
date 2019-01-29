@@ -12,7 +12,7 @@ from app import app, db
 from app.forms import LoginForm, RegistrationForm, EditProfileForm, UpdatePasswordForm, ResetPasswordRequestForm, ResetPasswordForm
 from app.models import User
 
-from app.email import send_password_reset_email
+from app.email import send_password_reset_email, send_email_verify_email
 
 import os
 
@@ -88,6 +88,7 @@ def register():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
+        send_email_verify_email(user)
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
@@ -123,7 +124,6 @@ def update_password():
     form = EditProfileForm(current_user.username)
     pform=UpdatePasswordForm()
 
-    print(current_user.username)
 
     if pform.validate_on_submit():
         current_user.set_password(pform.password.data)
@@ -163,6 +163,23 @@ def reset_password(token):
         flash('Your password has been reset.')
         return redirect(url_for('login'))
     return render_template('reset_password.html', form=form)
+
+
+@app.route('/verify_email/<token>', methods=['GET','POST'])
+def verify_email(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    user = User.verify_email_verify_token(token)
+    if not user:
+        return redirect(url_for('index'))
+    form = ResetPasswordForm()
+
+    user.email_verified = True
+    db.session.commit()
+    flash('Your account is now complete.')
+
+    return redirect(url_for('login'))
+
 
 
 @app.route("/upload", methods=['POST'])
