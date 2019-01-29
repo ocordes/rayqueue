@@ -31,6 +31,10 @@ login = LoginManager(app)
 login.login_view = 'login'
 
 
+# data dir
+if not os.path.exists(app.config['DATA_DIR']):
+    os.mkdir(app.config['DATA_DIR'])
+
 # error handler
 if not app.debug:
     if app.config['MAIL_SERVER']:
