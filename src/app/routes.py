@@ -120,7 +120,7 @@ def user(username):
 def update_password():
     #user = User.query.filter_by(username=username).first_or_404()
 
-    form = EditProfileForm()
+    form = EditProfileForm(current_user.username)
     pform=UpdatePasswordForm()
 
     print(current_user.username)
