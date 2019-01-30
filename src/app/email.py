@@ -1,3 +1,11 @@
+"""
+
+app/email.py
+
+written by: Oliver Cordes 2019-01-26
+changed by: Oliver Cordes 2019-01-29
+
+"""
 from threading import Thread
 
 from flask import render_template

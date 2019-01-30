@@ -35,7 +35,7 @@ class User(UserMixin, db.Model):
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
 
     # some internal and private fields
-    email_verified = db.Column(db.Boolean, default=False)
+    is_active = db.Column(db.Boolean, default=False)
     administrator  = db.Column(db.Boolean, default=False)
 
 

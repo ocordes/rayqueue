@@ -3,13 +3,13 @@
 app/routes.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-01-27
+changed by: Oliver Cordes 2019-01-30
 
 """
 
 
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, EditProfileForm, UpdatePasswordForm, ResetPasswordRequestForm, ResetPasswordForm
+from app.forms import LoginForm, RegistrationForm, EditProfileForm, UpdatePasswordForm, ResetPasswordRequestForm, ResetPasswordForm, AdminPasswordForm
 from app.models import User
 
 from app.email import send_password_reset_email, send_email_verify_email
@@ -57,19 +57,46 @@ def index():
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
-    form = LoginForm()
 
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user is None or not user.check_password(form.password.data):
-            flash('Invalid username or password')
+    # so at this point we need to check if we have
+    # a clean installation, just ask for admin
+    # credentials
+    if User.query.count()==0:  # no users available
+        form = AdminPasswordForm()
+        if form.validate_on_submit():
+            user = User(username='admin', email='')
+            user.set_password(form.password.data)
+            user.first_name = 'System'
+            user.last_name = 'Administrator'
+            user.is_active = True
+            user.administrator = True
+            db.session.add(user)
+            db.session.commit()
+
+            flash('Password for the administrator account is now set!')
             return redirect(url_for('login'))
-        login_user(user, remember=form.remember_me.data)
-        next_page = request.args.get('next')
-        if not next_page or url_parse(next_page).netloc != '':
-            next_page = url_for('index')
-        return redirect(next_page)
-    return render_template('login.html', title='Sign In', form=form)
+
+        flash('No users in database! Enter an administrator password!')
+        return render_template('admin_password.html',
+            title='Set Administrator Password', form=form)
+    else:
+        # proceed with the normal login procedure
+        form = LoginForm()
+
+        if form.validate_on_submit():
+            user = User.query.filter_by(username=form.username.data).first()
+            if user is None or not user.check_password(form.password.data):
+                flash('Invalid username or password')
+                return redirect(url_for('login'))
+            if login_user(user, remember=form.remember_me.data):
+                next_page = request.args.get('next')
+                if not next_page or url_parse(next_page).netloc != '':
+                    next_page = url_for('index')
+                return redirect(next_page)
+            else:
+                flash('User account is not active!')
+                return redirect(url_for('login'))
+        return render_template('login.html', title='Sign In', form=form)
 
 
 @app.route('/logout')
@@ -86,11 +113,15 @@ def register():
     if form.validate_on_submit():
         user = User(username=form.username.data, email=form.email.data)
         user.set_password(form.password.data)
+        user.first_name = form.first_name.data
+        user.last_name = form.last_name.data
         db.session.add(user)
         db.session.commit()
         send_email_verify_email(user)
-        flash('Congratulations, you are now a registered user!')
+        flash('Congratulations, you are now a registered user! An email was sent for confirmation!')
         return redirect(url_for('login'))
+
+
     return render_template('register.html', title='Register', form=form)
 
 
@@ -174,7 +205,7 @@ def verify_email(token):
         return redirect(url_for('index'))
     form = ResetPasswordForm()
 
-    user.email_verified = True
+    user.is_active = True
     db.session.commit()
     flash('Your account is now complete.')
 

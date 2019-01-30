@@ -1,3 +1,12 @@
+"""
+
+app/__init__.py
+
+written by: Oliver Cordes 2019-01-26
+changed by: Oliver Cordes 2019-01-30
+
+"""
+
 import os
 import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
