@@ -21,9 +21,12 @@ from flask_login import LoginManager
 from flask_mail import Mail
 
 
+
+
 # define the app in the module ;-)
 app = Flask(__name__)
 app.config.from_object(Config)
+
 
 # start the bootstrap code
 bootstrap = Bootstrap(app)
@@ -34,6 +37,10 @@ migrate = Migrate(app, db)
 
 mail = Mail(app)
 
+
+# register the blueprints
+from app.errors import bp as errors_bp
+app.register_blueprint(errors_bp)
 
 # login manager
 login = LoginManager(app)
@@ -77,4 +84,4 @@ if not app.debug:
 
 
 # import the sub modules
-from app import routes, models, errors
+from app import routes, models
