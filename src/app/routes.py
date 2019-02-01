@@ -28,7 +28,7 @@ APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 before_request will be executed before any page will be
 rendered
 """
-@app.before_request
+@app.app.before_request
 def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = datetime.utcnow()
