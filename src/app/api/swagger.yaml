@@ -12,16 +12,41 @@ basePath: "/api"
 
 # Paths supported by the server application
 paths:
+  /login:
+    post:
+      operationId: "app.api.users.login"
+      tags:
+        - "Login"
+      summary: "Login procedure"
+      description: "Login procedure"
+      parameters:
+        - name: "user"
+          in: "body"
+          description: "Login User"
+          required: True
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                description: "Username"
+              password:
+                type: string
+                description: "Password"
+      responses:
+        201:
+          description: "Successfully logged in"
+
   /users:
     get:
       operationId: "app.api.users.read"
       tags:
         - "Users"
-      summary: "The people data structure supported by the server application"
-      description: "Read the list of people"
+      summary: "The user data structure supported by the server application"
+      description: "Read the list of users"
       responses:
         200:
-          description: "Successful read people list operation"
+          description: "Successful read user list operation"
           schema:
             type: "array"
             items:

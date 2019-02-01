@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from flask import make_response, abort
+
 from flask_login import current_user, login_user, logout_user, login_required
 
 def get_timestamp():
@@ -39,3 +41,37 @@ def read():
     """
     # Create the list of people from our data
     return [PEOPLE[key] for key in sorted(PEOPLE.keys())]
+
+
+
+def login(user):
+    """
+    This function creates a new person in the people structure
+    based on the passed in person data
+    :param person:  person to create in people structure
+    :return:        201 on success, 406 on person exists
+    """
+    username = user.get("username", None)
+    pwssword = user.get("password", None)
+
+
+    return make_response(
+        "{username} successfully logged in".format(username=username), 201 )
+
+    # # Does the person exist already?
+    # if lname not in PEOPLE and lname is not None:
+    #     PEOPLE[lname] = {
+    #         "lname": lname,
+    #         "fname": fname,
+    #         "timestamp": get_timestamp(),
+    #     }
+    #     return make_response(
+    #         "{lname} successfully created".format(lname=lname), 201
+    #     )
+    #
+    # # Otherwise, they exist, that's an error
+    # else:
+    #     abort(
+    #         406,
+    #         "Peron with last name {lname} already exists".format(lname=lname),
+    #     )
