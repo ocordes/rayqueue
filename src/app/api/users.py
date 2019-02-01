@@ -4,6 +4,8 @@ from flask import make_response, abort
 
 from flask_login import current_user, login_user, logout_user, login_required
 
+
+
 def get_timestamp():
     return datetime.now().strftime(("%Y-%m-%d %H:%M:%S"))
 
@@ -46,14 +48,21 @@ def read():
 
 def login(user):
     """
-    This function creates a new person in the people structure
-    based on the passed in person data
-    :param person:  person to create in people structure
-    :return:        201 on success, 406 on person exists
+    This function performs a login via username/password
+    into the system
+    :param user:    contains username and password
+    :return:        201 on success, 401 on person exists
     """
     username = user.get("username", None)
     pwssword = user.get("password", None)
 
+
+    user_info = User.query.filter_by(username=username).first()
+    if user_info is None or not user_info.check_password(password):
+        abort(
+                 401,
+                 "Invalid username or password",
+             )
 
     return make_response(
         "{username} successfully logged in".format(username=username), 201 )
