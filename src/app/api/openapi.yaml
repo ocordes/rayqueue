@@ -1,0 +1,64 @@
+openapi: 3.0.0
+info:
+  title: JWT Example
+  version: '1.0'
+
+servers:
+  - url: /api
+    description: relative path to the API end points
+
+
+paths:
+  /login:
+    post:
+      summary: Return JWT token
+      operationId: app.api.users.login
+      description: Login procedure
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              x-body-name: user
+              properties:
+                username:
+                  type: string
+                  description: Username
+                password:
+                  type: string
+                  description: Password
+      responses:
+        '200':
+          description: JWT token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                  token:
+                    type: string
+                    description: JWT token
+  /secret:
+    get:
+      summary: Return secret string
+      operationId: app.api.users.get_secret
+      responses:
+        '200':
+          description: secret response
+          content:
+            'text/plain':
+              schema:
+                type: string
+      security:
+      - jwt: ['secret']
+
+components:
+  securitySchemes:
+    jwt:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      x-bearerInfoFunc: app.api.users.decode_token

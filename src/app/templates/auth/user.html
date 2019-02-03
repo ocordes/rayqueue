@@ -64,7 +64,7 @@
         <td style="vertical-align:bottom">
          <div class="row">
           <div class="col-md-4">
-            <form action="{{url_for('update_password')}}" method="post">
+            <form action="{{url_for('auth.update_password')}}" method="post">
              {{ pform.hidden_tag() }}
              <p>
               {{ pform.password.label }}<br>

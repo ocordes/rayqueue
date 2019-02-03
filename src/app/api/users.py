@@ -1,9 +1,20 @@
 from datetime import datetime
 
-from flask import make_response, abort
+from flask import current_app, make_response, abort, jsonify
 
 from flask_login import current_user, login_user, logout_user, login_required
 
+#from app import db
+from app.api import bp
+
+from app.models import User
+
+from time import time
+import jwt
+import six
+
+JWT_ISSUER           = 'rayqueue.com'
+JWT_LIFETIME_SECONDS = 60 * 60        # 1h
 
 
 def get_timestamp():
@@ -46,16 +57,20 @@ def read():
 
 
 
+
+#def login(user):
 def login(user):
     """
-    This function performs a login via username/password
-    into the system
+    This function performs a user check via username/password
     :param user:    contains username and password
-    :return:        201 on success, 401 on person exists
+    :return:        200 on success + access_token
+                    401 if checks were not successful
     """
     username = user.get("username", None)
-    pwssword = user.get("password", None)
+    password = user.get("password", None)
 
+    #print(username)
+    #print(password)
 
     user_info = User.query.filter_by(username=username).first()
     if user_info is None or not user_info.check_password(password):
@@ -64,8 +79,27 @@ def login(user):
                  "Invalid username or password",
              )
 
-    return make_response(
-        "{username} successfully logged in".format(username=username), 201 )
+
+    timestamp = time()
+    payload = {
+        "iss": JWT_ISSUER,
+        "iat": int(timestamp),
+        "exp": int(timestamp + JWT_LIFETIME_SECONDS),
+        "sub": username,
+    }
+
+    data = {
+              "status": 200,
+              "token": jwt.encode(
+                            payload,
+                            current_app.config['SECRET_KEY'],
+                            algorithm='HS256').decode('utf-8')
+    }
+
+    resp = jsonify(data)
+    resp.status_code = 200
+
+    return resp
 
     # # Does the person exist already?
     # if lname not in PEOPLE and lname is not None:
@@ -84,3 +118,17 @@ def login(user):
     #         406,
     #         "Peron with last name {lname} already exists".format(lname=lname),
     #     )
+
+
+def get_secret(user, token_info) -> str:
+    return '''
+    You are user_id {user} and the secret is 'wbevuec'.
+    Decoded token claims: {token_info}.
+    '''.format(user=user, token_info=token_info)
+
+
+def decode_token(token):
+    try:
+        return jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+    except JWTError as e:
+        six.raise_from(Unauthorized, e)

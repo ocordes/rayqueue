@@ -8,7 +8,7 @@ changed by: Oliver Cordes 2019-01-29
 """
 
 
-from app import app, db, login
+from app import db, login
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
