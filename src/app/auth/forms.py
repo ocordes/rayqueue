@@ -89,3 +89,9 @@ class AdminPasswordForm(FlaskForm):
         'Repeat Password', validators=[DataRequired(), EqualTo('password')])
 
     submit = SubmitField('Set admin password')
+
+
+class UserListForm(FlaskForm):
+    set_admin = SubmitField('Set Admin')
+    clear_admin = SubmitField('Clear Admin')
+    remove = SubmitField('Remove')

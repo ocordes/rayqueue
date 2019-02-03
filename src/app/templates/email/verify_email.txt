@@ -2,7 +2,7 @@ Dear {{user.first_name}} {{user.last_name}} ({{ user.username }}),
 
 To verify your email address click on the following link:
 
-{{ url_for('verify_email', token=token, _external=True) }}
+{{ url_for('auth.verify_email', token=token, _external=True) }}
 
 If you have not tried to register a new account simply ignore this message.
 

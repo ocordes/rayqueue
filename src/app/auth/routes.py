@@ -1,16 +1,17 @@
 """
 
-app/routes.py
+app/auth/routes.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-01-30
+changed by: Oliver Cordes 2019-02-02
 
 """
 
 import os
 from datetime import datetime
 
-from flask import request, render_template, url_for, flash, redirect
+from flask import current_app, request, render_template, \
+                  url_for, flash, redirect
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 
@@ -176,11 +177,16 @@ def verify_email(token):
         return redirect(url_for('main.index'))
     user = User.verify_email_verify_token(token)
     if not user:
+        msg = 'No such user in token'
+        current_app.logger.info(msg)
+        flash(msg)
         return redirect(url_for('main.index'))
     form = ResetPasswordForm()
 
     user.is_active = True
     db.session.commit()
-    flash('Your account is now complete.')
+    msg = 'Your account is now complete.'
+    current_app.logger.info(msg)
+    flash(msg)
 
     return redirect(url_for('auth.login'))

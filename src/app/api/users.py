@@ -17,48 +17,17 @@ JWT_ISSUER           = 'rayqueue.com'
 JWT_LIFETIME_SECONDS = 60 * 60        # 1h
 
 
-def get_timestamp():
-    return datetime.now().strftime(("%Y-%m-%d %H:%M:%S"))
+# taken from example the decode function
 
-# Data to serve with our API
-PEOPLE = {
-    "Farrell": {
-        "username": "dfarrel",
-        "first_name": "Doug",
-        "last_name": "Farrell",
-        "timestamp": get_timestamp()
-    },
-    "Brockman": {
-        "username": "kbrockman",
-        "first_name": "Kent",
-        "last_name": "Brockman",
-        "timestamp": get_timestamp()
-    },
-    "Easter": {
-        "username": "beaster",
-        "first_name": "Bunny",
-        "last_name": "Easter",
-        "timestamp": get_timestamp()
-    }
-}
-
-# Create a handler for our read (GET) people
-# it is possible to mask this with the login_required decorator!
-@login_required
-def read():
-    """
-    This function responds to a request for /api/people
-    with the complete lists of people
-
-    :return:        sorted list of people
-    """
-    # Create the list of people from our data
-    return [PEOPLE[key] for key in sorted(PEOPLE.keys())]
+def decode_token(token):
+    try:
+        return jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+    except JWTError as e:
+        six.raise_from(Unauthorized, e)
 
 
 
-
-#def login(user):
+# login
 def login(user):
     """
     This function performs a user check via username/password
@@ -69,9 +38,7 @@ def login(user):
     username = user.get("username", None)
     password = user.get("password", None)
 
-    #print(username)
-    #print(password)
-
+    # check if username/password combination is valid
     user_info = User.query.filter_by(username=username).first()
     if user_info is None or not user_info.check_password(password):
         abort(
@@ -80,6 +47,7 @@ def login(user):
              )
 
 
+    # create an access token
     timestamp = time()
     payload = {
         "iss": JWT_ISSUER,
@@ -88,6 +56,7 @@ def login(user):
         "sub": username,
     }
 
+    # return the response payload
     data = {
               "status": 200,
               "token": jwt.encode(
@@ -126,6 +95,8 @@ def get_secret(user, token_info) -> str:
     Decoded token claims: {token_info}.
     '''.format(user=user, token_info=token_info)
 
+
+# taken from example the decode function
 
 def decode_token(token):
     try:

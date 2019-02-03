@@ -1,9 +1,9 @@
 """
 
-app/auth/email.py
+app/email.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-01-29
+changed by: Oliver Cordes 2019-02-03
 
 """
 
