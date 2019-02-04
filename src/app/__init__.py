@@ -66,6 +66,8 @@ def create_app(config_class=Config):
     from app.api import bp as api_bp
     app.app.register_blueprint(api_bp)
 
+    from app.projects import bp as projects_bp
+    app.app.register_blueprint(projects_bp)
 
     from app.main import bp as main_bp
     app.app.register_blueprint(main_bp)

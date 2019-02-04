@@ -6,16 +6,18 @@ __version__ = '0.0.1'
 
 from app import create_app,db
 
-from app.models import User
+from app.models import User, Project
 
 # create an application
-app = create_app()
+application = create_app()
+
+app = application.app
 
 
 # for flask shell command
-@app.app.shell_context_processor
+@app.shell_context_processor
 def make_shell_context():
-    return {'db': db, 'User': User}
+    return {'db': db, 'User': User, 'Project': Project}
 
 
 

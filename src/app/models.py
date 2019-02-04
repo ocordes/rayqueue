@@ -3,7 +3,7 @@
 app/models.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-01-29
+changed by: Oliver Cordes 2019-02-04
 
 """
 
@@ -38,6 +38,9 @@ class User(UserMixin, db.Model):
     # some internal and private fields
     is_active = db.Column(db.Boolean, default=False)
     administrator  = db.Column(db.Boolean, default=False)
+
+    # relationships
+    projects = db.relationship('Project', backref='owner', lazy='dynamic')
 
 
     def set_password(self, password):
@@ -88,3 +91,15 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
+
+
+class Project(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    name = db.Column(db.String(64), index=True, unique=True)
+    is_public = db.Column(db.Boolean, default=False)
+
+
+    def __repr__(self):
+        return '<Project {}>'.format(self.name)
