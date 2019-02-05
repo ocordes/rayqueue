@@ -3,7 +3,7 @@
 app/projects/routes.py
 
 written by: Oliver Cordes 2019-02-04
-changed by: Oliver Cordes 2019-02-04
+changed by: Oliver Cordes 2019-02-05
 
 """
 
@@ -40,6 +40,15 @@ def show_projects():
 @login_required
 def create_project():
     form = CreateProjectForm()
+
+    if form.validate_on_submit():
+        project = Project(name=form.name.data,
+                          is_public=form.is_public.data,
+                          project_type=int(form.project_type.data))
+        db.session.add(project)
+        db.session.commit()
+        flash('Added project \'{}\''. format(project.name))
+        return redirect(url_for('main.index'))
     return render_template('projects/create_project.html',
                             title='Create new project',
                             form=form)

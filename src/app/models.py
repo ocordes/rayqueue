@@ -21,6 +21,7 @@ from time import time
 import jwt
 
 
+
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
@@ -99,7 +100,8 @@ class Project(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     name = db.Column(db.String(64), index=True, unique=True)
     is_public = db.Column(db.Boolean, default=False)
-
+    project_type = db.Column(db.Integer)
+        
 
     def __repr__(self):
         return '<Project {}>'.format(self.name)

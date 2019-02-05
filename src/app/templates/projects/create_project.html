@@ -13,8 +13,21 @@
         {% endfor %}
     </p>
     <p>
+      {{ form.project_type.label }}<br>
+      {% for subfield in form.project_type %}
+         &nbsp; {{ subfield }}
+         {{ subfield.label }}<br>
+      {% endfor %}
+      {% for error in form.project_type.errors %}
+      <span style="color: red;">[{{ error }}]</span>
+      {% endfor %}
+    </p>
+    <p>
       {{ form.is_public.label }}<br>
-      {{ form.is_public }}<br>
+      &nbsp; {{ form.is_public }}<br>
+      {% for error in form.project_type.errors %}
+      <span style="color: red;">[{{ error }}]</span>
+      {% endfor %}
     </p>
     <p>{{ form.submit() }}</p>
     </form>
