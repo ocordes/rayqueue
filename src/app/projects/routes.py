@@ -33,7 +33,9 @@ def show_project(projectid):
 @bp.route('/projects', methods=['GET','POST'])
 @login_required
 def show_projects():
-    return render_template('projects/show_projects.html', title='Project list')
+    return render_template('projects/show_projects.html',
+                            title='Project list',
+                            projects=Project.query.all())
 
 
 @bp.route('/create_project', methods=['GET','POST'])

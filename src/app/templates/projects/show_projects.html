@@ -1,6 +1,24 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <h3>List of avaible projects:</h3>
+    <h3>List of available projects:</h3>
     <br>
+    <table class="table">
+      <thead>
+        <td></td>
+        <td>ID</td>
+        <td>Name</td>
+      </thead>
+      {% for project in projects %}
+      <tr>
+       <td>
+         <label>
+          <input type="checkbox" name="projects" value="{{project.id}}">
+         </label>
+        </td>
+        <td>{{project.id}}</td>
+        <td>{{project.name}}</td>
+      </tr>
+      {% endfor %}
+     </table>
 {% endblock %}
