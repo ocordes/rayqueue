@@ -18,24 +18,48 @@ from werkzeug.urls import url_parse
 
 from app import db
 from app.projects import bp
-from app.projects.forms import CreateProjectForm
+from app.projects.forms import CreateProjectForm, UpdateProjectForm
+from app.projects.admin import owner_required, check_access
 from app.models import User, Project
 #from app.auth.email import send_password_reset_email, send_email_verify_email
 
 
 
+
 @bp.route('/project/<projectid>', methods=['GET','POST'])
+@owner_required('projectid')
 @login_required
 def show_project(projectid):
-    pass
+    form = UpdateProjectForm()
+
+    project = Project.query.get(projectid)
+
+    if form.validate_on_submit():
+        pass
+    elif request.method == 'GET':
+        form.name.data = project.name
+        
+    return render_template('projects/show_project.html',
+                            title='Project',
+                            form=form)
 
 
 @bp.route('/projects', methods=['GET','POST'])
 @login_required
 def show_projects():
+    projects = None
+    pr = Project.query.all()
+    for p in pr:
+        ret, msg = check_access(current_user, p)
+        if ret:
+            if projects is None:
+                projects = [p]
+            else:
+                projects.append(p)
     return render_template('projects/show_projects.html',
                             title='Project list',
-                            projects=Project.query.all())
+                            projects=projects,
+                            user_id=User.query.get)
 
 
 @bp.route('/create_project', methods=['GET','POST'])
@@ -46,7 +70,8 @@ def create_project():
     if form.validate_on_submit():
         project = Project(name=form.name.data,
                           is_public=form.is_public.data,
-                          project_type=int(form.project_type.data))
+                          project_type=int(form.project_type.data),
+                          user_id=current_user.id)
         db.session.add(project)
         db.session.commit()
         flash('Added project \'{}\''. format(project.name))

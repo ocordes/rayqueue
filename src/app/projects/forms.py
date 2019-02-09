@@ -26,3 +26,11 @@ class CreateProjectForm(FlaskForm):
         project = Project.query.filter_by(name=name.data).first()
         if project is not None:
             raise ValidationError('Please use a different project name.')
+
+
+class UpdateProjectForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired()])
+    project_type = RadioField('Type', choices=[('0','Image'),('1','Animation')], validators=[DataRequired()])
+    is_public = BooleanField('Public' )
+
+    update = SubmitField('Update')
