@@ -3,7 +3,7 @@
 app/auth/users.py
 
 written by: Oliver Cordes 2019-02-03
-changed by: Oliver Cordes 2019-02-03
+changed by: Oliver Cordes 2019-02-10
 
 """
 
@@ -15,9 +15,9 @@ from flask_login import current_user, login_required
 
 from app import db
 from app.auth import bp
-from app.models import User
+from app.models import User, Project
 
-from app.auth.forms import UserListForm
+from app.auth.forms import UserListForm, EditProfileForm, UpdatePasswordForm
 
 
 from app.auth.admin import admin_required
@@ -56,8 +56,37 @@ def users():
             elif form.remove.data:
                 db.session.delete(user)
                 msg = 'remove account user={} ({})'.format(uid,user.username)
+                current_app.logger.info(msg)
                 flash(msg)
 
         db.session.commit()
     return render_template('auth/users.html',
         title='List of users', users=User.query.all(), form=form)
+
+
+@bp.route('/user/<username>', methods=['GET','POST'])
+@login_required
+def user(username):
+    user = User.query.filter_by(username=username).first_or_404()
+
+    form = EditProfileForm(current_user.username)
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.first_name = form.first_name.data
+        current_user.last_name = form.last_name.data
+        current_user.email = form.email.data
+        db.session.commit()
+        flash('Your changes have been saved.')
+        return redirect(url_for('auth.user', username=current_user.username))
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.first_name.data = current_user.first_name
+        form.last_name.data = current_user.last_name
+        form.email.data = current_user.email
+        print(user.projects.all())
+
+    return render_template('auth/user.html',
+                            user=user,
+                            form=form,
+                            projects=user.projects.all(),
+                            pform=UpdatePasswordForm())

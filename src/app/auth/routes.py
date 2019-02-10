@@ -100,29 +100,6 @@ def register():
     return render_template('auth/register.html', title='Register', form=form)
 
 
-@bp.route('/user/<username>', methods=['GET','POST'])
-@login_required
-def user(username):
-    user = User.query.filter_by(username=username).first_or_404()
-
-    form = EditProfileForm(current_user.username)
-    if form.validate_on_submit():
-        current_user.username = form.username.data
-        current_user.first_name = form.first_name.data
-        current_user.last_name = form.last_name.data
-        current_user.email = form.email.data
-        db.session.commit()
-        flash('Your changes have been saved.')
-        return redirect(url_for('auth.user', username=current_user.username))
-    elif request.method == 'GET':
-        form.username.data = current_user.username
-        form.first_name.data = current_user.first_name
-        form.last_name.data = current_user.last_name
-        form.email.data = current_user.email
-
-    return render_template('auth/user.html', user=user, form=form, pform=UpdatePasswordForm())
-
-
 @bp.route('/update_password', methods=['POST'])
 def update_password():
     #user = User.query.filter_by(username=username).first_or_404()

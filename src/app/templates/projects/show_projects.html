@@ -3,6 +3,8 @@
 {% block app_content %}
     <h3>List of available projects:</h3>
     <br>
+    <form action="" method="post">
+    {{ form.hidden_tag() }}
     <table class="table">
       <thead>
         <td></td>
@@ -11,6 +13,8 @@
         <td>Owner</td>
         <td>Type</td>
         <td>Public</td>
+        <td>Status</td>
+        <td>Created</td>
       </thead>
       {% if projects is none %}
       <tr>
@@ -25,7 +29,7 @@
          </label>
         </td>
         <td><a href="{{url_for('projects.show_project', projectid=project.id)}}">{{project.id}}</a></td>
-        <td>{{project.name}}</td>
+        <td><a href="{{url_for('projects.show_project', projectid=project.id)}}">{{project.name}}</a></td>
         <td>{{user_id(project.user_id).username}}</td>
         {% if project.project_type == 0 %}
         <td>Image</td>
@@ -33,8 +37,28 @@
         <td>Animation</td>
         {% endif %}
         <td>{{project.is_public}}</td>
+        <td>
+        {% if project.status == 0 %}
+        Open
+        {% elif project.status == 1 %}
+        Running
+        {% elif project.status == 2 %}
+        Complete
+        {% else %}
+        Unknown
+        {% endif %}
+        </td>
+        <td>{{project.timestamp.strftime('%Y-%m-%d %H:%M')}}</td>
       </tr>
       {% endfor %}
       {% endif %}
      </table>
+     {{ form.remove(onclick="return (doStuff())") }} {{ form.create() }}
+     </form>
+
+     <script>
+function doStuff(){
+  return (confirm('Do you really want to remove these items?'))
+}
+     </script>
 {% endblock %}

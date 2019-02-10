@@ -87,4 +87,41 @@
         </td>
       </tr>
     </table>
+
+    <hr>
+    <h3>Projects</h3>
+    <table class="table">
+      <thead>
+        <td>ID</td>
+        <td>Name</td>
+        <td>Type</td>
+        <td>Public</td>
+        <td>Status</td>
+        <td>Created</td>
+      </thead>
+      {% for project in projects %}
+      <tr>
+        <td><a href="{{url_for('projects.show_project', projectid=project.id)}}">{{project.id}}</a></td>
+        <td><a href="{{url_for('projects.show_project', projectid=project.id)}}">{{project.name}}</a></td>
+        {% if project.project_type == 0 %}
+        <td>Image</td>
+        {% else %}
+        <td>Animation</td>
+        {% endif %}
+        <td>{{project.is_public}}</td>
+        <td>
+          {% if project.status == 0 %}
+          Open
+          {% elif project.status == 1 %}
+          Running
+          {% elif project.status == 2 %}
+          Complete
+          {% else %}
+          Unknown
+          {% endif %}
+        </td>
+        <td>{{project.timestamp.strftime('%Y-%m-%d %H:%M')}}</td>
+      </tr>
+      {% endfor %}
+      </table>
 {% endblock %}

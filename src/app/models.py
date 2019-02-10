@@ -101,7 +101,8 @@ class Project(db.Model):
     name = db.Column(db.String(64), index=True, unique=True)
     is_public = db.Column(db.Boolean, default=False)
     project_type = db.Column(db.Integer)
-        
+    status = db.Column(db.Integer)
+
 
     def __repr__(self):
         return '<Project {}>'.format(self.name)

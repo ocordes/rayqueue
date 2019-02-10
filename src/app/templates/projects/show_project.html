@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 
 {% block app_content %}
+    <div class="pull-right">
+      <img src="{{ user.avatar(128) }}">
+      <h3>{{ user.first_name }} {{ user.last_name }}</h3>
+      ({{ user.username}})<br>
+      created: {{ project.timestamp.strftime("%Y-%m-%d %H:%M")}}
+    </div>
     <h3>Project:</h3>
     <br>
     <form action="" method="post">
@@ -29,6 +35,18 @@
       <span style="color: red;">[{{ error }}]</span>
       {% endfor %}
     </p>
+    <p>
+      <b>Status</b><br>
+      &nbsp;
+      {% if project.status == 0 %}
+      Open
+      {% elif project.status == 1 %}
+      Running
+      {% elif project.status == 2 %}
+      Complete
+      {% else %}
+      Unknown
+      {% endif %}
     <p>{{ form.update() }}</p>
     </form>
 {% endblock %}

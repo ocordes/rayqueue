@@ -34,3 +34,9 @@ class UpdateProjectForm(FlaskForm):
     is_public = BooleanField('Public' )
 
     update = SubmitField('Update')
+
+
+class ProjectListForm(FlaskForm):
+    remove = SubmitField('Remove')
+    create = SubmitField('Create')
+    
