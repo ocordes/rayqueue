@@ -4,6 +4,8 @@ from flask import current_app, make_response, abort, jsonify
 
 from flask_login import current_user, login_user, logout_user, login_required
 
+from werkzeug.exceptions import Unauthorized
+
 #from app import db
 from app.api import bp
 
@@ -17,11 +19,16 @@ JWT_ISSUER           = 'rayqueue.com'
 JWT_LIFETIME_SECONDS = 60 * 60        # 1h
 
 
+class JWTError(Exception):
+    pass
+
 # taken from example the decode function
 
 def decode_token(token):
     try:
-        return jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        return jwt.decode(token,
+            current_app.config['SECRET_KEY'],
+            algorithms=['HS256'])        
     except JWTError as e:
         six.raise_from(Unauthorized, e)
 
@@ -53,7 +60,7 @@ def login(user):
         "iss": JWT_ISSUER,
         "iat": int(timestamp),
         "exp": int(timestamp + JWT_LIFETIME_SECONDS),
-        "sub": username,
+        "sub": user_info.id,
     }
 
     # return the response payload
@@ -94,12 +101,3 @@ def get_secret(user, token_info) -> str:
     You are user_id {user} and the secret is 'wbevuec'.
     Decoded token claims: {token_info}.
     '''.format(user=user, token_info=token_info)
-
-
-# taken from example the decode function
-
-def decode_token(token):
-    try:
-        return jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-    except JWTError as e:
-        six.raise_from(Unauthorized, e)

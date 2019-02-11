@@ -41,6 +41,22 @@ paths:
                   token:
                     type: string
                     description: JWT token
+  /projects:
+    get:
+      summary: Return a list of accesable projects which user is owner
+      operationId: app.api.projects.find_projects
+      responses:
+        '200':
+          description: list of projects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#components/schemas/Project'
+      security:
+      - jwt: []
+
   /secret:
     get:
       summary: Return secret string
@@ -53,7 +69,8 @@ paths:
               schema:
                 type: string
       security:
-      - jwt: ['secret']
+      - jwt: []
+
 
 components:
   securitySchemes:
@@ -62,3 +79,19 @@ components:
       scheme: bearer
       bearerFormat: JWT
       x-bearerInfoFunc: app.api.users.decode_token
+
+  schemas:
+    Project:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        created:
+          type: string
+        status:
+          type: integer
+        project_type:
+          type: integer
+        is_public:
+          type: boolean

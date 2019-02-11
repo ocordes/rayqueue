@@ -104,5 +104,17 @@ class Project(db.Model):
     status = db.Column(db.Integer)
 
 
+    def to_dict(self):
+        data = {
+            'id': self.id,
+            'name': self.name,
+            'created': self.timestamp.isoformat() + 'Z',
+            'is_public': self.is_public,
+            'project_type': self.project_type,
+            'status': self.status
+            }
+        return data
+
+
     def __repr__(self):
         return '<Project {}>'.format(self.name)
