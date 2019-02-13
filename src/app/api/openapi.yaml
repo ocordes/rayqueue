@@ -43,7 +43,7 @@ paths:
                     description: JWT token
   /projects:
     get:
-      summary: Return a list of accesable projects which user is owner
+      summary: Return a list of accessable projects which user is owner
       operationId: app.api.projects.find_projects
       responses:
         '200':
@@ -54,6 +54,25 @@ paths:
                 type: array
                 items:
                   $ref: '#components/schemas/Project'
+      security:
+      - jwt: []
+    post:
+      summary: Add a new project
+      operationId: app.api.projects.add_project
+      requestBody:
+        description: Create a new project
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewProject'
+      responses:
+        '200':
+          description: Project response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
       security:
       - jwt: []
 
@@ -91,6 +110,14 @@ components:
           type: string
         status:
           type: integer
+        project_type:
+          type: integer
+        is_public:
+          type: boolean
+    NewProject:
+      properties:
+        name:
+          type: string
         project_type:
           type: integer
         is_public:
