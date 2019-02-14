@@ -3,7 +3,7 @@
 api/projects.py
 
 written by: Oliver Cordes 2019-02-11
-changed by: Oliver Cordes 2019-02-12
+changed by: Oliver Cordes 2019-02-14
 
 """
 
@@ -22,7 +22,14 @@ from app.models import User, Project
 from app.api.checks import body_get
 
 
+"""
+find_project
 
+
+:param user: user_id from token
+:param token_info: info of the token
+:rvalue: returns an array of all projects with user_id as owner
+"""
 def find_projects(user, token_info):
     u = User.query.get(int(user))
 
@@ -50,7 +57,7 @@ def add_project(user, token_info, body):
     project = Project.query.filter_by(name=name).first()
     if project is not None:
         abort( 400,
-               'Project with name={} already exist'.format(name) )
+               'Project with name={} already exists'.format(name) )
 
     project = Project(name=body.get('name', 'Some project'),
                     is_public=body.get('is_public', False),
@@ -69,5 +76,31 @@ get_project
 """
 
 def get_project(user, token_info, project_id):
-    print(project_id)
-    pass
+    project = Project.query.get(project_id)
+
+    if project is None:
+        abort(404, 'No project with such id')
+
+    if project.user_id != user:
+        abort(401, 'You are not the owner of this project')
+
+    return jsonify(project.to_dict())
+
+
+"""
+update_project
+"""
+
+def update_project(user, token_info, project_id, body):
+    print(user)
+    print(body)
+    project = Project.query.get(project_id)
+
+    if project is None:
+        abort(404, 'No project with such id')
+
+    if project.user_id != user:
+        abort(401, 'You are not the owner of this project')
+
+
+    return jsonify(project.to_dict())

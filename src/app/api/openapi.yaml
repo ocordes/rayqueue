@@ -99,6 +99,35 @@ paths:
           description: Project does not exist
       security:
       - jwt: []
+    put:
+      tags: [Projects]
+      operationId: app.api.projects.update_project
+      summary: Update a project
+      parameters:
+      - name: project_id
+        description: Project unique identifier
+        in: path
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        description: Update a project
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewProject'
+      responses:
+        200:
+          description: Return project
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        404:
+          description: Project does not exist
+      security:
+      - jwt: []
 
   /secret:
     get:
