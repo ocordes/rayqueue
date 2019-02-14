@@ -76,6 +76,30 @@ paths:
       security:
       - jwt: []
 
+  /project/{project_id}:
+    get:
+      tags: [Pets]
+      operationId: app.api.projects.get_project
+      summary: Get a single project
+      parameters:
+      - name: project_id
+        description: Project unique identifier
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: Return project
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        404:
+          description: Project does not exist
+      security:
+      - jwt: []
+
   /secret:
     get:
       summary: Return secret string

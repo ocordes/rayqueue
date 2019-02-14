@@ -19,6 +19,7 @@ from app.api import bp
 
 from app.models import User, Project
 
+from app.api.checks import body_get
 
 
 
@@ -28,6 +29,7 @@ def find_projects(user, token_info):
     data = [p.to_dict() for p in u.projects.all()]
 
     return jsonify(data)
+
 
 
 """
@@ -41,11 +43,14 @@ def add_project(user, token_info, body):
     print(user)
     print(body)
 
-    #if user_info is None or not user_info.check_password(password):
-    #    abort(
-    #             401,
-    #             "Invalid username or password",
-    #         )
+    name = body_get(body, 'name')
+    is_public = body_get(body, 'is_public')
+    project_type = body_get(body, 'project_type')
+
+    project = Project.query.filter_by(name=name).first()
+    if project is not None:
+        abort( 400,
+               'Project with name={} already exist'.format(name) )
 
     project = Project(name=body.get('name', 'Some project'),
                     is_public=body.get('is_public', False),
@@ -57,3 +62,12 @@ def add_project(user, token_info, body):
     db.session.commit()
 
     return jsonify(project.to_dict())
+
+
+"""
+get_project
+"""
+
+def get_project(user, token_info, project_id):
+    print(project_id)
+    pass
