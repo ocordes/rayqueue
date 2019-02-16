@@ -3,7 +3,7 @@
 app/models.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-02-04
+changed by: Oliver Cordes 2019-02-16
 
 """
 
@@ -42,6 +42,7 @@ class User(UserMixin, db.Model):
 
     # relationships
     projects = db.relationship('Project', backref='owner', lazy='dynamic')
+    files = db.relationship('File', backref='owner', lazy='dynamic')
 
 
     def set_password(self, password):
@@ -103,6 +104,9 @@ class Project(db.Model):
     project_type = db.Column(db.Integer)
     status = db.Column(db.Integer)
 
+    # relationships
+    files = db.relationship('File', backref='project', lazy='dynamic')
+
 
     def to_dict(self):
         data = {
@@ -118,3 +122,17 @@ class Project(db.Model):
 
     def __repr__(self):
         return '<Project {}>'.format(self.name)
+
+
+class File(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
+    md5sum = db.Column(db.String)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
+    file_type = db.Column(db.Integer)
+
+
+    def __repr__(self):
+        return '<File {}>'.format(self.name)

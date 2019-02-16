@@ -104,3 +104,20 @@ def update_project(user, token_info, project_id, body):
 
 
     return jsonify(project.to_dict())
+
+
+
+"""
+remove_project
+"""
+
+def remove_project(user, token_info, project_id):
+    project = Project.query.get(project_id)
+
+    if project is None:
+        abort(404, 'No project with such id')
+
+    if project.user_id != user:
+        abort(401, 'You are not the owner of this project')
+
+    return jsonify(project.to_dict())

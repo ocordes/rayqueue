@@ -11,6 +11,7 @@ servers:
 paths:
   /login:
     post:
+      tags: [Auth]
       summary: Return JWT token
       operationId: app.api.users.login
       description: Login procedure
@@ -43,6 +44,7 @@ paths:
                     description: JWT token
   /projects:
     get:
+      tags: [Projects]
       summary: Return a list of accessable projects which user is owner
       operationId: app.api.projects.find_projects
       responses:
@@ -57,6 +59,7 @@ paths:
       security:
       - jwt: []
     post:
+      tags: [Projects]
       summary: Add a new project
       operationId: app.api.projects.add_project
       requestBody:
@@ -78,7 +81,7 @@ paths:
 
   /project/{project_id}:
     get:
-      tags: [Pets]
+      tags: [Projects]
       operationId: app.api.projects.get_project
       summary: Get a single project
       parameters:
@@ -117,6 +120,28 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/NewProject'
+      responses:
+        200:
+          description: Return project
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        404:
+          description: Project does not exist
+      security:
+      - jwt: []
+    delete:
+      tags: [Projects]
+      operationId: app.api.projects.remove_project
+      summary: Remove a single project
+      parameters:
+      - name: project_id
+        description: Project unique identifier
+        in: path
+        required: true
+        schema:
+          type: integer
       responses:
         200:
           description: Return project
