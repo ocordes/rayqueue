@@ -53,4 +53,13 @@
       {% endif %}
     <p>{{ form.update() }}</p>
     </form>
+    <hr>
+    <form action="{{url_for('projects.upload_project_basefile',projectid=project.id)}}" method="post">
+    {{ form.hidden_tag() }}
+    <p>
+      {{uform.upload.label}} <br>
+      {{uform.upload}} <br>
+    </p>
+    <p>{{uform.submit}}</p>
+    </form>
 {% endblock %}

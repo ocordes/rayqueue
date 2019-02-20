@@ -19,7 +19,7 @@ from werkzeug.urls import url_parse
 from app import db
 from app.projects import bp
 from app.projects.forms import CreateProjectForm, UpdateProjectForm, \
-                               ProjectListForm
+                               ProjectListForm, UploadBaseFilesForm
 from app.projects.admin import owner_required, check_access
 from app.models import User, Project
 #from app.auth.email import send_password_reset_email, send_email_verify_email
@@ -32,6 +32,7 @@ from app.models import User, Project
 @login_required
 def show_project(projectid):
     form = UpdateProjectForm()
+    uform = UploadBaseFilesForm()
 
     project = Project.query.get(projectid)
     user    = User.query.get(project.user_id)
@@ -53,8 +54,24 @@ def show_project(projectid):
     return render_template('projects/show_project.html',
                             title='Project',
                             form=form,
+                            uform=uform,
                             user=user,
                             project=project)
+
+
+@bp.route('/project/basefile/<projectid>', methods=['POST'])
+@owner_required('projectid')
+@login_required
+def upload_project_basefile(projectid):
+    form = UploadBaseFilesForm()
+
+    project = Project.query.get(projectid)
+    user    = User.query.get(project.user_id)
+
+    if form.validate_on_submit():
+        pass
+
+    return redirect(url_for('projects.show_project', project_id=projectid))
 
 
 @bp.route('/projects', methods=['GET','POST'])

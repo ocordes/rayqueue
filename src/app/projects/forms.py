@@ -11,8 +11,10 @@ changed by: Oliver Cordes 2019-02-20
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, \
                     SubmitField, TextAreaField, RadioField, \
-                    SelectField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Length
+                    SelectField 
+from flask_wtf.file import FileField, FileAllowed, FileRequired
+from wtforms.validators import ValidationError, DataRequired, \
+                               Email, EqualTo, Length
 from app.models import Project
 
 
@@ -37,6 +39,14 @@ class UpdateProjectForm(FlaskForm):
     is_public = BooleanField('Public' )
 
     update = SubmitField('Update')
+
+
+class UploadBaseFilesForm(FlaskForm):
+    upload = FileField('BaseFile', validators=[
+                    FileRequired(),
+                    FileAllowed(['tgz', 'zip', 'tar.gz'], 'Archives only!')
+                    ])
+    submit = SubmitField('Upload')
 
 
 class ProjectListForm(FlaskForm):
