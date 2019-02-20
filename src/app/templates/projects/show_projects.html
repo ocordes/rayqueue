@@ -12,6 +12,7 @@
         <td>Name</td>
         <td>Owner</td>
         <td>Type</td>
+        <td>Version</td>
         <td>Public</td>
         <td>Status</td>
         <td>Created</td>
@@ -36,6 +37,7 @@
         {% else %}
         <td>Animation</td>
         {% endif %}
+        <td>{{project.version}}</td>
         <td>{{project.is_public}}</td>
         <td>
         {% if project.status == 0 %}

@@ -29,6 +29,10 @@
       {% endfor %}
     </p>
     <p>
+      {{ form.version.label }}<br>
+      &nbsp; {{ form.version }}<br>
+    </p>
+    <p>
       {{ form.is_public.label }}<br>
       &nbsp; {{ form.is_public }}<br>
       {% for error in form.project_type.errors %}

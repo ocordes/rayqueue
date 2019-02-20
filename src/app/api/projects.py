@@ -3,7 +3,7 @@
 api/projects.py
 
 written by: Oliver Cordes 2019-02-11
-changed by: Oliver Cordes 2019-02-14
+changed by: Oliver Cordes 2019-02-20
 
 """
 
@@ -51,19 +51,22 @@ def add_project(user, token_info, body):
     print(body)
 
     name = body_get(body, 'name')
+    version = Project.correct_version( body_get(body, 'version'))
     is_public = body_get(body, 'is_public')
     project_type = body_get(body, 'project_type')
+
 
     project = Project.query.filter_by(name=name).first()
     if project is not None:
         abort( 400,
                'Project with name={} already exists'.format(name) )
 
-    project = Project(name=body.get('name', 'Some project'),
-                    is_public=body.get('is_public', False),
-                    user_id=user,
-                    project_type=body.get('project_type',0),
-                    status=0)
+    project = Project(name=name,
+                       user_id=user,
+                       version=version,
+                       is_public=is_public,
+                       project_type=project_type,
+                       status=0)
 
     db.session.add(project)
     db.session.commit()
@@ -102,6 +105,23 @@ def update_project(user, token_info, project_id, body):
     if project.user_id != user:
         abort(401, 'You are not the owner of this project')
 
+    # extract the name from body and checks for duplicate entries!
+    name = body_get(body, 'name')
+    if len(Project.query.filter_by(name=name).all()) > 0:
+        abort(401, 'name={} already used for another project!'.format(name))
+
+    version = Project.correct_version( body_get(body, 'version'))
+    is_public = body_get(body, 'is_public')
+    project_type = body_get(body, 'project_type')
+
+    project.name = name
+    project.version = version
+    project.is_public = is_public
+    project.project_type = project_type
+
+
+    db.session.commit()
+
 
     return jsonify(project.to_dict())
 
@@ -119,5 +139,8 @@ def remove_project(user, token_info, project_id):
 
     if project.user_id != user:
         abort(401, 'You are not the owner of this project')
+
+    db.session.delete(project)
+    db.session.commit()
 
     return jsonify(project.to_dict())

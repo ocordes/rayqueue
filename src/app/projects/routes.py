@@ -3,7 +3,7 @@
 app/projects/routes.py
 
 written by: Oliver Cordes 2019-02-04
-changed by: Oliver Cordes 2019-02-10
+changed by: Oliver Cordes 2019-02-20
 
 """
 
@@ -38,13 +38,15 @@ def show_project(projectid):
 
     if form.validate_on_submit():
         project.name = form.name.data
-        project.is_public=form.is_public.data
-        project.project_type=int(form.project_type.data)
+        project.is_public = form.is_public.data
+        project.project_type = int(form.project_type.data)
+        project.version = form.version.data
         db.session.commit()
         flash('Your changes have been saved.')
     elif request.method == 'GET':
         form.name.default = project.name
         form.project_type.default = str(project.project_type)
+        form.version.default = project.version
         form.is_public.default = project.is_public
         form.process()
 
@@ -99,6 +101,7 @@ def create_project():
         project = Project(name=form.name.data,
                           is_public=form.is_public.data,
                           project_type=int(form.project_type.data),
+                          version=form.version.data,
                           user_id=current_user.id,
                           status=0)
         db.session.add(project)

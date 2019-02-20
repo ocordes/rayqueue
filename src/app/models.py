@@ -3,7 +3,7 @@
 app/models.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-02-16
+changed by: Oliver Cordes 2019-02-20
 
 """
 
@@ -100,6 +100,7 @@ class Project(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     name = db.Column(db.String(64), index=True, unique=True)
+    version = db.Column(db.String(10))
     is_public = db.Column(db.Boolean, default=False)
     project_type = db.Column(db.Integer)
     status = db.Column(db.Integer)
@@ -113,6 +114,7 @@ class Project(db.Model):
             'id': self.id,
             'name': self.name,
             'created': self.timestamp.isoformat() + 'Z',
+            'version': self.version,
             'is_public': self.is_public,
             'project_type': self.project_type,
             'status': self.status
@@ -122,6 +124,17 @@ class Project(db.Model):
 
     def __repr__(self):
         return '<Project {}>'.format(self.name)
+
+
+    @staticmethod
+    def correct_version(version):
+        avail_versions = [ '3.7', '3.8', '3.6']
+        default_version = '3.7'
+
+        if version in avail_versions:
+            return version
+        else:
+            return default_version
 
 
 class File(db.Model):

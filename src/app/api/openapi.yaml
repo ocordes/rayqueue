@@ -186,6 +186,8 @@ components:
           type: string
         created:
           type: string
+        version:
+          type: string
         status:
           type: integer
         project_type:
@@ -195,6 +197,8 @@ components:
     NewProject:
       properties:
         name:
+          type: string
+        version:
           type: string
         project_type:
           type: integer
