@@ -3,12 +3,15 @@
 app/models.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-02-20
+changed by: Oliver Cordes 2019-02-21
 
 """
 
+import os
+import uuid
 
 from app import db, login
+from app.utils.md5file import save_md5file
 
 from flask import current_app
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -19,6 +22,14 @@ from hashlib import md5
 from datetime import datetime
 from time import time
 import jwt
+
+
+FILE_UNKNOWN   = 0
+FILE_BASE_FILE = 1
+
+FILE_TYPES = { FILE_UNKNOWN: 'unknown',
+               FILE_BASE_FILE: 'base_files'
+             }
 
 
 
@@ -108,6 +119,9 @@ class Project(db.Model):
     # relationships
     files = db.relationship('File', backref='project', lazy='dynamic')
 
+    base_files = db.relationship('File',
+                                  primaryjoin="and_(Project.id==File.project_id, File.file_type=='%s')"% (FILE_BASE_FILE))
+
 
     def to_dict(self):
         data = {
@@ -149,3 +163,21 @@ class File(db.Model):
 
     def __repr__(self):
         return '<File {}>'.format(self.name)
+
+
+    @staticmethod
+    def save_file(src, name, ftype, project):
+        id = uuid.uuid4()
+        dir = FILE_TYPES[ftype]
+        dfilename = '{}_{}'.format(id, name)
+        full_dir = os.path.join(current_app.config['DATA_DIR'], dir )
+        os.makedirs(full_dir, exist_ok = True)   # no problems if full_dir exists
+        filename = os.path.join(full_dir, dfilename)
+
+        md5sum = save_md5file(src, filename)
+
+        return File(name=dfilename,
+                    md5sum=md5sum,
+                    user_id=project.user_id,
+                    project_id=project.id,
+                    file_type=ftype)

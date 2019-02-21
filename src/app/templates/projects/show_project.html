@@ -54,10 +54,34 @@
     <p>{{ form.update() }}</p>
     </form>
     <hr>
-    <form action="{{url_for('projects.upload_project_basefile',projectid=project.id)}}" method="post">
+    <h4>BaseFiles</h4>
+    <form action="{{url_for('projects.upload_project_basefile',projectid=project.id)}}" method="post" enctype="multipart/form-data">
     {{ form.hidden_tag() }}
+    <table class="table">
+      <thead>
+        <td></td>
+        <td>ID</td>
+        <td>Name</td>
+        <td>MD5</td>
+        <td>Created</td>
+      </thead>
+      {% if project.base_files is none %}
+      <tr>
+        <td colspan="4">No files</td>
+      </tr>
+      {% else %}
+      <tr>
+      {% for file in project.base_files %}
+        <td></td>
+        <td> {{file.id}} </td>
+        <td> {{file.name}} </td>
+        <td> {{file.md5sum}} </td>
+        <td> {{file.timestamp.strftime("%Y-%m-%d %H:%M")}} </td>
+      {% endfor %}
+      </tr>
+      {% endif %}
+    </table>
     <p>
-      {{uform.upload.label}} <br>
       {{uform.upload}} <br>
     </p>
     <p>{{uform.submit}}</p>

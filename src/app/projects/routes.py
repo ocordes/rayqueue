@@ -3,7 +3,7 @@
 app/projects/routes.py
 
 written by: Oliver Cordes 2019-02-04
-changed by: Oliver Cordes 2019-02-20
+changed by: Oliver Cordes 2019-02-21
 
 """
 
@@ -14,6 +14,7 @@ from flask import current_app, request, render_template, \
                   url_for, flash, redirect
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
+from werkzeug.utils import secure_filename
 
 
 from app import db
@@ -21,9 +22,11 @@ from app.projects import bp
 from app.projects.forms import CreateProjectForm, UpdateProjectForm, \
                                ProjectListForm, UploadBaseFilesForm
 from app.projects.admin import owner_required, check_access
-from app.models import User, Project
+from app.models import User, Project, File, \
+                       FILE_BASE_FILE
 #from app.auth.email import send_password_reset_email, send_email_verify_email
 
+from app.utils.md5file import save_md5file
 
 
 
@@ -68,10 +71,17 @@ def upload_project_basefile(projectid):
     project = Project.query.get(projectid)
     user    = User.query.get(project.user_id)
 
-    if form.validate_on_submit():
-        pass
 
-    return redirect(url_for('projects.show_project', project_id=projectid))
+    if form.validate_on_submit():
+        print('Update')
+        f = form.upload.data
+        filename = secure_filename(f.filename)
+        new_file = File.save_file(f, filename, FILE_BASE_FILE, project)
+
+        db.session.add(new_file)
+        db.session.commit()
+
+    return redirect(url_for('projects.show_project', projectid=projectid))
 
 
 @bp.route('/projects', methods=['GET','POST'])
