@@ -58,6 +58,7 @@ def login():
         # proceed with the normal login procedure
         form = LoginForm()
 
+        print( form.submit() )
         if form.validate_on_submit():
             user = User.query.filter_by(username=form.username.data).first()
             if user is None or not user.check_password(form.password.data):
