@@ -3,7 +3,7 @@
 app/projects/routes.py
 
 written by: Oliver Cordes 2019-02-04
-changed by: Oliver Cordes 2019-02-21
+changed by: Oliver Cordes 2019-02-22
 
 """
 
@@ -31,8 +31,8 @@ from app.utils.md5file import save_md5file
 
 
 @bp.route('/project/<projectid>', methods=['GET','POST'])
-@owner_required('projectid')
 @login_required
+@owner_required('projectid')
 def show_project(projectid):
     form = UpdateProjectForm()
     uform = UploadBaseFilesForm()
@@ -63,8 +63,8 @@ def show_project(projectid):
 
 
 @bp.route('/project/basefile/<projectid>', methods=['POST'])
-@owner_required('projectid')
 @login_required
+@owner_required('projectid')
 def upload_project_basefile(projectid):
     form = UploadBaseFilesForm()
 

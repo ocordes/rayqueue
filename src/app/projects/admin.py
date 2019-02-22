@@ -3,7 +3,7 @@
 app/projects/admin.py
 
 written by: Oliver Cordes 2019-02-07
-changed by: Oliver Cordes 2019-02-09
+changed by: Oliver Cordes 2019-02-22
 
 """
 
@@ -17,6 +17,8 @@ from app.models import User, Project
 
 
 def check_access(user, project):
+    if user.is_anonymous:
+        return False, 'Anonymous user'
     if user.administrator:
         return True, 'Administrator'
     if user.id == project.user_id:
