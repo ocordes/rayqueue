@@ -57,6 +57,7 @@ def login():
     else:
         # proceed with the normal login procedure
         form = LoginForm()
+        rform = RegistrationForm()
 
         print( form.submit() )
         if form.validate_on_submit():
@@ -72,7 +73,10 @@ def login():
             else:
                 flash('User account is not active!')
                 return redirect(url_for('auth.login'))
-        return render_template('auth/login.html', title='Sign In', form=form)
+        return render_template('auth/login.html', title='Sign In',
+                                form=form,
+                                rform=rform,
+                                mode='login')
 
 
 @bp.route('/logout')
@@ -85,8 +89,9 @@ def logout():
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
-    form = RegistrationForm()
-    if form.validate_on_submit():
+    form = LoginForm()
+    rform = RegistrationForm()
+    if rform.validate_on_submit():
         user = User(username=form.username.data, email=form.email.data)
         user.set_password(form.password.data)
         user.first_name = form.first_name.data
@@ -97,8 +102,10 @@ def register():
         flash('Congratulations, you are now a registered user! An email was sent for confirmation!')
         return redirect(url_for('auth.login'))
 
-
-    return render_template('auth/register.html', title='Register', form=form)
+    return render_template('auth/login.html', title='Sign In',
+                            form=form,
+                            rform=rform,
+                            mode='signup')
 
 
 @bp.route('/update_password', methods=['POST'])
