@@ -57,9 +57,7 @@ def login():
     else:
         # proceed with the normal login procedure
         form = LoginForm()
-        rform = RegistrationForm()
 
-        print( form.submit() )
         if form.validate_on_submit():
             user = User.query.filter_by(username=form.username.data).first()
             if user is None or not user.check_password(form.password.data):
@@ -75,7 +73,8 @@ def login():
                 return redirect(url_for('auth.login'))
         return render_template('auth/login.html', title='Sign In',
                                 form=form,
-                                rform=rform,
+                                rform=RegistrationForm(),
+                                pform=ResetPasswordRequestForm(),
                                 mode='login')
 
 
@@ -89,22 +88,24 @@ def logout():
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
-    form = LoginForm()
     rform = RegistrationForm()
     if rform.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data)
-        user.set_password(form.password.data)
-        user.first_name = form.first_name.data
-        user.last_name = form.last_name.data
+        user = User(username=rform.username.data,
+                    email=rform.email.data,
+                    first_name=rform.first_name.data,
+                    last_name=rform.last_name.data)
+        user.set_password(rform.password.data)
         db.session.add(user)
         db.session.commit()
         send_email_verify_email(user)
         flash('Congratulations, you are now a registered user! An email was sent for confirmation!')
         return redirect(url_for('auth.login'))
 
+    # this is the case of an error!
     return render_template('auth/login.html', title='Sign In',
-                            form=form,
+                            form=LoginForm(),
                             rform=rform,
+                            pform=ResetPasswordRequestForm(),
                             mode='signup')
 
 
@@ -129,15 +130,21 @@ def update_password():
 def reset_password_request():
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
-    form = ResetPasswordRequestForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
+    pform = ResetPasswordRequestForm()
+    if pform.validate_on_submit():
+        user = User.query.filter_by(email=pform.email.data).first()
         if user:
             send_password_reset_email(user)
+            print(user)
         flash('Check your email for the instructions to reset your password')
-        return redirect(url_for('main.login'))
-    return render_template('auth/reset_password_request.html',
-                           title='Reset Password', form=form)
+        return redirect(url_for('auth.login'))
+
+    return render_template('auth/login.html', title='Sign In',
+                            form=LoginForm(),
+                            rform=RegistrationForm(),
+                            pform=pform,
+                            mode='reset')
+
 
 
 @bp.route('/reset_password/<token>', methods=['GET', 'POST'])

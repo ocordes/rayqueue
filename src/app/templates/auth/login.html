@@ -12,7 +12,9 @@
         <div class="panel panel-info" >
                 <div class="panel-heading">
                     <div class="panel-title">Sign In</div>
-                    <div style="float:right; font-size: 80%; position: relative; top:-10px"><a href="{{ url_for('auth.reset_password_request') }}">Forgot password?</a></div>
+                    <div style="float:right; font-size: 80%; position: relative; top:-10px">
+                      <a href="#" onClick="$('#loginbox').hide(); $('#resetbox').show();event.preventDefault();">Forgot password?</a></div>
+                      <!-- <a href="{{ url_for('auth.reset_password_request') }}">Forgot password?</a></div>-->
                 </div>
 
                 <div style="padding-top:30px" class="panel-body" >
@@ -78,29 +80,34 @@
                         </div>
                         <div class="panel-body" >
                             <form id="signupform" class="form-horizontal" role="form" method="post" action="{{url_for('auth.register')}}">
-
-                                <div id="signupalert" style="display:none" class="alert alert-danger">
-                                    <p>Error:</p>
-                                    <span></span>
-                                    {% for error in form.username.errors %}
-                                    <span style="color: red;">[{{ error }}]</span>
-                                    {% endfor %}
-                                </div>
-
-
+                                {{ rform.hidden_tag() }}
                                 <div class="form-group">
                                     <label for="username" class="col-md-3 control-label">Username</label>
                                     <div class="col-md-9">
                                         {{rform.username(class_="form-control",placeholder="Username")}}
                                     </div>
                                 </div>
+                                {% if rform.username.errors|length > 0 %}
+                                <div id="signupalert" class="alert alert-danger">
+                                    {% for error in rform.username.errors %}
+                                    <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
 
                                 <div class="form-group">
                                     <label for="email" class="col-md-3 control-label">Email</label>
                                     <div class="col-md-9">
-                                        {{rform.username(class_="form-control",placeholder="Email Address")}}
+                                        {{rform.email(class_="form-control",placeholder="Email Address")}}
                                     </div>
                                 </div>
+                                {% if rform.email.errors|length > 0 %}
+                                <div id="signupalert" class="alert alert-danger">
+                                    {% for error in rform.email.errors %}
+                                    <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
 
                                 <div class="form-group">
                                     <label for="firstname" class="col-md-3 control-label">First Name</label>
@@ -108,24 +115,55 @@
                                         {{rform.first_name(class_="form-control",placeholder="First Name")}}
                                     </div>
                                 </div>
+                                {% if rform.first_name.errors|length > 0 %}
+                                <div id="signupalert" class="alert alert-danger">
+                                    {% for error in rform.first_name.errors %}
+                                    <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+
                                 <div class="form-group">
                                     <label for="lastname" class="col-md-3 control-label">Last Name</label>
                                     <div class="col-md-9">
                                         {{rform.last_name(class_="form-control",placeholder="Last Name")}}
                                     </div>
                                 </div>
+                                {% if rform.last_name.errors|length > 0 %}
+                                <div id="signupalert" class="alert alert-danger">
+                                    {% for error in rform.last_name.errors %}
+                                    <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+
                                 <div class="form-group">
                                     <label for="password" class="col-md-3 control-label">Password</label>
                                     <div class="col-md-9">
                                         {{rform.password(class_="form-control",placeholder="Password")}}
                                     </div>
                                 </div>
+                                {% if rform.password.errors|length > 0 %}
+                                <div id="signupalert" class="alert alert-danger">
+                                    {% for error in rform.password.errors %}
+                                    <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+
                                 <div class="form-group">
                                     <label for="password" class="col-md-3 control-label">Repeat Password</label>
                                     <div class="col-md-9">
                                         {{rform.password2(class_="form-control",placeholder="Repeat Password")}}
                                     </div>
                                 </div>
+                                {% if rform.password2.errors|length > 0 %}
+                                <div id="signupalert" class="alert alert-danger">
+                                    {% for error in rform.password2.errors %}
+                                    <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
 
                                 <div class="form-group">
                                     <!-- Button -->
@@ -143,10 +181,51 @@
 
 
          </div>
-  </div>
+         <div id="resetbox"
+               {% if mode =='reset' %}
+               style="margin-top:50px"
+               {% else %}
+               style="display:none; margin-top:50px"
+               {% endif %}
+               class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+                         <div class="panel panel-info">
+                             <div class="panel-heading">
+                                 <div class="panel-title">Forgot password</div>
+                                 <div style="float:right; font-size: 85%; position: relative; top:-10px"><a id="signinlink" href="#" onclick="$('#resetbox').hide(); $('#loginbox').show();event.preventDefault();">Sign In</a></div>
+                             </div>
+                             <div class="panel-body" >
+                                 <form id="resetform" class="form-horizontal" role="form" method="post" action="{{url_for('auth.reset_password_request')}}">
 
-    <p>
-        Forgot Your Password?
-        <a href="{{ url_for('auth.reset_password_request') }}">Click to Reset It</a>
-    </p>
+                                     {{ pform.hidden_tag() }}
+                                     <div class="form-group">
+                                         <label for="email" class="col-md-1 control-label">Email</label>
+                                         <div class="col-md-11">
+                                             {{pform.email(class_="form-control",placeholder="Email Address")}}
+                                         </div>
+                                     </div>
+                                     {% if pform.email.errors|length > 0 %}
+                                     <div id="signupalert" class="alert alert-danger">
+                                         {% for error in pform.email.errors %}
+                                         <span>{{ error }}</span>
+                                         {% endfor %}
+                                     </div>
+                                     {% endif %}
+
+                                     <div class="form-group">
+                                         <!-- Button -->
+                                         <div class="col-md-offset-1 col-md-9">
+                                             {{ pform.submit(class_="btn btn-primary", id="btn-reset")}}
+                                             <!-- <button id="btn-signup" type="button" class="btn btn-info"><i class="icon-hand-right"></i> &nbsp Sign Up</button>-->
+                                         </div>
+                                     </div>
+
+                                 </form>
+                              </div>
+                         </div>
+
+
+
+
+              </div>
+  </div>
 {% endblock %}

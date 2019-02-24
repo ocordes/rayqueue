@@ -3,13 +3,13 @@
 app/auth/email.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-02-03
+changed by: Oliver Cordes 2019-02-24
 
 """
 
 from flask import render_template, current_app
 #from flask_babel import _
-from app.email import send_email
+from app.utils.email import send_email
 
 
 
