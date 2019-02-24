@@ -111,9 +111,6 @@ def register():
 
 @bp.route('/update_password', methods=['POST'])
 def update_password():
-    #user = User.query.filter_by(username=username).first_or_404()
-
-    form = EditProfileForm(current_user.username)
     pform=UpdatePasswordForm()
 
 
@@ -123,7 +120,7 @@ def update_password():
         flash('Your new password has been saved.')
 
     return redirect(url_for('auth.user', username=current_user.username))
-    #return render_template('user.html', user=current_user, form=form, pform=pform)
+
 
 
 @bp.route('/reset_password_request', methods=['GET', 'POST'])
@@ -173,7 +170,6 @@ def verify_email(token):
         current_app.logger.info(msg)
         flash(msg)
         return redirect(url_for('main.index'))
-    form = ResetPasswordForm()
 
     user.is_active = True
     db.session.commit()

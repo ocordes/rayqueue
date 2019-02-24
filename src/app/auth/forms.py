@@ -1,9 +1,9 @@
 """
 
-app/forms.py
+app/auth/forms.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-01-30
+changed by: Oliver Cordes 2019-02-24
 
 """
 
@@ -68,7 +68,7 @@ class UpdatePasswordForm(FlaskForm):
     password2 = PasswordField(
         'Repeat Password', validators=[DataRequired(), EqualTo('password')])
 
-    submit = SubmitField('Update password')
+    submit = SubmitField('Update Password')
 
 
 class ResetPasswordRequestForm(FlaskForm):
@@ -80,7 +80,7 @@ class ResetPasswordForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     password2 = PasswordField(
         'Repeat Password', validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField('Request Password Reset')
+    submit = SubmitField('Reset Password')
 
 
 class AdminPasswordForm(FlaskForm):
