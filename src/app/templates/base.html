@@ -5,6 +5,11 @@
     {% if title %}{{ title }} - Rayqueue{% else %}Welcome to Rayqueue{% endif %}
 {% endblock %}
 
+{% block styles %}
+{{super()}}
+    <link rel="stylesheet" href="{{url_for('static', filename='sticky-footer.css')}}">
+{% endblock %}
+
 {% block navbar %}
     <nav class="navbar navbar-default">
         <div class="container">
@@ -69,4 +74,21 @@
         {# application content needs to be provided in the app_content block #}
         {% block app_content %}{% endblock %}
     </div>
+
+    {# Footer #}
+
+    <footer class="footer">
+      <div class="container-fluid bg-primary">
+        <div class="row">
+          <div class="footer-text text-white col-md-2 col-md-offset-2 col-sm-1 col-sm-offset-2 col-xs-6">
+            Rayqueue {{rq_version}}
+          </div>
+          <div class="footer-text text-white col-md-2 col-sm-1 col-xs-6">
+            © {{rq_copyright}}
+          </div>
+        </div>
+      </div>
+    </footer>
+
+
 {% endblock %}

@@ -20,6 +20,11 @@ def make_shell_context():
     return {'db': db, 'User': User, 'Project': Project}
 
 
+@app.context_processor
+def utility_processor():
+    return { 'rq_version': __version__,
+             'rq_copyright': '2019 by {}'.format(__author__)}
+
 
 # test this file
 if __name__ == "__main__":
