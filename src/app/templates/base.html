@@ -46,6 +46,7 @@
                       <ul class="dropdown-menu">
                         {% if current_user.administrator %}
                         <li><a href="{{ url_for('auth.users') }}">Users (admin)</a></li>
+                        <li><a href="{{url_for('auth.preferences')}}">Preferences</a></li>
                         <li class="divider"></li>
                         {% endif %}
                         <li><a href="{{ url_for('auth.user', username=current_user.username) }}">Profile</a></li>

@@ -3,7 +3,7 @@
 app/auth/routes.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-02-02
+changed by: Oliver Cordes 2019-02-25
 
 """
 
@@ -20,9 +20,12 @@ from app import db
 from app.auth import bp
 from app.auth.forms import LoginForm, RegistrationForm, EditProfileForm, \
                            UpdatePasswordForm, ResetPasswordRequestForm, \
-                           ResetPasswordForm, AdminPasswordForm
+                           ResetPasswordForm, AdminPasswordForm, \
+                           PreferencesForm
 from app.models import User
-from app.auth.email import send_password_reset_email, send_email_verify_email
+from app.auth.email import send_password_reset_email, send_email_verify_email, \
+                           send_test_email
+from app.auth.admin import admin_required
 
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -178,3 +181,16 @@ def verify_email(token):
     flash(msg)
 
     return redirect(url_for('auth.login'))
+
+
+
+@bp.route('/preferences', methods=['GET','POST'])
+@login_required
+@admin_required
+def preferences():
+    test_email_form = PreferencesForm()
+    if test_email_form.validate_on_submit():
+        send_test_email(test_email_form.test_email.data)
+        flash('Send test email to \'{}\''.format(test_email_form.test_email.data))
+    return render_template('auth/preferences.html',
+                            test_email_form=test_email_form)

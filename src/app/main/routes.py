@@ -3,7 +3,7 @@
 app/routes.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-01-30
+changed by: Oliver Cordes 2019-02-25
 
 """
 
@@ -71,10 +71,3 @@ def upload():
         file.save(destination)
 
     return render_template("complete.html")
-
-
-#@bp.route('/api', methods=['POST'])
-#def api():
-#    return jsonify(username='hello',
-#                   email='president@whitehouse.gov',
-#                   id=42)

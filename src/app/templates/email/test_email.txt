@@ -1,0 +1,11 @@
+Dear Rayqueue-User,
+
+This is an email to verify the email system!
+
+To login click on the following link:
+
+{{url_for('auth.login',_external=True)}}
+
+Sincerely,
+
+The Rayqueue Team

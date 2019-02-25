@@ -95,3 +95,9 @@ class UserListForm(FlaskForm):
     set_admin = SubmitField('Set Admin')
     clear_admin = SubmitField('Clear Admin')
     remove = SubmitField('Remove')
+
+
+
+class PreferencesForm(FlaskForm):
+    test_email = StringField('Send Email to:', validators=[DataRequired(), Email()])
+    send_email = SubmitField('Send Test Email')

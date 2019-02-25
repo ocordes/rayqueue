@@ -3,7 +3,7 @@
 app/auth/email.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-02-24
+changed by: Oliver Cordes 2019-02-25
 
 """
 
@@ -34,3 +34,11 @@ def send_email_verify_email(user):
                                          user=user, token=token),
                html_body=render_template('email/verify_email.html',
                                          user=user, token=token))
+
+
+def send_test_email(recipients):
+    send_email('[Rayqueue] Test Email',
+                sender=current_app.config['ADMINS'][0],
+                recipients=recipients.split(','),
+                text_body=render_template('email/test_email.txt'),
+                html_body=render_template('email/test_email.html'))
