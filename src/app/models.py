@@ -3,7 +3,7 @@
 app/models.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-02-21
+changed by: Oliver Cordes 2019-02-25
 
 """
 
@@ -11,7 +11,7 @@ import os
 import uuid
 
 from app import db, login
-from app.utils.md5file import save_md5file
+from app.utils.files import save_md5file
 
 from flask import current_app
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -154,6 +154,7 @@ class Project(db.Model):
 class File(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
+    size = db.Column(db.BigInteger)
     md5sum = db.Column(db.String)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -174,10 +175,11 @@ class File(db.Model):
         os.makedirs(full_dir, exist_ok = True)   # no problems if full_dir exists
         filename = os.path.join(full_dir, dfilename)
 
-        md5sum = save_md5file(src, filename)
+        md5sum, size = save_md5file(src, filename)
 
         return File(name=dfilename,
                     md5sum=md5sum,
+                    size=size,
                     user_id=project.user_id,
                     project_id=project.id,
                     file_type=ftype)

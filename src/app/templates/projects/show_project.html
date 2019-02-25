@@ -62,6 +62,7 @@
         <td></td>
         <td>ID</td>
         <td>Name</td>
+        <td>Size</td>
         <td>MD5</td>
         <td>Created</td>
       </thead>
@@ -70,15 +71,16 @@
         <td colspan="4">No files</td>
       </tr>
       {% else %}
-      <tr>
       {% for file in project.base_files %}
+      <tr>
         <td></td>
         <td> {{file.id}} </td>
         <td> {{file.name}} </td>
+        <td> {{size2human(file.size)}} </td>
         <td> {{file.md5sum}} </td>
         <td> {{file.timestamp.strftime("%Y-%m-%d %H:%M")}} </td>
-      {% endfor %}
       </tr>
+      {% endfor %}
       {% endif %}
     </table>
     <p>

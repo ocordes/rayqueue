@@ -3,7 +3,7 @@
 app/projects/routes.py
 
 written by: Oliver Cordes 2019-02-04
-changed by: Oliver Cordes 2019-02-22
+changed by: Oliver Cordes 2019-02-25
 
 """
 
@@ -26,7 +26,7 @@ from app.models import User, Project, File, \
                        FILE_BASE_FILE
 #from app.auth.email import send_password_reset_email, send_email_verify_email
 
-from app.utils.md5file import save_md5file
+from app.utils.files import size2human
 
 
 
@@ -59,7 +59,8 @@ def show_project(projectid):
                             form=form,
                             uform=uform,
                             user=user,
-                            project=project)
+                            project=project,
+                            size2human=size2human )
 
 
 @bp.route('/project/basefile/<projectid>', methods=['POST'])
