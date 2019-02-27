@@ -24,7 +24,7 @@
                       {{form.name.label}}
                     </label>
                     <div class="col-md-10">
-                      {{form.name(class_="form-control",placeholder="Name")}}
+                      {{form.name(class_="form-control",placeholder="Name",readonly=readonly)}}
                     </div>
                     {% if form.name.errors|length > 0 %}
                     <div id="signupalert" class="alert alert-danger">
@@ -38,9 +38,11 @@
                     <label for="project_type" class="col-md-2 control-label">
                         {{form.project_type.label}}
                     </label>
-                    <div class="checkbox col-md-10">
+                    <div class="col-md-10">
                     {% for subfield in form.project_type %}
-                      {{subfield}} {{subfield.label}} &nbsp;
+                      <label class="radio-inline {{readonly and 'disabled' or ''}}">
+                        {{subfield()}} {{subfield.label}}
+                      </label>
                     {% endfor %}
                     </div>
                 </div>
@@ -49,7 +51,7 @@
                        {{form.version.label}}
                   </label>
                   <div class="col-md-1">
-                  {{form.version(class_="form-control" )}}
+                  {{form.version(class_="form-control",readonly=readonly)}}
                   </div>
                 </div>
 

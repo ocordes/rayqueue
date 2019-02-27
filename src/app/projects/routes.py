@@ -59,6 +59,7 @@ def show_project(projectid):
                             form=form,
                             uform=uform,
                             user=user,
+                            readonly=user.id == project.user_id,
                             project=project,
                             size2human=size2human )
 
