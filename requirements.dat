@@ -22,7 +22,7 @@ Jinja2==2.10
 jsonschema==2.6.0
 Mako==1.0.7
 MarkupSafe==1.1.1
-openapi-spec-validator==0.2.5
+openapi-spec-validator==0.2.4
 post==2018.11.20
 public==2018.11.20
 PyJWT==1.7.1
