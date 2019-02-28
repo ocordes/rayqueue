@@ -54,6 +54,16 @@
                   {{form.version(class_="form-control",readonly=readonly)}}
                   </div>
                 </div>
+                <div class="form-group">
+                    <label for="is_public" class="col-md-2 control-label">
+                        Visible
+                    </label>
+                    <div class="col-md-10">
+                      <label class="checkbox-inline {{readonly and 'disabled' or ''}}">
+                        {{ form.is_public }} {{form.is_public.label}}
+                      </label>
+                    </div>
+                </div>
 
                 <div class="form-group">
                     <div class="col-md-offset-2 col-md-10">
