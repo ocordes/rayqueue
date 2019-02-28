@@ -107,6 +107,8 @@ def create_app(config_class=Config):
             app.app.logger.setLevel(logging.INFO)
             app.app.logger.info('Rayqueue startup')
 
+            app.app.config['logfile'] = 'logs/rayqueue.log'
+
         return app
 
 

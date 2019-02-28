@@ -9,7 +9,7 @@ class Config(object):
     DATA_DIR   = os.environ.get('DATA_DIR') or os.path.join(basedir, 'data')
 
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'app.db')
+        'sqlite:///' + os.path.join(basedir, 'data', 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     MAIL_SERVER = os.environ.get('MAIL_SERVER')

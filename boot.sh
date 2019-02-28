@@ -3,6 +3,9 @@
 # this script is used to boot a Docker container
 
 source venv/bin/activate
+cd src
+export FLASK_APP=rayqueue.py
+
 while true; do
 	flask db upgrade
 	if [[ "$?" == "0" ]]; then
@@ -13,5 +16,5 @@ while true; do
 done
 
 # flask commands
-export FLASK_APP=rayqueue.py
-exec flask run
+#exec flask run -h 0.0.0.0
+exec gunicorn -b :5000 --access-logfile - --error-logfile - rayqueue:app

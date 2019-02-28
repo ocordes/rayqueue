@@ -189,8 +189,12 @@ def verify_email(token):
 @admin_required
 def preferences():
     test_email_form = PreferencesForm()
+    logfile_data = 'Empty logfile'
+    with open(current_app.config['logfile'], 'r') as f:
+        logfile_data = f.read()
     if test_email_form.validate_on_submit():
         send_test_email(test_email_form.test_email.data)
         flash('Send test email to \'{}\''.format(test_email_form.test_email.data))
     return render_template('auth/preferences.html',
+                            logfile_data=logfile_data,
                             test_email_form=test_email_form)
