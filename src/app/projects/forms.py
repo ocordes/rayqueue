@@ -3,7 +3,7 @@
 app/projects/forms.py
 
 written by: Oliver Cordes 2019-02-04
-changed by: Oliver Cordes 2019-02-20
+changed by: Oliver Cordes 2019-03-01
 
 """
 
@@ -11,7 +11,7 @@ changed by: Oliver Cordes 2019-02-20
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, \
                     SubmitField, TextAreaField, RadioField, \
-                    SelectField 
+                    SelectField
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms.validators import ValidationError, DataRequired, \
                                Email, EqualTo, Length
@@ -47,6 +47,10 @@ class UploadBaseFilesForm(FlaskForm):
                     FileAllowed(['tgz', 'zip', 'tar.gz'], 'Archives only!')
                     ])
     submit = SubmitField('Upload')
+
+
+class ManageBaseFileForm(FlaskForm):
+    remove = SubmitField('Remove')
 
 
 class ProjectListForm(FlaskForm):

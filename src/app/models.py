@@ -3,7 +3,7 @@
 app/models.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-02-25
+changed by: Oliver Cordes 2019-03-01
 
 """
 
@@ -164,6 +164,25 @@ class File(db.Model):
 
     def __repr__(self):
         return '<File {}>'.format(self.name)
+
+
+    def remove(self):
+        dir = FILE_TYPES[self.file_type]
+        full_dir = os.path.join(current_app.config['DATA_DIR'], dir )
+        filename = os.path.join(full_dir, self.name)
+        if os.access(filename, os.R_OK):
+            try:
+                os.remove(filename)
+            except:
+                return True, 'File error'
+            return True, 'OK'
+        else:
+            return False, 'Access error/not found'
+
+
+
+    def check(self):
+        pass
 
 
     @staticmethod

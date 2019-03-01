@@ -9,37 +9,39 @@
       </div>
       <div class="panel-body">
         <div class="form-group col-md-10 col-md-offset-2">
-        <h4> Environment variables:</h4>
-        <table class="table table-bordered">
-          <thead>
-            <td>KEY</td>
-            <td>VALUE</td>
-          </thead>
-          <tr>
-            <td>MAIL_SERVER</td>
-            <td>{{config['MAIL_SERVER']}}</td>
-          </tr>
-          <tr>
-            <td>MAIL_PORT</td>
-            <td>{{config['MAIL_PORT']}}</td>
-          </tr>
-          <tr>
-            <td>MAIL_USE_TLS</td>
-            <td>{{config['MAIL_USE_TLS']}}</td>
-          </tr>
-          <tr>
-            <td>MAIL_USERNAME</td>
-            <td>{{config['MAIL_USERNAME']}}</td>
-          </tr>
-          <tr>
-            <td>MAIL_PASSWORD</td>
-            <td>{{config['MAIL_PASSWORD']}}</td>
-          </tr>
-          <tr>
-            <td>ADMINS</td>
-            <td>{{config['ADMINS']}}</td>
-          </tr>
-        </table>
+          <h4> Environment variables:</h4>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <td>KEY</td>
+                <td>VALUE</td>
+              </thead>
+              <tr>
+                <td>MAIL_SERVER</td>
+                <td>{{config['MAIL_SERVER']}}</td>
+              </tr>
+              <tr>
+                <td>MAIL_PORT</td>
+                <td>{{config['MAIL_PORT']}}</td>
+              </tr>
+              <tr>
+                <td>MAIL_USE_TLS</td>
+                <td>{{config['MAIL_USE_TLS']}}</td>
+              </tr>
+              <tr>
+                <td>MAIL_USERNAME</td>
+                <td>{{config['MAIL_USERNAME']}}</td>
+              </tr>
+              <tr>
+                <td>MAIL_PASSWORD</td>
+                <td>{{config['MAIL_PASSWORD']}}</td>
+              </tr>
+              <tr>
+                <td>ADMINS</td>
+                <td>{{config['ADMINS']}}</td>
+              </tr>
+            </table>
+          </div>
         </div>
         <form id="testemailform" class="form-horizontal" role="form" method="post" action="">
             {{ test_email_form.hidden_tag() }}

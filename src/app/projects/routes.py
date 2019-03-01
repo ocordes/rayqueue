@@ -3,7 +3,7 @@
 app/projects/routes.py
 
 written by: Oliver Cordes 2019-02-04
-changed by: Oliver Cordes 2019-02-25
+changed by: Oliver Cordes 2019-03-01
 
 """
 
@@ -20,7 +20,8 @@ from werkzeug.utils import secure_filename
 from app import db
 from app.projects import bp
 from app.projects.forms import CreateProjectForm, UpdateProjectForm, \
-                               ProjectListForm, UploadBaseFilesForm
+                               ProjectListForm, UploadBaseFilesForm, \
+                               ManageBaseFileForm
 from app.projects.admin import owner_required, check_access
 from app.models import User, Project, File, \
                        FILE_BASE_FILE
@@ -35,7 +36,6 @@ from app.utils.files import size2human
 @owner_required('projectid')
 def show_project(projectid):
     form = UpdateProjectForm()
-    uform = UploadBaseFilesForm()
 
     project = Project.query.get(projectid)
     user    = User.query.get(project.user_id)
@@ -57,7 +57,8 @@ def show_project(projectid):
     return render_template('projects/show_project.html',
                             title='Project',
                             form=form,
-                            uform=uform,
+                            uform=UploadBaseFilesForm(),
+                            mform=ManageBaseFileForm(),
                             user=user,
                             readonly=user.id == project.user_id,
                             project=project,
@@ -73,7 +74,7 @@ def upload_project_basefile(projectid):
     project = Project.query.get(projectid)
     user    = User.query.get(project.user_id)
 
-
+    print('Hallo')
     if form.validate_on_submit():
         print('Update')
         f = form.upload.data
@@ -83,6 +84,33 @@ def upload_project_basefile(projectid):
         db.session.add(new_file)
         db.session.commit()
 
+        msg = 'Added \'{}\' to BaseFiles'.format(filename)
+        flash(msg)
+        current_app.logger.info(msg)
+    return redirect(url_for('projects.show_project', projectid=projectid))
+
+
+@bp.route('/project/basefile/<projectid>/remove', methods=['POST'])
+@login_required
+@owner_required('projectid')
+def remove_project_basefile(projectid):
+    mform = ManageBaseFileForm()
+    if mform.validate_on_submit():
+        # get a list of selected items
+        #selected_files = request.form.getlist('files')
+        for id in request.form.getlist('files'):
+            fid = File.query.get(id)
+            ret, retmsg = fid.remove()
+            if ret:
+                # file was remove successfully
+                # remove from database
+                msg = 'Remove \'{}\' from BaseFiles'.format(fid.name)
+                db.session.delete(fid)
+            else:
+                msg = 'Removing \'{}\' failed ({})'.format(fid.name, retmsg)
+            flash(msg)
+            current_app.logger.info(msg)
+        db.session.commit()
     return redirect(url_for('projects.show_project', projectid=projectid))
 
 

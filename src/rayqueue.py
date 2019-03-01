@@ -58,9 +58,10 @@ app.cli.add_command(check_app)
 
 # some specials for the gunicorn logger used in production
 if __name__ != '__main__':
-    gunicorn_logger = logging.getLogger('gunicorn.error')
-    app.logger.handlers = gunicorn_logger.handlers
-    app.logger.setLevel(gunicorn_logger.level)
+    #gunicorn_logger = logging.getLogger('gunicorn.error')
+    #app.logger.handlers = gunicorn_logger.handlers
+    #app.logger.setLevel(gunicorn_logger.level)
+    pass
 
 
 # test this file
