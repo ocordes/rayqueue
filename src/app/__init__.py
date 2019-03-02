@@ -3,7 +3,7 @@
 app/__init__.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-01-30
+changed by: Oliver Cordes 2019-03-02
 
 """
 
@@ -21,6 +21,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_mail import Mail, email_dispatched
+from flask_debugtoolbar import DebugToolbarExtension
 
 
 
@@ -33,6 +34,7 @@ mail = Mail()
 bootstrap = Bootstrap()
 #moment = Moment()
 #babel = Babel()
+toolbar = DebugToolbarExtension()
 
 # define the app in the module ;-)
 
@@ -46,6 +48,8 @@ def create_app(config_class=Config):
     # attach the config
     app.app.config.from_object(Config)
 
+    app.app.debug = app.app.config['DEBUG']
+
     db.init_app(app.app)
     migrate.init_app(app.app, db)
     login.init_app(app.app)
@@ -53,6 +57,8 @@ def create_app(config_class=Config):
     bootstrap.init_app(app.app)
     #moment.init_app(app.app)
     #babel.init_app(app.app)
+    myapp = app.app
+    toolbar.init_app(myapp)
 
 
     # register the blueprints
@@ -77,39 +83,39 @@ def create_app(config_class=Config):
         os.mkdir(app.app.config['DATA_DIR'])
 
     # error handler
-    if not app.app.debug:
-        if app.app.config['MAIL_SERVER']:
-            auth = None
-            if app.app.config['MAIL_USERNAME'] or app.app.config['MAIL_PASSWORD']:
-                auth = (app.app.config['MAIL_USERNAME'], app.app.config['MAIL_PASSWORD'])
-            secure = None
-            if app.app.config['MAIL_USE_TLS']:
-                secure = ()
-            mail_handler = SMTPHandler(
+
+    if app.app.config['MAIL_SERVER']:
+        auth = None
+        if app.app.config['MAIL_USERNAME'] or app.app.config['MAIL_PASSWORD']:
+            auth = (app.app.config['MAIL_USERNAME'], app.app.config['MAIL_PASSWORD'])
+        secure = None
+        if app.app.config['MAIL_USE_TLS']:
+            secure = ()
+        mail_handler = SMTPHandler(
                 mailhost=(app.app.config['MAIL_SERVER'], app.app.config['MAIL_PORT']),
                 #fromaddr='no-reply@' + app.config['MAIL_SERVER'],
                 fromaddr='ocordes@astro.uni-bonn.de',
                 toaddrs=app.app.config['ADMINS'], subject='Rayqueue Failure',
                 credentials=auth, secure=secure)
-            mail_handler.setLevel(logging.ERROR)
-            app.app.logger.addHandler(mail_handler)
+        mail_handler.setLevel(logging.ERROR)
+        app.app.logger.addHandler(mail_handler)
 
 
-            if not os.path.exists('logs'):
-                os.mkdir('logs')
-            file_handler = RotatingFileHandler('logs/rayqueue.log', maxBytes=10240,
+        if not os.path.exists('logs'):
+            os.mkdir('logs')
+        file_handler = RotatingFileHandler('logs/rayqueue.log', maxBytes=10240,
                                        backupCount=10)
-            file_handler.setFormatter(logging.Formatter(
+        file_handler.setFormatter(logging.Formatter(
                 '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
-            file_handler.setLevel(logging.INFO)
-            app.app.logger.addHandler(file_handler)
+        file_handler.setLevel(logging.INFO)
+        app.app.logger.addHandler(file_handler)
 
-            app.app.logger.setLevel(logging.INFO)
-            app.app.logger.info('Rayqueue startup')
+        app.app.logger.setLevel(logging.INFO)
+        app.app.logger.info('Rayqueue startup')
 
-            app.app.config['logfile'] = 'logs/rayqueue.log'
+        app.app.config['logfile'] = 'logs/rayqueue.log'
 
-        return app
+    return app
 
 
 # import the sub modules

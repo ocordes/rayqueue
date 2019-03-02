@@ -35,10 +35,11 @@ from app.utils.files import size2human
 @login_required
 @owner_required('projectid')
 def show_project(projectid):
-    form = UpdateProjectForm()
+    form = UpdateProjectForm(prefix='Update')
 
     project = Project.query.get(projectid)
     user    = User.query.get(project.user_id)
+
 
     if form.validate_on_submit():
         project.name = form.name.data
@@ -47,7 +48,7 @@ def show_project(projectid):
         project.version = form.version.data
         db.session.commit()
         flash('Your changes have been saved.')
-    elif request.method == 'GET':
+    else:
         form.name.default = project.name
         form.project_type.default = str(project.project_type)
         form.version.default = project.version
@@ -57,26 +58,25 @@ def show_project(projectid):
     return render_template('projects/show_project.html',
                             title='Project',
                             form=form,
-                            uform=UploadBaseFilesForm(),
-                            mform=ManageBaseFileForm(),
+                            uform=UploadBaseFilesForm(prefix='Upload'),
+                            mform=ManageBaseFileForm(prefix='Manage'),
                             user=user,
-                            readonly=user.id == project.user_id,
+                            readonly=user.id != project.user_id,
                             project=project,
                             size2human=size2human )
 
 
-@bp.route('/project/basefile/<projectid>', methods=['POST'])
+@bp.route('/project/basefile/<projectid>/add', methods=['POST'])
 @login_required
 @owner_required('projectid')
 def upload_project_basefile(projectid):
-    form = UploadBaseFilesForm()
+    form = UploadBaseFilesForm(prefix='Upload')
 
     project = Project.query.get(projectid)
     user    = User.query.get(project.user_id)
 
-    print('Hallo')
     if form.validate_on_submit():
-        print('Update')
+
         f = form.upload.data
         filename = secure_filename(f.filename)
         new_file = File.save_file(f, filename, FILE_BASE_FILE, project)
@@ -94,7 +94,7 @@ def upload_project_basefile(projectid):
 @login_required
 @owner_required('projectid')
 def remove_project_basefile(projectid):
-    mform = ManageBaseFileForm()
+    mform = ManageBaseFileForm(prefix='Manage')
     if mform.validate_on_submit():
         # get a list of selected items
         #selected_files = request.form.getlist('files')
@@ -149,7 +149,7 @@ def show_projects():
                             form=form)
 
 
-@bp.route('/create_project', methods=['GET','POST'])
+@bp.route('/project/add', methods=['GET','POST'])
 @login_required
 def create_project():
     form = CreateProjectForm()

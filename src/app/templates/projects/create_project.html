@@ -1,38 +1,66 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <h3>Create a new project:</h3>
-    <br>
-    <form action="" method="post">
-    {{ form.hidden_tag() }}
-    <p>
-        {{ form.name.label }}<br>
-        {{ form.name(size=64) }}<br>
-        {% for error in form.name.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    <p>
-      {{ form.project_type.label }}<br>
-      {% for subfield in form.project_type %}
-         &nbsp; {{ subfield }}
-         {{ subfield.label }}<br>
-      {% endfor %}
-      {% for error in form.project_type.errors %}
-      <span style="color: red;">[{{ error }}]</span>
-      {% endfor %}
-    </p>
-    <p>
-      {{ form.version.label }}<br>
-      &nbsp; {{ form.version }}<br>
-    </p>
-    <p>
-      {{ form.is_public.label }}<br>
-      &nbsp; {{ form.is_public }}<br>
-      {% for error in form.project_type.errors %}
-      <span style="color: red;">[{{ error }}]</span>
-      {% endfor %}
-    </p>
-    <p>{{ form.submit() }}</p>
-    </form>
+<div style="margin-top:50px" class="mainbox">
+  <div class="panel panel-info">
+      <div class="panel-heading">
+          <div class="panel-title">Create a new project</div>
+      </div>
+      <div class="panel-body">
+          <form id="createprojectform" class="form-horizontal" role="form" method="post" action="">
+                {{form.hidden_tag()}}
+                <div class="form-group">
+                    <label for="name" class="col-md-2 control-label">
+                      {{form.name.label}}
+                    </label>
+                    <div class="col-md-10">
+                      {{form.name(class_="form-control",placeholder="Name")}}
+                    </div>
+                    {% if form.name.errors|length > 0 %}
+                    <div id="signupalert" class="alert alert-danger">
+                    {% for error in form.name.errors %}
+                        <span>{{error}}</span>
+                    {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="project_type" class="col-md-2 control-label">
+                        {{form.project_type.label}}
+                    </label>
+                    <div class="col-md-10">
+                    {% for subfield in form.project_type %}
+                      <label class="radio-inline">
+                        {{subfield()}} {{subfield.label}}
+                      </label>
+                    {% endfor %}
+                    </div>
+                </div>
+                <div class="form-group">
+                  <label for="version" class="col-md-2 control-label">
+                       {{form.version.label}}
+                  </label>
+                  <div class="col-md-1">
+                  {{form.version(class_="form-control")}}
+                  </div>
+                </div>
+                <div class="form-group">
+                    <label for="is_public" class="col-md-2 control-label">
+                        Visibility
+                    </label>
+                    <div class="col-md-10">
+                      <label class="checkbox-inline">
+                        {{ form.is_public }} {{form.is_public.label}}
+                      </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                      {{form.submit(class_="btn btn-info", id="btn-submit")}}
+                   </div>
+               </div>
+          </form>
+      </div>
+  </div>
+</div>
 {% endblock %}

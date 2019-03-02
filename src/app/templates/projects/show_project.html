@@ -101,6 +101,7 @@
           </div>
           <div class="panel-body">
             <form id="basefilesform" class="form-horizontal" role="form" method="post" action="{{url_for('projects.remove_project_basefile',projectid=project.id)}}">
+            <!--<form id="basefilesform" class="form-horizontal" role="form" method="post" action="">-->
               {{ mform.hidden_tag() }}
             <div class="table-responsive">
               <table class="table table-bordered">
@@ -142,7 +143,7 @@
             </form>
 
             <div style="border-top: 1px solid#888; padding-top:15px; font-size:85%" >
-            <form id="uploadfileform" class="form-horizontal" role="form" method="post" action="{{url_for('projects.upload_project_basefile',projectid=project.id)}}">
+            <form id="uploadfileform" class="form-horizontal" role="form" method="post" action="{{url_for('projects.upload_project_basefile',projectid=project.id)}}" enctype="multipart/form-data">
               {{ uform.hidden_tag() }}
               <div class="form-group">
                 <label for="upload" class="col-md-2 control-label">

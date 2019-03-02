@@ -1,3 +1,12 @@
+"""
+
+config.py
+
+written by: Oliver Cordes 2019-01-31
+changed by: Oliver Cordes 2019-03-02
+
+"""
+
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -19,3 +28,6 @@ class Config(object):
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     #ADMINS = ['your-email@example.com']
     ADMINS = ['ocordes@astro.uni-bonn.de']
+
+    DEBUG = os.environ.get('APP_DEBUG') == 'True'
+    DEBUG_TB_INTERCEPT_REDIRECTS = False

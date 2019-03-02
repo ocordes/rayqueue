@@ -3,11 +3,13 @@
 app/utils/files.py
 
 written by: Oliver Cordes 2019-02-25
-changed by: Oliver Cordes 2019-02-25
+changed by: Oliver Cordes 2019-03-02
 
 
 """
 
+
+import hashlib
 
 """
 size2human
