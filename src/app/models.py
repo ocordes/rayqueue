@@ -140,6 +140,20 @@ class Project(db.Model):
         return '<Project {}>'.format(self.name)
 
 
+    def remove_files(self):
+        complete = True
+        msgs = []
+        for ffile in self.files:
+            ret, msg = ffile.remove()
+            if ret == False:
+                msgs.append('{} not removed ({})'.format(ffile.name, msg))
+                complete = False
+            else:
+                db.session.delete(ffile)
+
+        return complete, msgs
+
+
     @staticmethod
     def correct_version(version):
         avail_versions = [ '3.7', '3.8', '3.6']

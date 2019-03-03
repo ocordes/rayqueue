@@ -114,6 +114,11 @@ def remove_project_basefile(projectid):
     return redirect(url_for('projects.show_project', projectid=projectid))
 
 
+"""
+get_project_basefile
+
+provides the basefile with the original name (skipping the uuid-code!)
+"""
 @bp.route('/project/basefile/<projectid>/get/<fileid>', methods=['GET'])
 @login_required
 @owner_required('projectid')
@@ -158,10 +163,15 @@ def show_projects():
         selected_projects = request.form.getlist('projects')
         for id in selected_projects:
             project = Project.query.get(id)
-            db.session.delete(project)
-            msg = 'remove project name={}'.format(project.name)
-            flash(msg)
-            current_app.logger.info(msg)
+            ret, msgs = project.remove_files()
+            if ret:
+                db.session.delete(project)
+                msg = 'remove project name={}'.format(project.name)
+                current_app.logger.info(msg)
+            else:
+                for msg in msgs:
+                    flash(msg)
+                    current_app.logger.info(msg)
         db.session.commit()
         return redirect(url_for('projects.show_projects'))
 

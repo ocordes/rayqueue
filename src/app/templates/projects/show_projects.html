@@ -1,66 +1,76 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <h3>List of available projects:</h3>
-    <br>
-    <form action="" method="post">
-    {{ form.hidden_tag() }}
-    <table class="table">
-      <thead>
-        <td></td>
-        <td>ID</td>
-        <td>Name</td>
-        <td>Owner</td>
-        <td>Type</td>
-        <td>Version</td>
-        <td>Public</td>
-        <td>Status</td>
-        <td>Created</td>
-      </thead>
-      {% if projects is none %}
-      <tr>
-        <td colspan="4">No projects</td>
-      </tr>
-      {% else %}
-      {% for project in projects %}
-      <tr>
-       <td>
-         <label>
-          <input type="checkbox" name="projects" value="{{project.id}}">
-         </label>
-        </td>
-        <td><a href="{{url_for('projects.show_project', projectid=project.id)}}">{{project.id}}</a></td>
-        <td><a href="{{url_for('projects.show_project', projectid=project.id)}}">{{project.name}}</a></td>
-        <td>{{user_id(project.user_id).username}}</td>
-        {% if project.project_type == 0 %}
-        <td>Image</td>
-        {% else %}
-        <td>Animation</td>
-        {% endif %}
-        <td>{{project.version}}</td>
-        <td>{{project.is_public}}</td>
-        <td>
-        {% if project.status == 0 %}
-        Open
-        {% elif project.status == 1 %}
-        Running
-        {% elif project.status == 2 %}
-        Complete
-        {% else %}
-        Unknown
-        {% endif %}
-        </td>
-        <td>{{project.timestamp.strftime('%Y-%m-%d %H:%M')}}</td>
-      </tr>
-      {% endfor %}
-      {% endif %}
-     </table>
-     {{ form.remove(onclick="return (doStuff())") }} {{ form.create() }}
-     </form>
 
-     <script>
+<div style="margin-top:50px" class="mainbox">
+  <div class="panel panel-info">
+      <div class="panel-heading">
+          <div class="panel-title">List of available projects</div>
+      </div>
+      <div class="panel-body">
+        <form id="projectsform" class="form-horizontal" role="form" method="post" action="">
+          {{form.hidden_tag()}}
+
+          <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead>
+                  <td></td>
+                  <td>ID</td>
+                  <td>Name</td>
+                  <td>Owner</td>
+                  <td>Type</td>
+                  <td>Version</td>
+                  <td>Public</td>
+                  <td>Status</td>
+                  <td>Created</td>
+                </thead>
+                {% if projects is none %}
+                <tr>
+                  <td colspan="4">No projects</td>
+                </tr>
+                {% else %}
+                {% for project in projects %}
+                <tr>
+                  <td>
+                   <input type="checkbox" name="projects" value="{{project.id}}">
+                  </td>
+                  <td><a href="{{url_for('projects.show_project', projectid=project.id)}}">{{project.id}}</a></td>
+                  <td><a href="{{url_for('projects.show_project', projectid=project.id)}}">{{project.name}}</a></td>
+                  <td>{{user_id(project.user_id).username}}</td>
+                  {% if project.project_type == 0 %}
+                  <td>Image</td>
+                  {% else %}
+                  <td>Animation</td>
+                  {% endif %}
+                  <td>{{project.version}}</td>
+                  <td>{{project.is_public}}</td>
+                  <td>
+                  {% if project.status == 0 %}
+                  Open
+                  {% elif project.status == 1 %}
+                  Running
+                  {% elif project.status == 2 %}
+                  Complete
+                  {% else %}
+                  Unknown
+                  {% endif %}
+                  </td>
+                  <td>{{project.timestamp.strftime('%Y-%m-%d %H:%M')}}</td>
+                </tr>
+                {% endfor %}
+                {% endif %}
+               </table>
+          </div>
+          {{ form.remove(onclick="return (doStuff())") }} {{ form.create() }}
+        </form>
+      </div>
+  </div>
+</div>
+
+
+<script>
 function doStuff(){
   return (confirm('Do you really want to remove these items?'))
 }
-     </script>
+</script>
 {% endblock %}
