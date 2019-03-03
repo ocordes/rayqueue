@@ -3,7 +3,7 @@
 app/projects/routes.py
 
 written by: Oliver Cordes 2019-02-04
-changed by: Oliver Cordes 2019-03-01
+changed by: Oliver Cordes 2019-03-03
 
 """
 
@@ -11,7 +11,7 @@ import os
 from datetime import datetime
 
 from flask import current_app, request, render_template, \
-                  url_for, flash, redirect
+                  url_for, flash, redirect, send_file
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 from werkzeug.utils import secure_filename
@@ -111,6 +111,29 @@ def remove_project_basefile(projectid):
             flash(msg)
             current_app.logger.info(msg)
         db.session.commit()
+    return redirect(url_for('projects.show_project', projectid=projectid))
+
+
+@bp.route('/project/basefile/<projectid>/get/<fileid>', methods=['GET'])
+@login_required
+@owner_required('projectid')
+def get_project_basefile(projectid,fileid):
+    projectid = int(projectid)
+    print(projectid)
+    print(fileid)
+
+    project = Project.query.get(projectid)
+    ffile = File.query.get(fileid)
+    print(ffile.project_id)
+    print(type(projectid))
+    if ffile.project_id == projectid:
+        filename = ffile.full_filename()
+        orig_name = ffile.name[37:]
+        return send_file(filename, as_attachment=True, attachment_filename=orig_name)
+    else:
+        msg = 'File doesn\'t match project ownership!'
+        flash(msg)
+        current_app.logger.info(msg)
     return redirect(url_for('projects.show_project', projectid=projectid))
 
 

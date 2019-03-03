@@ -124,7 +124,7 @@
                     <input type="checkbox" name="files" value="{{file.id}}">
                   </td>
                   <td> {{file.id}} </td>
-                  <td> {{file.name}} </td>
+                  <td> <a href="{{url_for('projects.get_project_basefile',projectid=project.id,fileid=file.id)}}">{{file.name}}</a> </td>
                   <td> {{size2human(file.size)}} </td>
                   <td> {{file.md5sum}} </td>
                   <td> {{file.timestamp.strftime("%Y-%m-%d %H:%M")}} </td>

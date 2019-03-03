@@ -3,7 +3,7 @@
 app/models.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-03-01
+changed by: Oliver Cordes 2019-03-03
 
 """
 
@@ -166,10 +166,14 @@ class File(db.Model):
         return '<File {}>'.format(self.name)
 
 
+    def full_filename(self):
+        directory = FILE_TYPES[self.file_type]
+        full_dir = os.path.join(current_app.config['DATA_DIR'], directory)
+        return os.path.join(full_dir, self.name)
+
+
     def remove(self):
-        dir = FILE_TYPES[self.file_type]
-        full_dir = os.path.join(current_app.config['DATA_DIR'], dir )
-        filename = os.path.join(full_dir, self.name)
+        filename = self.full_filename()
         if os.access(filename, os.R_OK):
             try:
                 os.remove(filename)
