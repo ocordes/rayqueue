@@ -29,5 +29,9 @@ class Config(object):
     #ADMINS = ['your-email@example.com']
     ADMINS = ['ocordes@astro.uni-bonn.de']
 
+    # debug toolbar configs
     DEBUG = os.environ.get('APP_DEBUG') == 'True'
     DEBUG_TB_INTERCEPT_REDIRECTS = False
+
+    # scheduler configs
+    SCHEDULER_API_ENABLED = True

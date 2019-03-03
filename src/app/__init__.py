@@ -3,7 +3,7 @@
 app/__init__.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-03-02
+changed by: Oliver Cordes 2019-03-03
 
 """
 
@@ -22,6 +22,7 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_mail import Mail, email_dispatched
 from flask_debugtoolbar import DebugToolbarExtension
+from flask_apscheduler import APScheduler
 
 
 
@@ -35,6 +36,9 @@ bootstrap = Bootstrap()
 #moment = Moment()
 #babel = Babel()
 toolbar = DebugToolbarExtension()
+
+scheduler = APScheduler()
+
 
 # define the app in the module ;-)
 
@@ -57,9 +61,10 @@ def create_app(config_class=Config):
     bootstrap.init_app(app.app)
     #moment.init_app(app.app)
     #babel.init_app(app.app)
-    myapp = app.app
-    toolbar.init_app(myapp)
 
+    toolbar.init_app(app.app)
+    scheduler.init_app(app.app)
+    scheduler.start()
 
     # register the blueprints
     from app.errors import bp as errors_bp

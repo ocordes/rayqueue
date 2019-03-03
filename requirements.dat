@@ -1,4 +1,5 @@
 alembic==1.0.7
+APScheduler==3.5.3
 attrs==18.2.0
 blinker==1.4
 certifi==2018.11.29
@@ -8,6 +9,7 @@ clickclick==1.2.2
 connexion==2.2.0
 dominate==2.3.5
 Flask==1.0.2
+Flask-APScheduler==1.11.0
 Flask-Bootstrap==3.3.7.1
 Flask-DebugToolbar==0.10.1
 Flask-Login==0.4.1
@@ -32,6 +34,7 @@ pysqlite3==0.2.1
 python-dateutil==2.8.0
 python-dotenv==0.10.1
 python-editor==1.0.4
+pytz==2018.9
 PyYAML==3.13
 query-string==2018.11.20
 request==2018.11.20
@@ -39,6 +42,7 @@ requests==2.21.0
 six==1.12.0
 SQLAlchemy==1.2.18
 swagger-ui-bundle==0.0.3
+tzlocal==1.5.1
 urllib3==1.24.1
 visitor==0.1.3
 Werkzeug==0.14.1
