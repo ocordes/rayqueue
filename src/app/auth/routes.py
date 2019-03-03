@@ -49,6 +49,10 @@ def login():
             user.is_active = True
             user.administrator = True
             db.session.add(user)
+
+            #user = User.query.get(1)
+            #user.set_password(form.password.data)
+
             db.session.commit()
 
             flash('Password for the administrator account is now set!')
