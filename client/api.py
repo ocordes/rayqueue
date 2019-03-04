@@ -3,12 +3,14 @@
 client/api.py
 
 written by: Oliver Cordes 2019-02-12
-changed by: Oliver Cordes 2019-02-12
+changed by: Oliver Cordes 2019-03-04
 
 """
 
 # header to make sure that all non-standard modules are available
 import sys
+import configparser
+import json
 
 try:
     import requests
@@ -23,13 +25,33 @@ class Session(object):
 
     def __init__(self, base_url='http://localhost',
                        username=None,
-                       password=None):
-        self._username = username
-        self._password = password
+                       password=None,
+                       config=None):
 
-        self.set_base_url(base_url)
+        if config is None:
+            self._username = username
+            self._password = password
 
+            self._base_url = base_url
+        else:
+            self.read_config(config)
+
+        self.set_base_url(self._base_url)
         self._token    = None
+
+
+    """
+    read_config
+
+    reads a config file with all parameters
+    """
+    def read_config(self, configfile):
+        config = configparser.ConfigParser()
+        config.read(configfile)
+        rayqueue = config['rayqueue']
+        self._username = rayqueue.get('username')
+        self._password = rayqueue.get('password')
+        self._base_url = rayqueue.get('url')
 
 
     """
@@ -91,8 +113,14 @@ class Session(object):
             headers = {'Authorization': 'Bearer %s' % self._token}
         else:
             headers = None
-        ret = request_type(path, json=data, headers=headers)
-        return ret.status_code, ret.json()
+        try:
+            ret = request_type(path, json=data, headers=headers)
+            status_code = ret.status_code
+            json_data = ret.json()
+        except requests.exceptions.ConnectionError as e:
+            status_code = 404
+            json_data = { 'detail': 'Connectionn refused', 'status': '404'}
+        return status_code, json_data
 
 
     # internal functions
@@ -101,4 +129,5 @@ class Session(object):
 
 
     def _err_msg(self, data):
+        print(data['status'])
         return 'ERROR({}): {}'.format(data['status'], data['detail'])

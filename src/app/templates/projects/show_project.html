@@ -113,7 +113,7 @@
                   <td>MD5</td>
                   <td>Created</td>
                 </thead>
-                {% if project.base_files is none %}
+                {% if project.base_files|length > 0 %}
                 <tr>
                   <td colspan="6">No files</td>
                 </tr>
