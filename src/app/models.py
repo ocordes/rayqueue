@@ -3,7 +3,7 @@
 app/models.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-03-03
+changed by: Oliver Cordes 2019-03-06
 
 """
 
@@ -54,6 +54,8 @@ class User(UserMixin, db.Model):
     # relationships
     projects = db.relationship('Project', backref='owner', lazy='dynamic')
     files = db.relationship('File', backref='owner', lazy='dynamic')
+    images = db.relationship('Image', backref='owner', lazy='dynamic')
+    queueelemets = db.relationship('QueueElement', backref='worker', lazy='dynamic')
 
 
     def set_password(self, password):
@@ -220,3 +222,34 @@ class File(db.Model):
                     user_id=project.user_id,
                     project_id=project.id,
                     file_type=ftype)
+
+
+
+class Image(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
+    created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    finished = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    state = db.Column(db.Integer, default=-1)
+    # files referenced by ID
+    model = db.Column(db.Integer, default=-1)
+    render_image = db.Column(db.Integer, default=-1)
+    log_file = db.Column(db.Integer, default=-1)
+
+
+    def __repr__(self):
+        return '<File {}>'.format(self.id)
+
+
+
+class QueueElement(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    image_id = db.Column(db.Integer, db.ForeignKey('image.id'))
+    worker_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    state = db.Column(db.Integer, default=-1)
+    requested = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+
+
+    def __repr__(self):
+        return '<File {}>'.format(self.id)

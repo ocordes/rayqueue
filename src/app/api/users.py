@@ -28,7 +28,7 @@ def decode_token(token):
     try:
         return jwt.decode(token,
             current_app.config['SECRET_KEY'],
-            algorithms=['HS256'])        
+            algorithms=['HS256'])
     except JWTError as e:
         six.raise_from(Unauthorized, e)
 
@@ -97,6 +97,13 @@ def login(user):
 
 
 def get_secret(user, token_info) -> str:
+    return '''
+    You are user_id {user} and the secret is 'wbevuec'.
+    Decoded token claims: {token_info}.
+    '''.format(user=user, token_info=token_info)
+
+
+def get_secret2(user, token_info) -> str:
     return '''
     You are user_id {user} and the secret is 'wbevuec'.
     Decoded token claims: {token_info}.

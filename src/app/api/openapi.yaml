@@ -154,6 +154,30 @@ paths:
       security:
       - jwt: []
 
+  /files/id/{file_id}:
+    get:
+      summary: Get file by ID
+      operationId: app.api.users.get_secret2
+      parameters:
+      - name: file_id
+        description: File unique identifier
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: File
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        404:
+          description: File not found
+      security:
+      - jwt: []
+
+
   /secret:
     get:
       summary: Return secret string
