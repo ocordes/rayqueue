@@ -106,19 +106,19 @@ def create_app(config_class=Config):
         app.app.logger.addHandler(mail_handler)
 
 
-        if not os.path.exists('logs'):
-            os.mkdir('logs')
-        file_handler = RotatingFileHandler('logs/rayqueue.log', maxBytes=10240,
+    if not os.path.exists('logs'):
+        os.mkdir('logs')
+    file_handler = RotatingFileHandler('logs/rayqueue.log', maxBytes=10240,
                                        backupCount=10)
-        file_handler.setFormatter(logging.Formatter(
+    file_handler.setFormatter(logging.Formatter(
                 '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
-        file_handler.setLevel(logging.INFO)
-        app.app.logger.addHandler(file_handler)
+    file_handler.setLevel(logging.INFO)
+    app.app.logger.addHandler(file_handler)
 
-        app.app.logger.setLevel(logging.INFO)
-        app.app.logger.info('Rayqueue startup')
+    app.app.logger.setLevel(logging.INFO)
+    app.app.logger.info('Rayqueue startup')
 
-        app.app.config['logfile'] = 'logs/rayqueue.log'
+    app.app.config['logfile'] = 'logs/rayqueue.log'
 
     return app
 

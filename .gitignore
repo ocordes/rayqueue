@@ -109,3 +109,4 @@ venv.bak/
 /src/logs/*
 /src/app.db*
 /src/data/
+create_docker.sh

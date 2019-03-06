@@ -68,6 +68,19 @@
         <div class="panel-title">Logs</div>
     </div>
     <div class="panel-body">
+      <h4> Environment variables:</h4>
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead>
+            <td>KEY</td>
+            <td>VALUE</td>
+          </thead>
+          <tr>
+            <td>SERVER_SOFTWARE</td>
+            <td>{{config['SERVER_SOFTWARE']}}</td>
+          </tr>
+        </table>
+      </div>
       <pre class="pre-scrollable">{{logfile_data}}
       </pre>
     </div>

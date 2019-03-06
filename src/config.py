@@ -35,3 +35,7 @@ class Config(object):
 
     # scheduler configs
     SCHEDULER_API_ENABLED = True
+
+
+    # gunicorn check
+    SERVER_SOFTWARE = os.environ.get('SERVER_SOFTWARE') or 'FLASK'

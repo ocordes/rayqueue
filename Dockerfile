@@ -11,6 +11,8 @@ RUN venv/bin/pip install -r requirements.dat
 RUN venv/bin/pip install gunicorn
 
 COPY src src
+RUN rm src/data/app.db
+RUN rm src/logs/*
 COPY boot.sh .
 RUN chmod +x boot.sh
 

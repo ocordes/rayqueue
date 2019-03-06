@@ -3,7 +3,7 @@
 app/auth/routes.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-02-25
+changed by: Oliver Cordes 2019-03-06
 
 """
 
@@ -194,8 +194,12 @@ def verify_email(token):
 def preferences():
     test_email_form = PreferencesForm()
     logfile_data = 'Empty logfile'
-    with open(current_app.config['logfile'], 'r') as f:
-        logfile_data = f.read()
+    if current_app.config['SERVER_SOFTWARE'] == 'FLASK':
+        try:
+            with open(current_app.config['logfile'], 'r') as f:
+                logfile_data = f.read()
+        except:
+            logfile_data = 'Error readign logfile'
     if test_email_form.validate_on_submit():
         send_test_email(test_email_form.test_email.data)
         flash('Send test email to \'{}\''.format(test_email_form.test_email.data))

@@ -12,6 +12,7 @@ from flask.cli import AppGroup
 from app import create_app,db
 from app.models import User, Project
 
+import logging
 
 # create an application
 application = create_app()
@@ -57,11 +58,11 @@ app.cli.add_command(check_app)
 
 
 # some specials for the gunicorn logger used in production
-if __name__ != '__main__':
-    #gunicorn_logger = logging.getLogger('gunicorn.error')
-    #app.logger.handlers = gunicorn_logger.handlers
-    #app.logger.setLevel(gunicorn_logger.level)
-    pass
+#if __name__ != '__main__':
+if 'gunicorn' in app.config['SERVER_SOFTWARE']:
+    gunicorn_logger = logging.getLogger('gunicorn.error')
+    app.logger.handlers = gunicorn_logger.handlers
+    app.logger.setLevel(gunicorn_logger.level)
 
 
 # test this file
