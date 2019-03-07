@@ -3,7 +3,7 @@
 client/projects.py
 
 written by: Oliver Cordes 2019-02-12
-changed by: Oliver Cordes 2019-02-12
+changed by: Oliver Cordes 2019-03-07
 
 """
 
@@ -22,11 +22,12 @@ class Project(object):
 
     @staticmethod
     def query(session):
-        status, data = session.raw_request('/projects', bearer=True)
-
         projects = []
-        for project in data:
-            p = Project(data=project)
-            projects.append(p)
+        status, data = session.raw_request('/projects', request_type=session.rsession.get)
+
+        if status == 200:
+            for project in data:
+                p = Project(data=project)
+                projects.append(p)
 
         return projects

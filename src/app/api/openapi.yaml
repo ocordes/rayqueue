@@ -157,7 +157,7 @@ paths:
   /files/id/{file_id}:
     get:
       summary: Get file by ID
-      operationId: app.api.users.get_secret2
+      operationId: app.api.files.get_file_by_id
       parameters:
       - name: file_id
         description: File unique identifier
@@ -169,9 +169,10 @@ paths:
         '200':
           description: File
           content:
-            application/json:
+            application/octet-stream:
               schema:
-                $ref: '#/components/schemas/Project'
+                type: string
+                format: binary
         404:
           description: File not found
       security:

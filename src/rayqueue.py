@@ -1,8 +1,16 @@
 #!/usr/bin/env python
 
+"""
+rayqueue.py
+
+written by: 2019-01-20
+changed by; 2019-03-07
+
+"""
+
 __author__  = 'Oliver Cordes'
 
-__version__ = '0.0.2'
+__version__ = '0.0.3'
 
 # used for the cli extension
 import click
@@ -67,5 +75,8 @@ if 'gunicorn' in app.config['SERVER_SOFTWARE']:
 
 # test this file
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=4555, debug=True)
+    app.run(host='0.0.0.0',
+            port=4555,
+            debug=True,
+            extra_files=['./app/api/openapi.yaml'])
     #app.run(port=4555)

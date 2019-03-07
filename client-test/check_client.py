@@ -2,6 +2,7 @@
 
 from client.api import Session
 from client.projects import Project
+from client.files import File
 
 
 # main
@@ -9,6 +10,7 @@ rq = Session(username='ocordes', password='cTower',
                 base_url='http://localhost:4555/api')
 
 if rq.login():
+    print('Login successful!')
     #ret = rq.raw_request('/projects', bearer=True)
     #print(ret)
 
@@ -21,3 +23,8 @@ if rq.login():
         print(p.is_public)
         print(p.project_type)
         print(p.status)
+
+
+    status, filename = File.get_by_id(rq, 3, '.')
+    print(status)
+    print(filename)
