@@ -23,7 +23,7 @@ class Project(object):
     @staticmethod
     def query(session):
         projects = []
-        status, data = session.raw_request('/projects', request_type=session.rsession.get)
+        status, data = session.request('/projects', request_type=session.rsession.get)
 
         if status == 200:
             for project in data:

@@ -1,3 +1,13 @@
+""""
+
+app/api/users.py
+
+written by: Oliver Cordes 2019-01-26
+changed by: Oliver Cordes 2019-03-08
+
+"""
+
+
 from datetime import datetime
 
 from flask import current_app, make_response, abort, jsonify
@@ -13,14 +23,11 @@ from app.models import User
 
 from time import time
 import jwt
-import six
 
 JWT_ISSUER           = 'rayqueue.com'
 JWT_LIFETIME_SECONDS = 60 * 60        # 1h
+JWT_LIFETIME_SECONDS = 10
 
-
-class JWTError(Exception):
-    pass
 
 # taken from example the decode function
 
@@ -29,8 +36,14 @@ def decode_token(token):
         return jwt.decode(token,
             current_app.config['SECRET_KEY'],
             algorithms=['HS256'])
-    except JWTError as e:
-        six.raise_from(Unauthorized, e)
+
+    except jwt.exceptions.InvalidTokenError as e:
+        abort( 401, e.__str__(), )
+
+    except:
+        abort( 401,
+                'Token not valid!',
+            )
 
 
 

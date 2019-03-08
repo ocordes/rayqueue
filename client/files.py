@@ -26,14 +26,18 @@ class File(object):
         path = '/files/id/{}'.format(id)
         status_code, filename, raw_file = session.file_request(path)
 
-        full_filename = os.path.join(directory, filename)
+        if status_code == 200:
+            full_filename = os.path.join(directory, filename)
 
-        status = True
-        try:
-            with open(full_filename, 'wb') as out_file:
-                shutil.copyfileobj(raw_file, out_file)
-        except:
+            status = True
+            try:
+                with open(full_filename, 'wb') as out_file:
+                    shutil.copyfileobj(raw_file, out_file)
+            except:
+                status = False
+        else:
             status = False
+            full_filename = None
 
         return status, full_filename
 

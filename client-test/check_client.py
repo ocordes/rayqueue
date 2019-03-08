@@ -4,15 +4,19 @@ from client.api import Session
 from client.projects import Project
 from client.files import File
 
+import time
+
 
 # main
 rq = Session(username='ocordes', password='cTower',
-                base_url='http://localhost:4555/api')
+                base_url='http://localhost:4555/api', verbose=True)
 
 if rq.login():
     print('Login successful!')
     #ret = rq.raw_request('/projects', bearer=True)
     #print(ret)
+
+    time.sleep(20)
 
     projects = Project.query(rq)
 
@@ -25,6 +29,7 @@ if rq.login():
         print(p.status)
 
 
+    time.sleep(20)
     status, filename = File.get_by_id(rq, 3, '.')
     print(status)
     print(filename)

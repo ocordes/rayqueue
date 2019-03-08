@@ -26,7 +26,10 @@ class Session(object):
     def __init__(self, base_url='http://localhost',
                        username=None,
                        password=None,
-                       config=None):
+                       config=None,
+                       verbose=False):
+
+        self._verbose = verbose
 
         if config is None:
             self._username = username
@@ -84,7 +87,8 @@ class Session(object):
             self.rsession.headers.update(auth_header)
             return True
         else:
-            print(self._err_msg(data))
+            if verbose:
+                print(self._err_msg(data))
 
 
         return False
@@ -124,14 +128,15 @@ class Session(object):
 
         while tries < max_tries:
             status_code, json_data = self.raw_request(endpoint, data=data,
-                                                        reqest_type=request_type)
-            if status_code == 401:
-                print('WARNING: Maybe token error in API request! Retrying login!')
-                if self.login() == False:
-                    break
+                                                        request_type=request_type)
+            if status_code != 401:
+                break
+
+            print('WARNING: Maybe token error in API request! Retrying login!')
+            if self.login():
                 print('INFORMATION: login successful! Retry the API request!')
                 # if login successful, next try to send the request
-                tries += 1
+            tries += 1
 
         if tries == max_tries:
             print('ERROR: Request cannot fullfilled after %i attempts!' % max_tries)
@@ -152,7 +157,7 @@ class Session(object):
         return filename
 
 
-    def file_request(self, endpoint ):
+    def raw_file_request(self, endpoint ):
         path = self._url(endpoint)
         try:
             ret = self.rsession.get(path, stream=True)
@@ -162,6 +167,26 @@ class Session(object):
             status_code = 404
             filename = { 'detail': 'Connectionn refused', 'status': '404'}
         return status_code, filename, ret.raw
+
+
+    def file_request(self, endpoint):
+        tries = 0
+        max_tries = 3
+
+        while tries < max_tries:
+            status_code, filename, rawdata = self.raw_file_request(endpoint)
+            if status_code != 401:
+                break
+
+            print('WARNING: Maybe token error in API request! Retrying login!')
+            if self.login():
+                print('INFORMATION: login successful! Retry the API request!')
+                # if login successful, next try to send the request
+            tries += 1
+
+        if tries == max_tries:
+            print('ERROR: Request cannot fullfilled after %i attempts!' % max_tries)
+        return status_code, filename, rawdata
 
 
     # internal functions

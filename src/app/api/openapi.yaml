@@ -13,7 +13,7 @@ paths:
     post:
       tags: [Auth]
       summary: Return JWT token
-      operationId: app.api.users.login
+      operationId: app.api.access.login
       description: Login procedure
       requestBody:
         required: true
@@ -182,7 +182,7 @@ paths:
   /secret:
     get:
       summary: Return secret string
-      operationId: app.api.users.get_secret
+      operationId: app.api.access.get_secret
       responses:
         '200':
           description: secret response
@@ -200,7 +200,7 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      x-bearerInfoFunc: app.api.users.decode_token
+      x-bearerInfoFunc: app.api.access.decode_token
 
   schemas:
     Project:
