@@ -26,7 +26,7 @@ import jwt
 
 JWT_ISSUER           = 'rayqueue.com'
 JWT_LIFETIME_SECONDS = 60 * 60        # 1h
-JWT_LIFETIME_SECONDS = 10
+#JWT_LIFETIME_SECONDS = 10
 
 
 # taken from example the decode function

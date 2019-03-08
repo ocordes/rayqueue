@@ -154,9 +154,47 @@ paths:
       security:
       - jwt: []
 
+  /image/{project_id}/model:
+    post:
+      summary: upload a model file
+      tags: [Images]
+      operationId: app.api.images.image_upload_model
+      summary: Create a new image with uploading of a new model
+      parameters:
+      - name: project_id
+        description: Project unique identifier
+        in: path
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        description: Model file for upload
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                filename:
+                  type: string
+                  format: binary
+      responses:
+        200:
+          description: Return Image
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewImage'
+        404:
+          description: Project does not exist
+      security:
+      - jwt: []
+
+
   /files/id/{file_id}:
     get:
       summary: Get file by ID
+      tags: [Files]
       operationId: app.api.files.get_file_by_id
       parameters:
       - name: file_id
@@ -177,6 +215,7 @@ paths:
           description: File not found
       security:
       - jwt: []
+
 
 
   /secret:
@@ -229,3 +268,15 @@ components:
           type: integer
         is_public:
           type: boolean
+    NewImage:
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        project_id:
+          type: integer
+        model_id:
+          type: integer
+        created:
+          type: string

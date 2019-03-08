@@ -3,7 +3,7 @@
 app/models.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-03-06
+changed by: Oliver Cordes 2019-03-08
 
 """
 
@@ -24,11 +24,17 @@ from time import time
 import jwt
 
 
-FILE_UNKNOWN   = 0
-FILE_BASE_FILE = 1
+FILE_UNKNOWN        = 0
+FILE_BASE_FILE      = 1
+FILE_MODEL          = 2
+FILE_RENDERED_IMAGE = 3
+FILE_LOGFILE        = 4
 
 FILE_TYPES = { FILE_UNKNOWN: 'unknown',
-               FILE_BASE_FILE: 'base_files'
+               FILE_BASE_FILE: 'base_files',
+               FILE_MODEL: 'models',
+               FILE_RENDERED_IMAGE: 'images',
+               FILE_LOGFILE: 'logfiles'
              }
 
 
@@ -240,6 +246,17 @@ class Image(db.Model):
 
     def __repr__(self):
         return '<File {}>'.format(self.id)
+
+
+    def to_dict(self):
+        data = {
+            'id': self.id,
+            'user_id': self.user_id,
+            'project_id': self.project_id,
+            'created': self.created.isoformat() + 'Z',
+            'model_id': self.model
+            }
+        return data
 
 
 
