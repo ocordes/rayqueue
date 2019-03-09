@@ -29,6 +29,7 @@ from app.models import User, Project, \
 #from app.auth.email import send_password_reset_email, send_email_verify_email
 
 from app.utils.files import size2human
+from app.utils.backref import get_redirect_target
 
 
 
@@ -143,17 +144,19 @@ def remove_project_image(projectid):
 
 
 """
-get_project_basefile
+get_project_file
 
-provides the basefile with the original name (skipping the uuid-code!)
+provides the file with the original name (skipping the uuid-code!)
 """
-@bp.route('/project/basefile/<projectid>/get/<fileid>', methods=['GET'])
+@bp.route('/project/file/<projectid>/get/<fileid>', methods=['GET'])
 @login_required
 @owner_required('projectid')
-def get_project_basefile(projectid,fileid):
+def get_project_file(projectid,fileid):
     projectid = int(projectid)
 
-
+    # look from which page we are called!
+    target = get_redirect_target()
+    
     project = Project.query.get(projectid)
     ffile = File.query.get(fileid)
 
@@ -165,7 +168,9 @@ def get_project_basefile(projectid,fileid):
         msg = 'File doesn\'t match project ownership!'
         flash(msg)
         current_app.logger.info(msg)
-    return redirect(url_for('projects.show_project', projectid=projectid))
+
+    # back to caller
+    return redirect(target)
 
 
 @bp.route('/projects', methods=['GET','POST'])
