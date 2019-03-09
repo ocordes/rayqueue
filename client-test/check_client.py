@@ -16,7 +16,7 @@ if rq.login():
     #ret = rq.raw_request('/projects', bearer=True)
     #print(ret)
 
-    time.sleep(20)
+    #time.sleep(20)
 
     projects = Project.query(rq)
 
@@ -26,10 +26,12 @@ if rq.login():
         print(p.id)
         print(p.is_public)
         print(p.project_type)
-        print(p.status)
+        print(p.state)
 
 
-    time.sleep(20)
-    status, filename = File.get_by_id(rq, 3, '.')
-    print(status)
-    print(filename)
+    #time.sleep(20)
+    #status, filename = File.get_by_id(rq, 3, '.')
+    #print(status)
+    #print(filename)
+
+    projects[0].clear_images(rq)

@@ -193,7 +193,7 @@
                   <td>
                     <input type="checkbox" name="images" value="{{image.id}}">
                   </td>
-                  <td> <a href="{{url_for('projects.get_project_file',projectid=project.id,fileid=image.id)}}">{{image.id}}</a> </td>
+                  <td>{{image.id}}</td>
                   <td>
                     {% if image.state == 0 %}
                     Queued
@@ -205,7 +205,9 @@
                     Unknown
                     {% endif %}
                   </td>
-                  <td> {{image.model}} </td>
+                  <td>
+                    <a href="{{url_for('projects.get_project_file',projectid=project.id,fileid=image.model)}}">{{image.model}}</a>
+                  </td>
                   <td> {{image.created.strftime("%Y-%m-%d %H:%M")}} </td>
                   <td>
                     {% if image.render_image == -1 %}

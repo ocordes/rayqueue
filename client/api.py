@@ -87,7 +87,7 @@ class Session(object):
             self.rsession.headers.update(auth_header)
             return True
         else:
-            if verbose:
+            if self._verbose:
                 print(self._err_msg(data))
 
 
@@ -112,10 +112,17 @@ class Session(object):
             try:
                 ret = request_type(path, json=data)
                 status_code = ret.status_code
-                json_data = ret.json()
+                try:
+                    json_data = ret.json()
+                except:
+                    json_data = {'detail': 'No json data', 'status': str(status_code)}
             except requests.exceptions.ConnectionError as e:
                 status_code = 404
                 json_data = { 'detail': 'Connection refused', 'status': '404'}
+
+        if (status_code >= 400) and self._verbose:
+            print(self._err_msg(json_data))
+
         return status_code, json_data
 
 
@@ -189,11 +196,46 @@ class Session(object):
         return status_code, filename, rawdata
 
 
+    def raw_file_upload(self, endpoint, filename):
+        path = self._url(endpoint)
+        files = {'filename': open(filename, 'rb')}
+        try:
+            ret = self.rsession.post(path, files=files)
+            status_code = ret.status_code
+            json_data = ret.json()
+        except requests.exceptions.ConnectionError as e:
+            status_code = 404
+            json_data = { 'detail': 'Connectionn refused', 'status': '404'}
+        return status_code, json_data
+
+
+    def file_upload(self, endpoint, filename):
+        tries = 0
+        max_tries = 3
+
+        while tries < max_tries:
+            status_code, json_data = self.raw_file_upload(endpoint, filename)
+            if status_code != 401:
+                break
+
+            print('WARNING: Maybe token error in API request! Retrying login!')
+            if self.login():
+                print('INFORMATION: login successful! Retry the API request!')
+                # if login successful, next try to send the request
+            tries += 1
+
+        if tries == max_tries:
+            print('ERROR: Request cannot fullfilled after %i attempts!' % max_tries)
+        return status_code, json_data
+
+
     # internal functions
     def _url(self, path):
-        return self._base_url+path
+        if path[0] == '/':
+            return self._base_url+path
+        else:
+            return self._base_url+'/'+path
 
 
     def _err_msg(self, data):
-        print(data['status'])
         return 'ERROR({}): {}'.format(data['status'], data['detail'])

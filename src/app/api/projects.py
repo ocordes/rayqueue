@@ -17,7 +17,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from app import db
 from app.api import bp
 
-from app.models import User, Project
+from app.models import *
 
 from app.api.checks import body_get
 
@@ -144,3 +144,24 @@ def remove_project(user, token_info, project_id):
     db.session.commit()
 
     return jsonify(project.to_dict())
+
+
+"""
+project_start_rendering
+"""
+
+def project_start_rendering(user, token_info, project_id):
+    project = Project.query.get(project_id)
+
+    if project is None:
+        abort(404, 'No project with such id')
+
+    if project.user_id != user:
+        abort(401, 'You are not the owner of this project')
+
+
+    project.status = PROJECT_RENDERING
+
+    db.session.commit()
+
+    return jsonify( {'msg': 'OK'} )

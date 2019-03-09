@@ -3,22 +3,27 @@
 client/projects.py
 
 written by: Oliver Cordes 2019-02-12
-changed by: Oliver Cordes 2019-03-07
+changed by: Oliver Cordes 2019-03-09
 
 """
 
+from client.baseobjects import BaseObject
 
 
-class Project(object):
-    def __init__(self,data=None):
-        if data is not None:
-            self._set_attributes(data)
+PROJECT_TYPE_IMAGE     = 0
+PROJECT_TYPE_ANIMATION = 1
 
+class Project(BaseObject):
+    def clear_images(self, session):
+        if self.project_type == PROJECT_TYPE_IMAGE:
+            endpoint = '/image/%i/clear' % self.id
 
-    def _set_attributes( self, adict ):
-        for name, value in adict.items():
-            setattr( self, name, value )
+            status, data = session.request(endpoint, request_type=session.rsession.post)
 
+            return status == 200
+        else:
+            return False
+            
 
     @staticmethod
     def query(session):

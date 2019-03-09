@@ -154,9 +154,56 @@ paths:
       security:
       - jwt: []
 
+  /image/{image_id}:
+    get:
+      summary: return the image data
+      tags: [Images]
+      operationId: app.api.images.get_image
+      parameters:
+      - name: image_id
+        description: Image uniqe identifier
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: Return Image
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewImage'
+        404:
+          description: Image does not exist
+      security:
+      - jwt: []
+
+  /image/{project_id}/clear:
+    post:
+      tags: [Images]
+      operationId: app.api.images.image_clear_all
+      summary: Remove all image files
+      parameters:
+      - name: project_id
+        description: Project unique identifier
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: Return Message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        404:
+          description: Image does not exist
+      security:
+      - jwt: []
+
   /image/{project_id}/model:
     post:
-      summary: upload a model file
       tags: [Images]
       operationId: app.api.images.image_upload_model
       summary: Create a new image with uploading of a new model
@@ -186,7 +233,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/NewImage'
         404:
-          description: Project does not exist
+          description: Image does not exist
       security:
       - jwt: []
 
@@ -242,6 +289,10 @@ components:
       x-bearerInfoFunc: app.api.access.decode_token
 
   schemas:
+    Message:
+      properties:
+        msg:
+          type: string
     Project:
       properties:
         id:

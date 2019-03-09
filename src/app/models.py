@@ -24,11 +24,18 @@ from time import time
 import jwt
 
 
-FILE_UNKNOWN        = 0
-FILE_BASE_FILE      = 1
-FILE_MODEL          = 2
-FILE_RENDERED_IMAGE = 3
-FILE_LOGFILE        = 4
+PROJECT_OPEN           = 0
+PROJECT_RENDERING      = 1
+PROJECT_FINISHED       = 2
+
+PROJECT_TYPE_IMAGE     = 0
+PROJECT_TYPE_ANIMATION = 1
+
+FILE_UNKNOWN           = 0
+FILE_BASE_FILE         = 1
+FILE_MODEL             = 2
+FILE_RENDERED_IMAGE    = 3
+FILE_LOGFILE           = 4
 
 IMAGE_STATE_UNKNOWN    = -1
 IMAGE_STATE_QUEUED     = 0
@@ -300,7 +307,6 @@ class Image(db.Model):
         for id in ids:
             ffile = File.query.get(id)
             ret, msg = ffile.remove()
-            print(ret, msg)
             if ret == False:
                 msgs.append('{} not removed ({})'.format(ffile.name, msg))
                 complete = False

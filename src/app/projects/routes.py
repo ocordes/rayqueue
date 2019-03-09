@@ -126,16 +126,14 @@ def remove_project_image(projectid):
         # get a list of selected items
         for id in request.form.getlist('images'):
             image = Image.query.get(id)
-            print(id)
-            print(image.model)
             ret, retmsg = image.remove()
             if ret:
                 # image files were removed successfully
                 # remove from database
-                msg = 'Remove \'{}\' from Image'.format(id)
+                msg = 'Remove id=\'{}\' from Image'.format(id)
                 db.session.delete(image)
             else:
-                msg = 'Removing \'{}\' failed ({})'.format(id, retmsg)
+                msg = 'Removing id=\'{}\' failed ({})'.format(id, retmsg)
             flash(msg)
             current_app.logger.info(msg)
         db.session.commit()
@@ -156,7 +154,7 @@ def get_project_file(projectid,fileid):
 
     # look from which page we are called!
     target = get_redirect_target()
-    
+
     project = Project.query.get(projectid)
     ffile = File.query.get(fileid)
 
