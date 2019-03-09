@@ -135,8 +135,8 @@
             </div>
             <div class="form-group">
               <div class="col-md-9">
-                <button onclick="checkall()" id="btn-checkall" type="button" class="btn btn-info"><i class="icon-hand-right"></i>Select all</button>
-                <button onclick="uncheckall()" id="btn-uncheckall" type="button" class="btn btn-info"><i class="icon-hand-right"></i>Unselect all</button>
+                <button onclick="checkall('files')" id="btn-checkall" type="button" class="btn btn-info"><i class="icon-hand-right"></i>Select all</button>
+                <button onclick="uncheckall('files')" id="btn-uncheckall" type="button" class="btn btn-info"><i class="icon-hand-right"></i>Unselect all</button>
                 {{mform.remove(onclick="return (remove_confirm())", class_="btn btn-danger", id="btn-remove")}}
               </div>
             </div>
@@ -162,10 +162,84 @@
       </div>
     </div>
 
+    <div style="margin-top:50px" class="mainbox">
+      <div class="panel panel-info">
+          <div class="panel-heading">
+              <div class="panel-title">Images</div>
+          </div>
+          <div class="panel-body">
+            <form id="imageform" class="form-horizontal" role="form" method="post" action="{{url_for('projects.remove_project_image',projectid=project.id)}}">
+              {{ iform.hidden_tag() }}
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead>
+                  <td></td>
+                  <td>ID</td>
+                  <td>State</td>
+                  <td>Model</td>
+                  <td>Created</td>
+                  <td>Rendered Image</td>
+                  <td>Log file</td>
+                  <td>Finished</td>
+                </thead>
+                {% if project.images|length==0 %}
+                {#{% if project.images %}#}
+                <tr>
+                  <td colspan="8">No files</td>
+                </tr>
+                {% else %}
+                {% for image in project.images %}
+                <tr>
+                  <td>
+                    <input type="checkbox" name="images" value="{{image.id}}">
+                  </td>
+                  <td> {{image.id}} </td>
+                  <td>
+                    {% if image.state == 0 %}
+                    Queued
+                    {% elif image.state == 1 %}
+                    Finished
+                    {% else %}
+                    Unknown
+                    {% endif %}
+                  </td>
+                  <td> {{image.model}} </td>
+                  <td> {{image.created.strftime("%Y-%m-%d %H:%M")}} </td>
+                  <td>
+                    {% if image.render_image == -1 %}
+                    Unavailable
+                    {% else %}
+                    {{image.render_image}}
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if image.log_file == -1 %}
+                    Unavailable
+                    {% else %}
+                    {{image.log_file}}
+                    {% endif %}
+                  </td>
+                  <td> {{image.finished.strftime("%Y-%m-%d %H:%M")}} </td>
+                </tr>
+                {% endfor %}
+                {% endif %}
+              </table>
+            </div>
+            <div class="form-group">
+              <div class="col-md-9">
+                <button onclick="checkall('images')" id="btn-checkall" type="button" class="btn btn-info"><i class="icon-hand-right"></i>Select all</button>
+                <button onclick="uncheckall('images')" id="btn-uncheckall" type="button" class="btn btn-info"><i class="icon-hand-right"></i>Unselect all</button>
+                {{iform.remove(onclick="return (remove_confirm())", class_="btn btn-danger", id="btn-remove")}}
+              </div>
+            </div>
+            </form>
+          </div>
+      </div>
+    </div>
 
 <script>
-  function checkall() {
-    var x = document.getElementsByName("files");
+  function checkall(name) {
+    var x = document.getElementsByName(name);
     var i;
     for (i = 0; i < x.length; i++) {
       if (x[i].type == "checkbox") {
@@ -174,8 +248,8 @@
     }
   }
 
-  function uncheckall() {
-    var x = document.getElementsByName("files");
+  function uncheckall(name) {
+    var x = document.getElementsByName(name);
     var i;
     for (i = 0; i < x.length; i++) {
       if (x[i].type == "checkbox") {

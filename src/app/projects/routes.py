@@ -3,7 +3,7 @@
 app/projects/routes.py
 
 written by: Oliver Cordes 2019-02-04
-changed by: Oliver Cordes 2019-03-03
+changed by: Oliver Cordes 2019-03-09
 
 """
 
@@ -21,10 +21,11 @@ from app import db
 from app.projects import bp
 from app.projects.forms import CreateProjectForm, UpdateProjectForm, \
                                ProjectListForm, UploadBaseFilesForm, \
-                               ManageBaseFileForm
+                               ManageBaseFileForm, ManageImageForm
 from app.projects.admin import owner_required, check_access
-from app.models import User, Project, File, \
-                       FILE_BASE_FILE
+from app.models import User, Project, \
+                        File, FILE_BASE_FILE, \
+                        Image
 #from app.auth.email import send_password_reset_email, send_email_verify_email
 
 from app.utils.files import size2human
@@ -60,6 +61,7 @@ def show_project(projectid):
                             form=form,
                             uform=UploadBaseFilesForm(prefix='Upload'),
                             mform=ManageBaseFileForm(prefix='Manage'),
+                            iform=ManageImageForm(prefix='Image'),
                             user=user,
                             readonly=user.id != project.user_id,
                             project=project,
@@ -114,6 +116,32 @@ def remove_project_basefile(projectid):
     return redirect(url_for('projects.show_project', projectid=projectid))
 
 
+@bp.route('/project/image/<projectid>/remove', methods=['POST'])
+@login_required
+@owner_required('projectid')
+def remove_project_image(projectid):
+    iform = ManageImageForm(prefix='Image')
+    if iform.validate_on_submit():
+        # get a list of selected items
+        for id in request.form.getlist('images'):
+            image = Image.query.get(id)
+            print(id)
+            print(image.model)
+            ret, retmsg = image.remove()
+            if ret:
+                # image files were removed successfully
+                # remove from database
+                msg = 'Remove \'{}\' from Image'.format(id)
+                db.session.delete(image)
+            else:
+                msg = 'Removing \'{}\' failed ({})'.format(id, retmsg)
+            flash(msg)
+            current_app.logger.info(msg)
+        db.session.commit()
+    return redirect(url_for('projects.show_project', projectid=projectid))
+
+
+
 """
 get_project_basefile
 
@@ -124,13 +152,11 @@ provides the basefile with the original name (skipping the uuid-code!)
 @owner_required('projectid')
 def get_project_basefile(projectid,fileid):
     projectid = int(projectid)
-    print(projectid)
-    print(fileid)
+
 
     project = Project.query.get(projectid)
     ffile = File.query.get(fileid)
-    print(ffile.project_id)
-    print(type(projectid))
+
     if ffile.project_id == projectid:
         filename = ffile.full_filename()
         orig_name = ffile.name[37:]

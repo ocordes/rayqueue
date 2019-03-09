@@ -3,7 +3,7 @@
 app/models.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-03-08
+changed by: Oliver Cordes 2019-03-09
 
 """
 
@@ -13,7 +13,7 @@ import uuid
 from app import db, login
 from app.utils.files import save_md5file
 
-from flask import current_app
+from flask import current_app, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from flask_login import UserMixin
@@ -29,6 +29,11 @@ FILE_BASE_FILE      = 1
 FILE_MODEL          = 2
 FILE_RENDERED_IMAGE = 3
 FILE_LOGFILE        = 4
+
+IMAGE_STATE_UNKNOWN  = -1
+IMAGE_STATE_QUEUED   = 0
+IMAGE_STATE_FINISHED = 1
+
 
 FILE_TYPES = { FILE_UNKNOWN: 'unknown',
                FILE_BASE_FILE: 'base_files',
@@ -125,10 +130,15 @@ class Project(db.Model):
     status = db.Column(db.Integer)
 
     # relationships
-    files = db.relationship('File', backref='project', lazy='dynamic')
+    #files = db.relationship('File', backref='project', lazy='dynamic')
+    files = db.relationship('File', #backref='project', lazy='dynamic',
+                                primaryjoin="Project.id==File.project_id")
 
     base_files = db.relationship('File',
                                   primaryjoin="and_(Project.id==File.project_id, File.file_type=='%s')"% (FILE_BASE_FILE))
+
+    images = db.relationship('Image',# backref='project', lazy='dynamic')
+                                primaryjoin="Project.id==Image.project_id")
 
 
     def to_dict(self):
@@ -139,7 +149,7 @@ class Project(db.Model):
             'version': self.version,
             'is_public': self.is_public,
             'project_type': self.project_type,
-            'status': self.status
+            'state': self.status
             }
         return data
 
@@ -254,10 +264,49 @@ class Image(db.Model):
             'user_id': self.user_id,
             'project_id': self.project_id,
             'created': self.created.isoformat() + 'Z',
-            'model_id': self.model
+            'model_id': self.model,
+            'state': self.state
             }
+        if self.render_image != -1:
+            data['render_image_id'] = self.render_image
+            data['finished'] = self.finished.isoformat() + 'Z',
+        if self.log_file != -1:
+            data['log_file_id'] = self.log_file
         return data
 
+    def remove_file(self, id):
+        fid = File.query.get(id)
+        ret, retmsg = fid.remove()
+        if ret:
+            # file was remove successfully
+            # remove from database
+            msg = 'Remove \'{}\' from BaseFiles'.format(fid.name)
+            db.session.delete(fid)
+        else:
+            msg = 'Removing \'{}\' failed ({})'.format(fid.name, retmsg)
+        flash(msg)
+        current_app.logger.info(msg)
+        db.session.commit()
+
+        return ret
+
+
+    def remove(self):
+        complete = True
+        msgs = []
+        ids = [ id for id in (self.model, self.render_image, self.log_file) if id != -1]
+        print(ids)
+        for id in ids:
+            ffile = File.query.get(id)
+            ret, msg = ffile.remove()
+            print(ret, msg)
+            if ret == False:
+                msgs.append('{} not removed ({})'.format(ffile.name, msg))
+                complete = False
+            else:
+                db.session.delete(ffile)
+
+        return complete, msgs
 
 
 class QueueElement(db.Model):

@@ -1,8 +1,33 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <h1>Hi, {{ current_user.username }}!</h1>
-    {% for post in posts %}
-    <div><p>{{ post.author.username }} says: <b>{{ post.body }}</b></p></div>
-    {% endfor %}
+    <div class="card border border-primary">
+      <img class="card-img-top" src="{{current_user.avatar(128)}}" alt="Avatar">
+      <div class="card-body">
+        <h4 class="card-title">{{current_user.first_name}} {{current_user.last_name}}</h4>
+        <p class="card-text">({{ current_user.username}})</p>
+      </div>
+    </div>
+    <h1>Dashboard</h1>
+
+    <div style="margin-top:50px" class="mainbox">
+      <div class="panel panel-info">
+          <div class="panel-heading">
+              <div class="panel-title">Running projects</div>
+          </div>
+          <div class="panel-body">
+          </div>
+      </div>
+    </div>
+
+    <div style="margin-top:50px" class="mainbox">
+      <div class="panel panel-info">
+          <div class="panel-heading">
+              <div class="panel-title">Queue</div>
+          </div>
+          <div class="panel-body">
+          </div>
+      </div>
+    </div>
+
 {% endblock %}

@@ -252,7 +252,7 @@ components:
           type: string
         version:
           type: string
-        status:
+        state:
           type: integer
         project_type:
           type: integer
@@ -268,6 +268,26 @@ components:
           type: integer
         is_public:
           type: boolean
+        state:
+          type: integer
+    Image:
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        project_id:
+          type: integer
+        model_id:
+          type: integer
+        render_image_id:
+          type: integer
+        log_file_id:
+          type: integer
+        created:
+          type: string
+        finished:
+          type: string
     NewImage:
       properties:
         id:
@@ -277,6 +297,8 @@ components:
         project_id:
           type: integer
         model_id:
+          type: integer
+        state:
           type: integer
         created:
           type: string
