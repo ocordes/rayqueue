@@ -22,7 +22,7 @@ from app.models import *
 from app.api.checks import body_get
 
 
-from app.queueing import manager
+from app.queueing import queue_manager
 
 """
 find_project
@@ -181,7 +181,7 @@ def project_cmd(user, token_info, project_id, command):
         project.status = PROJECT_OPEN
     elif command == 'start':
         project.status = PROJECT_RENDERING
-        manager.update()
+        queue_manager.update()
     else:
         abort( 405, 'command={} not allowed'.format(command))
 

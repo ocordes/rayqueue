@@ -3,7 +3,7 @@
 app/main/routes.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-02-27
+changed by: Oliver Cordes 2019-03-10
 
 """
 
@@ -39,17 +39,6 @@ def before_request():
 @bp.route('/index')
 @login_required
 def index():
-    user = {'username': 'Miguel'}
-    posts = [
-        {
-            'author': {'username': 'John'},
-            'body': 'Beautiful day in Portland!'
-        },
-        {
-            'author': {'username': 'Susan'},
-            'body': 'The Avengers movie was so cool!'
-        }
-    ]
     return render_template('index.html', title='Home', posts=posts)
 
 
