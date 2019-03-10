@@ -3,7 +3,7 @@
 app/__init__.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-03-03
+changed by: Oliver Cordes 2019-03-10
 
 """
 
@@ -79,6 +79,9 @@ def create_app(config_class=Config):
 
     from app.projects import bp as projects_bp
     app.app.register_blueprint(projects_bp)
+
+    from app.queueing import bp as queueing_bp
+    app.app.register_blueprint(queueing_bp)
 
     from app.main import bp as main_bp
     app.app.register_blueprint(main_bp)

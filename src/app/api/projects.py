@@ -1,6 +1,6 @@
 """
 
-api/projects.py
+app/api/projects.py
 
 written by: Oliver Cordes 2019-02-11
 changed by: Oliver Cordes 2019-03-10
@@ -21,6 +21,8 @@ from app.models import *
 
 from app.api.checks import body_get
 
+
+from app.queueing import manager
 
 """
 find_project
@@ -179,6 +181,7 @@ def project_cmd(user, token_info, project_id, command):
         project.status = PROJECT_OPEN
     elif command == 'start':
         project.status = PROJECT_RENDERING
+        manager.update()
     else:
         abort( 405, 'command={} not allowed'.format(command))
 
