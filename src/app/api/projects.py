@@ -3,7 +3,7 @@
 api/projects.py
 
 written by: Oliver Cordes 2019-02-11
-changed by: Oliver Cordes 2019-02-20
+changed by: Oliver Cordes 2019-03-10
 
 """
 
@@ -146,11 +146,23 @@ def remove_project(user, token_info, project_id):
     return jsonify(project.to_dict())
 
 
+
 """
-project_start_rendering
+project_cmd
+
+is a simple interface to execute some commands inside a project:
+
+command:
+ 'start':  start the rendering/queueing process
+ 'reset':  resets the project to open
+
+:param user:        the user
+:param token_info:  the token info
+:param project_id:  the project_id
+:param command:     command to execute
 """
 
-def project_start_rendering(user, token_info, project_id):
+def project_cmd(user, token_info, project_id, command):
     project = Project.query.get(project_id)
 
     if project is None:
@@ -159,8 +171,16 @@ def project_start_rendering(user, token_info, project_id):
     if project.user_id != user:
         abort(401, 'You are not the owner of this project')
 
+    command = command.lower()
 
-    project.status = PROJECT_RENDERING
+    #print('command={}'.format(command))
+
+    if command == 'reset':
+        project.status = PROJECT_OPEN
+    elif command == 'start':
+        project.status = PROJECT_RENDERING
+    else:
+        abort( 405, 'command={} not allowed'.format(command))
 
     db.session.commit()
 

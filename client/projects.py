@@ -23,7 +23,22 @@ class Project(BaseObject):
             return status == 200
         else:
             return False
-            
+
+    def _command(self, session, command ):
+        endpoint = '/project/%i/%s' % (self.id, command)
+
+        status, data = session.request(endpoint, request_type=session.rsession.post)
+
+        return status == 200
+
+
+    def start_rendering(self, session):
+        return self._command(session, 'start')
+
+
+    def reset(self, session):
+        return self._command(session, 'reset')
+
 
     @staticmethod
     def query(session):
