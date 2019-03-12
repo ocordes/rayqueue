@@ -33,7 +33,7 @@ class Manager(object):
             # walk through all images to check if there are not finished
 
             # use a direct db query instead of looping over all project images
-            images = Image.query.filter(Image.project_id==project.id).filter(Image.state==IMAGE_STATE_UNKNOWN).all()
+            images = Image.query.filter(Image.project_id==project.id).filter(Image.state==Image.IMAGE_STATE_UNKNOWN).all()
 
             for image in images:
                 qe = QueueElement(image_id=image.id, worker_id=-1, state=QUEUE_ELEMENT_QUEUED)
@@ -41,7 +41,7 @@ class Manager(object):
                 db.session.add(qe)
 
                 # sets the image status to queued
-                image.state = IMAGE_STATE_QUEUED
+                image.state = Image.IMAGE_STATE_QUEUED
 
                 current_app.logger.info('QM: added image id=%i to queue' % image.id)
 
