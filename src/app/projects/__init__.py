@@ -3,7 +3,7 @@ app/projects/__init__.py
 
 
 written by: Oliver Cordes 2019-02-04
-changed by: Oliver Cordes 2019-02-04
+changed by: Oliver Cordes 2019-03-12
 
 """
 
@@ -12,4 +12,4 @@ from flask import Blueprint
 bp = Blueprint('projects', __name__)
 
 
-from app.projects import routes
+from app.projects import routes, images

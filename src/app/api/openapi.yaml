@@ -269,6 +269,78 @@ paths:
       - jwt: []
 
 
+  /image/{image_id}/image:
+    post:
+      tags: [Images]
+      operationId: app.api.images.image_upload_render_image
+      summary: Uploading the rendered image to the existing image instance
+      parameters:
+      - name: image_id
+        description: Image unique identifier
+        in: path
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        description: Rendered image for upload
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                filename:
+                  type: string
+                  format: binary
+      responses:
+        200:
+          description: Return Image
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Image'
+        404:
+          description: Image does not exist
+      security:
+      - jwt: []
+
+
+  /image/{image_id}/logfile:
+    post:
+      tags: [Images]
+      operationId: app.api.images.image_upload_log_file
+      summary: Uploading the log file to the existing image instance
+      parameters:
+      - name: image_id
+        description: Image unique identifier
+        in: path
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        description: Rendered image for upload
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                filename:
+                  type: string
+                  format: binary
+      responses:
+        200:
+          description: Return Image
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Image'
+        404:
+          description: Image does not exist
+      security:
+      - jwt: []
+
+
   /files/id/{file_id}:
     get:
       summary: Get file by ID

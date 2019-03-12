@@ -1,9 +1,9 @@
 """
 
-api/images.py
+app/api/images.py
 
 written by: Oliver Cordes 2019-03-07
-changed by: Oliver Cordes 2019-03-09
+changed by: Oliver Cordes 2019-03-11
 
 """
 
@@ -20,6 +20,8 @@ from app.api import bp
 from app.models import *
 
 from app.api.checks import body_get
+
+from app.queueing import queue_manager
 
 import connexion
 
@@ -112,6 +114,84 @@ def image_upload_model(user, token_info, project_id, filename):
 
     if (project.project_type == PROJECT_TYPE_ANIMATION) and (project.status != PROJECT_RENDERING):
         # update queue manager
-        pass
+        queue_manager.update()
 
     return jsonify(model_image.to_dict())
+
+
+
+""""
+image_upload_render_image
+
+sends a file as the comlete rendered image to the image instance
+
+:param user:         the login user
+:param token_info:   the request token
+:param image_id:     the ID of the parent image
+:param filename:     the FileStorage object
+
+:rvalue:             json-object of the image data
+"""
+
+def image_upload_render_image(user, token_info, image_id, filename):
+    image = Image.query.get(image_id)
+
+    if image is None:
+        abort(404, 'No image with such id')
+
+    if image.user_id != user:
+        abort(401, 'You are not the owner of this image')
+
+
+    # save the uploaded file and return the ID
+    new_file = File.save_file(filename, filename.filename, FILE_RENDERED_IMAGE, project)
+    db.session.add(new_file)
+    db.session.commit()
+    
+    image.render_image = new_file.id
+
+    db.session.commit()
+
+    # update queue manager
+    queue_manager.update()
+
+    return jsonify(image.to_dict())
+
+
+
+""""
+image_upload_log_file
+
+sends a file as the logfile to the rendered image to the image instance
+
+:param user:         the login user
+:param token_info:   the request token
+:param image_id:     the ID of the parent image
+:param filename:     the FileStorage object
+
+:rvalue:             json-object of the image data
+"""
+
+def image_upload_log_file(user, token_info, image_id, filename):
+    image = Image.query.get(image_id)
+
+    if image is None:
+        abort(404, 'No image with such id')
+
+    if image.user_id != user:
+        abort(401, 'You are not the owner of this image')
+
+
+    # save the uploaded file and return the ID
+    new_file = File.save_file(filename, filename.filename, FILE_RENDERED_IMAGE, project)
+    db.session.add(new_file)
+    db.session.commit()
+
+    image.log_file = new_file.id
+
+    db.session.commit()
+
+    # update queue manager
+    queue_manager.update()
+
+    return jsonify(image.to_dict())

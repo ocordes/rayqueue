@@ -3,7 +3,7 @@
 app/models.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-03-09
+changed by: Oliver Cordes 2019-03-11
 
 """
 
@@ -24,23 +24,28 @@ from time import time
 import jwt
 
 
-PROJECT_OPEN           = 0
-PROJECT_RENDERING      = 1
-PROJECT_FINISHED       = 2
+PROJECT_OPEN            = 0
+PROJECT_RENDERING       = 1
+PROJECT_FINISHED        = 2
 
-PROJECT_TYPE_IMAGE     = 0
-PROJECT_TYPE_ANIMATION = 1
+PROJECT_TYPE_IMAGE      = 0
+PROJECT_TYPE_ANIMATION  = 1
 
-FILE_UNKNOWN           = 0
-FILE_BASE_FILE         = 1
-FILE_MODEL             = 2
-FILE_RENDERED_IMAGE    = 3
-FILE_LOGFILE           = 4
+FILE_UNKNOWN            = 0
+FILE_BASE_FILE          = 1
+FILE_MODEL              = 2
+FILE_RENDERED_IMAGE     = 3
+FILE_LOGFILE            = 4
 
-IMAGE_STATE_UNKNOWN    = -1
-IMAGE_STATE_QUEUED     = 0
-IMAGE_STATE_RENDERING  = 1
-IMAGE_STATE_FINISHED   = 2
+
+QUEUE_ELEMENT_QUEUED    = 0
+QUEUE_ELEMENT_HOLD      = 1
+QUEUE_ELEMENT_RENDERING = 2
+
+PROJECT_STATES = { PROJECT_OPEN: 'Open',
+                   PROJECT_RENDERING: 'Rendering',
+                   PROJECT_FINISHED: 'Finished',
+                 }
 
 
 FILE_TYPES = { FILE_UNKNOWN: 'unknown',
@@ -162,6 +167,11 @@ class Project(db.Model):
         return data
 
 
+    @property
+    def state2str(self):
+        return PROJECT_STATES.get(self.status, 'Unknown (dict error)')
+
+
     def __repr__(self):
         return '<Project {}>'.format(self.name)
 
@@ -178,6 +188,15 @@ class Project(db.Model):
                 db.session.delete(ffile)
 
         return complete, msgs
+
+
+    def number_of_open_images(self):
+        images = Image.query.filter(Image.project_id==self.id).filter(Image.state<Image.IMAGE_STATE_FINISHED).all()
+
+        if images is None:
+            return 0
+        else:
+            return len(images)
 
 
     @staticmethod
@@ -261,9 +280,26 @@ class Image(db.Model):
     render_image = db.Column(db.Integer, default=-1)
     log_file = db.Column(db.Integer, default=-1)
 
+    # static variables
+    IMAGE_STATE_UNKNOWN     = -1
+    IMAGE_STATE_QUEUED      = 0
+    IMAGE_STATE_RENDERING   = 1
+    IMAGE_STATE_FINISHED    = 2
+
+    IMAGE_STATES = { IMAGE_STATE_UNKNOWN: 'Unknown',
+                     IMAGE_STATE_QUEUED: 'Queued',
+                     IMAGE_STATE_RENDERING: 'Rendering',
+                     IMAGE_STATE_FINISHED: 'Finished',
+                   }
+
 
     def __repr__(self):
         return '<File {}>'.format(self.id)
+
+
+    @property
+    def state2str(self):
+        return self.IMAGE_STATES.get(self.state, 'Unknown (dict error)')
 
 
     def to_dict(self):
@@ -281,6 +317,7 @@ class Image(db.Model):
         if self.log_file != -1:
             data['log_file_id'] = self.log_file
         return data
+
 
     def remove_file(self, id):
         fid = File.query.get(id)
@@ -321,8 +358,21 @@ class QueueElement(db.Model):
     image_id = db.Column(db.Integer, db.ForeignKey('image.id'))
     worker_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     state = db.Column(db.Integer, default=-1)
-    requested = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    requested = db.Column(db.DateTime, index=True)
 
 
     def __repr__(self):
         return '<File {}>'.format(self.id)
+
+
+    @property
+    def project(self):
+        image = Image.query.get(self.image_id)
+        return image.project_id
+
+
+    @staticmethod
+    def check_image(image_id):
+        image = QueueElement.query.filter_by(image_id=image_id).first()
+        return image is not None

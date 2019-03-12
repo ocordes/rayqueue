@@ -16,6 +16,27 @@
               <div class="panel-title">Running projects</div>
           </div>
           <div class="panel-body">
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead>
+                  <td>ID</td>
+                  <td>Name</td>
+                  <td>Number of open images</td>
+                </thead>
+                {% if projects|length==0 %}
+                <tr>
+                  <td colspan="2">No files</td>
+                </tr>
+                {% else %}
+                {% for project in projects %}
+                <tr>
+                  <td>{{project.id}}</td>
+                  <td>{{project.name}}</td>
+                  <td>{{project.number_of_open_images()}}</td>
+                </tr>
+                {% endfor %}
+                {% endif %}
+              </table>
           </div>
       </div>
     </div>
@@ -26,6 +47,44 @@
               <div class="panel-title">Queue</div>
           </div>
           <div class="panel-body">
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead>
+                  <td>ID</td>
+                  <td>State</td>
+                  <td>Project</td>
+                  <td>Created</td>
+                  <td>Requested</td>
+                </thead>
+                {% if qes|length==0 %}
+                <tr>
+                  <td colspan="2">No images</td>
+                </tr>
+                {% else %}
+                {% for qe in qes %}
+                <tr>
+                  <td><a href="{{url_for('projects.show_image',imageid=qe.image_id)}}">{{qe.id}}</a>
+                  </td>
+                  <td>
+                    {% if qe.state == 0 %}
+                    QUEUED
+                    {% elif qe.state == 1 %}
+                    HOLD
+                    {% elif qe.state == 2 %}
+                    RENDERING
+                    {% else %}
+                    UNKNOWN
+                    {% endif %}
+                  </td>
+                  <td>{{qe.project}}</td>
+                  <td>{{qe.created}}</td>
+                  <td>
+                    {{qe.requested}}
+                  </td>
+                </tr>
+                {% endfor %}
+                {% endif %}
+              </table>
           </div>
       </div>
     </div>

@@ -44,17 +44,7 @@
                   {% endif %}
                   <td>{{project.version}}</td>
                   <td>{{project.is_public}}</td>
-                  <td>
-                  {% if project.status == 0 %}
-                  Open
-                  {% elif project.status == 1 %}
-                  Running
-                  {% elif project.status == 2 %}
-                  Complete
-                  {% else %}
-                  Unknown
-                  {% endif %}
-                  </td>
+                  <td>{{project.state2str}}</td>
                   <td>{{project.timestamp.strftime('%Y-%m-%d %H:%M')}}</td>
                 </tr>
                 {% endfor %}

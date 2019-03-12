@@ -17,7 +17,7 @@ from werkzeug.urls import url_parse
 
 from app import db
 from app.main import bp
-from app.models import User
+from app.models import *
 
 
 
@@ -39,7 +39,27 @@ def before_request():
 @bp.route('/index')
 @login_required
 def index():
-    return render_template('index.html', title='Home', posts=posts)
+    all_projects = Project.query.filter(Project.status==PROJECT_RENDERING).all()
+
+    projects = []
+    for project in all_projects:
+        if current_user.administrator == False:
+            if project.user_id != current_user.id:
+                if project.is_public == False:
+                    continue
+        projects.append(project)
+
+
+    all_qes = QueueElement.query.all()
+
+    qes = []
+    for qe in all_qes:
+        qes.append(qe)
+
+    return render_template('index.html', title='Dashboard',
+        projects=projects,
+        qes=qes,
+        images=Image.query.all())
 
 
 

@@ -70,15 +70,7 @@
                     </label>
                     <div class="col-md-10">
                       <label class="control-label">
-                        {% if project.status == 0 %}
-                        Open
-                        {% elif project.status == 1 %}
-                        Running
-                        {% elif project.status == 2 %}
-                        Complete
-                        {% else %}
-                        Unknown
-                        {% endif %}
+                        {{project.state2str}}
                       </label>
                     </div>
                 </div>
@@ -193,17 +185,9 @@
                   <td>
                     <input type="checkbox" name="images" value="{{image.id}}">
                   </td>
-                  <td>{{image.id}}</td>
-                  <td>
-                    {% if image.state == 0 %}
-                    Queued
-                    {% elif image.state == 1 %}
-                    Rendering
-                    {% elif image.state == 2 %}
-                    Finished
-                    {% else %}
-                    Unknown
-                    {% endif %}
+                  <td><a href="{{url_for('projects.show_image',imageid=image.id)}}">{{image.id}}</a>
+                  </td>
+                  <td> {{image.state2str}} </td>
                   </td>
                   <td>
                     <a href="{{url_for('projects.get_project_file',projectid=project.id,fileid=image.model)}}">{{image.model}}</a>

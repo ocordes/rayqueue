@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+  <div style="margin-top:50px" class="mainbox">
+    <div class="panel panel-info">
+      <div class="panel-heading">
+        <div class="panel-title">Image</div>
+      </div>
+      <div class="panel-body">
+        <div class="media">
+          <div class="media-left">
+            <img src="{{image.owner.avatar(60)}}" class="media-object" style="width:60px">
+          </div>
+          <div class="media-body">
+            <h4 class="media-heading">
+              {{image.owner.first_name}} {{image.owner.last_name}}</h4>
+            <p>({{image.owner.username}})</p>
+          </div>
+        </div>
+        <hr>
+
+        <div class="row">
+          <label class="col-md-offset-1 col-md-1 control-label">
+            Created
+          </label>
+          <div class="col-md-10">
+            {{image.created.strftime('%Y-%m-%d %H:%M:%S')}}
+          </div>
+        </div>
+        <div class="row">
+          <label class="col-md-offset-1 col-md-1 control-label">
+            Status
+          </label>
+          <div class="col-md-10">
+            {{image.state2str}}
+          </div>
+        </div>
+
+        <hr>
+
+        {% if image.state == image.IMAGE_STATE_FINISHED %}
+        <div class="row">
+          <label class="col-md-offset-1 col-md-1 control-label">
+            Finished
+          </label>
+          <div class="col-md-10">
+            {{image.finished.strftime('%Y-%m-%d %H:%M:%S')}}
+          </div>
+        </div>
+        <hr>
+        {% endif %}
+        <div class="form-group">
+          Downloads
+        </div>
+        <div class="row">
+          <label class="col-md-offset-1 col-md-2 control-label">
+            Model
+          </label>
+          <div class="col-md-9">
+            <a href="{{url_for('projects.get_project_file',projectid=image.project_id,fileid=image.model)}}">{{image.model}}</a>
+          </div>
+        </div>
+        <div class="row">
+          <label class="col-md-offset-1 col-md-2 control-label">
+            Rendered image
+          </label>
+          <div class="col-md-9">
+            {% if image.render_image == -1 %}
+            Unavailable
+            {% else %}
+            <a href="{{url_for('projects.get_project_file',projectid=image.project_id,fileid=image.render_image)}}">{{image.render_image}}</a>
+            {% endif %}
+          </div>
+        </div>
+        <div class="row">
+          <label class="col-md-offset-1 col-md-2 control-label">
+            Log file
+          </label>
+          <div class="col-md-9">
+            {% if image.log_file == -1 %}
+            Unavailable
+            {% else %}
+            <a href="{{url_for('projects.get_project_file',projectid=image.project_id,fileid=image.log_file)}}">{{image.log_file}}</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
