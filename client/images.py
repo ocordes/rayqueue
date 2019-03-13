@@ -34,8 +34,20 @@ class Image(BaseObject):
 
     @staticmethod
     def query(session, image_id):
-        endpoint = 'image/%i' % image_id
+        endpoint = '/image/%i' % image_id
         status, data = session.request(endpoint, request_type=session.rsession.get)
 
         if status == 200:
             return Image(data=data)
+
+
+    @staticmethod
+    def queue_next(session):
+        endpoint = '/queue/next'
+        status, data = session.request(endpoint, request_type=session.rsession.get)
+
+        if status == 200:
+            if data.get('msg') == None:
+                return Image(data=data)
+            else:
+                return None

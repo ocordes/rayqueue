@@ -367,6 +367,20 @@ paths:
       - jwt: []
 
 
+  /queue/next:
+    get:
+      summary: return the next image data
+      tags: [Queue]
+      operationId: app.api.images.queue_next
+      responses:
+        200:
+          description: Return Image
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Image'
+      security:
+      - jwt: []
 
   /secret:
     get:

@@ -3,7 +3,7 @@
 app/models.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-03-11
+changed by: Oliver Cordes 2019-03-13
 
 """
 
@@ -189,21 +189,13 @@ class Project(db.Model):
 
 
     def number_of_open_images(self):
-        images = Image.query.filter(Image.project_id==self.id).filter(Image.state<Image.IMAGE_STATE_FINISHED).all()
-
-        if images is None:
-            return 0
-        else:
-            return len(images)
+        # use the database count method to get the numbers
+        return Image.query.filter(Image.project_id==self.id).filter(Image.state<Image.IMAGE_STATE_FINISHED).count()
 
 
     def number_of_finished_images(self):
-        images = Image.query.filter(Image.project_id==self.id).filter(Image.state==Image.IMAGE_STATE_FINISHED).all()
-
-        if images is None:
-            return 0
-        else:
-            return len(images)
+        # use the database count method to get the numbers
+        return Image.query.filter(Image.project_id==self.id).filter(Image.state==Image.IMAGE_STATE_FINISHED).count()
 
 
     @staticmethod

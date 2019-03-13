@@ -216,7 +216,12 @@
                     <a href="{{url_for('projects.get_project_file',projectid=project.id,fileid=image.log_file)}}">{{image.log_file}}</a> </td>
                     {% endif %}
                   </td>
-                  <td> {{image.finished.strftime("%Y-%m-%d %H:%M")}} </td>
+                  <td>
+                    {% if image.state == image.IMAGE_STATE_FINISHED %}
+                    {{image.finished.strftime("%Y-%m-%d %H:%M")}} </td>
+                    {% else %}
+                    None
+                    {% endif %}
                 </tr>
                 {% endfor %}
                 {% endif %}

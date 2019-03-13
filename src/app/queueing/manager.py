@@ -84,3 +84,15 @@ class Manager(object):
     def update(self):
         # probably wrapping around with a locking mechanism
         self._real_update()
+
+
+
+    def next(self, user_id):
+        # get all possible QueueElements
+        qes = QueueElement.query.filter(QueueElement.state==QueueElement.QUEUE_ELEMENT_QUEUED)
+
+        for qe in qes:
+            if qe.image.user_id == user_id:
+                return qe
+
+        return None

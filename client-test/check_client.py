@@ -3,6 +3,7 @@
 from client.api import Session
 from client.projects import Project
 from client.files import File
+from client.images import Image
 
 import time
 
@@ -38,3 +39,6 @@ if rq.login():
     print(projects[0].reset(rq))
     print(projects[0].start_rendering(rq))
     #print(projects[0].reset(rq))
+
+
+    print(Image.queue_next(rq))

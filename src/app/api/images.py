@@ -147,7 +147,7 @@ def image_upload_render_image(user, token_info, image_id, filename):
     new_file = File.save_file(filename, filename.filename, FILE_RENDERED_IMAGE, project)
     db.session.add(new_file)
     db.session.commit()
-    
+
     image.render_image = new_file.id
 
     db.session.commit()
@@ -194,4 +194,27 @@ def image_upload_log_file(user, token_info, image_id, filename):
     # update queue manager
     queue_manager.update()
 
+    return jsonify(image.to_dict())
+
+
+
+def queue_next(user, token_info):
+
+    qe = queue_manager.next(user)
+
+    if qe == None:
+        return jsonify( {'msg': 'No images available'} )
+
+    # wait for testing!
+    ## prepare all files for rendering
+    #qe.state = QueueElement.QUEUE_ELEMENT_RENDERING
+    #qe.requested = datetime.utcnow()
+    #qe.worker_id = user
+
+    image = qe.image
+    #image.state = Image.IMAGE_STATE_RENDERING
+
+    ##db.session.commit()  # wait for testing!
+
+    # return the image data
     return jsonify(image.to_dict())
