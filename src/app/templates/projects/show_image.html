@@ -9,7 +9,7 @@
       <div class="panel-body">
         <div class="media">
           <div class="media-left">
-            <img src="{{image.owner.avatar(60)}}" class="media-object" style="width:60px">
+            <img src="{{image.owner.avatar(120)}}" class="media-object" style="width:120px">
           </div>
           <div class="media-body">
             <h4 class="media-heading">
@@ -25,6 +25,14 @@
           </label>
           <div class="col-md-10">
             {{image.created.strftime('%Y-%m-%d %H:%M:%S')}}
+          </div>
+        </div>
+        <div class="row">
+          <label class="col-md-offset-1 col-md-1 control-label">
+            Project
+          </label>
+          <div class="col-md-10">
+            <a href="{{url_for('projects.show_project',projectid=image.project_id)}}">{{image.project.name}}</a>
           </div>
         </div>
         <div class="row">

@@ -24,9 +24,6 @@ from time import time
 import jwt
 
 
-PROJECT_OPEN            = 0
-PROJECT_RENDERING       = 1
-PROJECT_FINISHED        = 2
 
 PROJECT_TYPE_IMAGE      = 0
 PROJECT_TYPE_ANIMATION  = 1
@@ -36,16 +33,6 @@ FILE_BASE_FILE          = 1
 FILE_MODEL              = 2
 FILE_RENDERED_IMAGE     = 3
 FILE_LOGFILE            = 4
-
-
-QUEUE_ELEMENT_QUEUED    = 0
-QUEUE_ELEMENT_HOLD      = 1
-QUEUE_ELEMENT_RENDERING = 2
-
-PROJECT_STATES = { PROJECT_OPEN: 'Open',
-                   PROJECT_RENDERING: 'Rendering',
-                   PROJECT_FINISHED: 'Finished',
-                 }
 
 
 FILE_TYPES = { FILE_UNKNOWN: 'unknown',
@@ -150,8 +137,19 @@ class Project(db.Model):
     base_files = db.relationship('File',
                                   primaryjoin="and_(Project.id==File.project_id, File.file_type=='%s')"% (FILE_BASE_FILE))
 
-    images = db.relationship('Image',# backref='project', lazy='dynamic')
-                                primaryjoin="Project.id==Image.project_id")
+    images = db.relationship('Image', # backref='project2', lazy='dynamic', foreign_keys='Image.project_id')
+                             primaryjoin="Project.id==Image.project_id", backref='project' )
+
+    # static variables
+    PROJECT_OPEN            = 0
+    PROJECT_RENDERING       = 1
+    PROJECT_FINISHED        = 2
+
+
+    PROJECT_STATES = { PROJECT_OPEN: 'Open',
+                       PROJECT_RENDERING: 'Rendering',
+                       PROJECT_FINISHED: 'Finished',
+                     }
 
 
     def to_dict(self):
@@ -169,7 +167,7 @@ class Project(db.Model):
 
     @property
     def state2str(self):
-        return PROJECT_STATES.get(self.status, 'Unknown (dict error)')
+        return self.PROJECT_STATES.get(self.status, 'Unknown (dict error)')
 
 
     def __repr__(self):
@@ -280,6 +278,9 @@ class Image(db.Model):
     render_image = db.Column(db.Integer, default=-1)
     log_file = db.Column(db.Integer, default=-1)
 
+
+    queueelement = db.relationship('QueueElement', backref='image', lazy='dynamic')
+
     # static variables
     IMAGE_STATE_UNKNOWN     = -1
     IMAGE_STATE_QUEUED      = 0
@@ -294,7 +295,7 @@ class Image(db.Model):
 
 
     def __repr__(self):
-        return '<File {}>'.format(self.id)
+        return '<Image {}>'.format(self.id)
 
 
     @property
@@ -362,14 +363,31 @@ class QueueElement(db.Model):
     requested = db.Column(db.DateTime, index=True)
 
 
+    # static variables
+    QUEUE_ELEMENT_UNKNOWN   = -1
+    QUEUE_ELEMENT_QUEUED    = 0
+    QUEUE_ELEMENT_HOLD      = 1
+    QUEUE_ELEMENT_RENDERING = 2
+
+    QUEUE_ELEMENT_STATES = { QUEUE_ELEMENT_UNKNOWN: 'Unknown',
+                             QUEUE_ELEMENT_QUEUED: 'Queued',
+                             QUEUE_ELEMENT_HOLD: 'Hold',
+                             QUEUE_ELEMENT_RENDERING: 'Rendering',
+                           }
+
     def __repr__(self):
-        return '<File {}>'.format(self.id)
+        return '<QueueElement {}>'.format(self.id)
+
+
+    @property
+    def state2str(self):
+        return self.QUEUE_ELEMENT_STATES.get(self.state, 'Unknown (dict error)')
 
 
     @property
     def project(self):
-        image = Image.query.get(self.image_id)
-        return image.project_id
+        #image = Image.query.get(self.image_id)
+        return self.image.project_id
 
 
     @staticmethod

@@ -39,7 +39,7 @@ def before_request():
 @bp.route('/index')
 @login_required
 def index():
-    all_projects = Project.query.filter(Project.status==PROJECT_RENDERING).all()
+    all_projects = Project.query.filter(Project.status==Project.PROJECT_RENDERING).all()
 
     projects = []
     for project in all_projects:
@@ -54,12 +54,16 @@ def index():
 
     qes = []
     for qe in all_qes:
+        project = qe.project
+        if current_user.administrator == False:
+            if project.user_id != current_user.id:
+                if project.is_public == False:
+                    continue
         qes.append(qe)
 
     return render_template('index.html', title='Dashboard',
         projects=projects,
-        qes=qes,
-        images=Image.query.all())
+        qes=qes )
 
 
 
