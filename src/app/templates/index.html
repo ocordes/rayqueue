@@ -27,7 +27,7 @@
                 <thead>
                   <td>ID</td>
                   <td>Name</td>
-                  <td>Number of open images</td>
+                  <td>Images</td>
                 </thead>
                 {% if projects|length==0 %}
                 <tr>
@@ -36,9 +36,9 @@
                 {% else %}
                 {% for project in projects %}
                 <tr>
-                  <td>{{project.id}}</td>
-                  <td>{{project.name}}</td>
-                  <td>{{project.number_of_open_images()}}</td>
+                  <td><a href="{{url_for('projects.show_project',projectid=project.id)}}">{{project.id}}</a></td>
+                  <td><a href="{{url_for('projects.show_project',projectid=project.id)}}">{{project.name}}</a></td>
+                  <td>{{project.number_of_finished_images()}}/{{project.number_of_open_images()}}</td>
                 </tr>
                 {% endfor %}
                 {% endif %}

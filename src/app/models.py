@@ -197,6 +197,15 @@ class Project(db.Model):
             return len(images)
 
 
+    def number_of_finished_images(self):
+        images = Image.query.filter(Image.project_id==self.id).filter(Image.state==Image.IMAGE_STATE_FINISHED).all()
+
+        if images is None:
+            return 0
+        else:
+            return len(images)
+
+
     @staticmethod
     def correct_version(version):
         avail_versions = [ '3.7', '3.8', '3.6']
@@ -368,11 +377,13 @@ class QueueElement(db.Model):
     QUEUE_ELEMENT_QUEUED    = 0
     QUEUE_ELEMENT_HOLD      = 1
     QUEUE_ELEMENT_RENDERING = 2
+    QUEUE_ELEMENT_FINISHED  = 3
 
     QUEUE_ELEMENT_STATES = { QUEUE_ELEMENT_UNKNOWN: 'Unknown',
                              QUEUE_ELEMENT_QUEUED: 'Queued',
                              QUEUE_ELEMENT_HOLD: 'Hold',
                              QUEUE_ELEMENT_RENDERING: 'Rendering',
+                             QUEUE_ELEMENT_FINISHED: 'Finished',
                            }
 
     def __repr__(self):

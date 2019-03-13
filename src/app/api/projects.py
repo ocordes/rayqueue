@@ -97,8 +97,6 @@ update_project
 """
 
 def update_project(user, token_info, project_id, body):
-    print(user)
-    print(body)
     project = Project.query.get(project_id)
 
     if project is None:
@@ -178,9 +176,10 @@ def project_cmd(user, token_info, project_id, command):
     #print('command={}'.format(command))
 
     if command == 'reset':
-        project.status = PROJECT_OPEN
+        project.status = Project.PROJECT_OPEN
+        queue_manager.update()    # don't forget to eliminate all scheduled images!
     elif command == 'start':
-        project.status = PROJECT_RENDERING
+        project.status = Project.PROJECT_RENDERING
         queue_manager.update()
     else:
         abort( 405, 'command={} not allowed'.format(command))

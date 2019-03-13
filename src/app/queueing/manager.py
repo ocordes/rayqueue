@@ -19,12 +19,32 @@ class Manager(object):
 
 
     def old_entries(self):
-        pass
+        # walk through all entries
+
+        qes = QueueElement.query.all()
+
+        for qe in qes:
+            # check positive, if nothing positive matches,
+            # remove the element from the queue
+
+            image = qe.image
+
+            if image.project.status == Project.PROJECT_RENDERING:
+                continue
+
+            if image.project.status == Project.PROJECT_OPEN:
+                image.state = Image.IMAGE_STATE_UNKNOWN
+
+            db.session.delete(qe)
+
+        db.session.commit()
+
+
 
     def new_entries(self):
         current_app.logger.info('QM: looking for new entries')
         # walk through all
-        projects = Project.query.filter(Project.status==PROJECT_RENDERING).all()
+        projects = Project.query.filter(Project.status==Project.PROJECT_RENDERING).all()
 
         # projects has now all Projects which are open for rendering
         for project in projects:
@@ -36,7 +56,7 @@ class Manager(object):
             images = Image.query.filter(Image.project_id==project.id).filter(Image.state==Image.IMAGE_STATE_UNKNOWN).all()
 
             for image in images:
-                qe = QueueElement(image_id=image.id, worker_id=-1, state=QUEUE_ELEMENT_QUEUED)
+                qe = QueueElement(image_id=image.id, worker_id=-1, state=QueueElement.QUEUE_ELEMENT_QUEUED)
 
                 db.session.add(qe)
 
