@@ -1,0 +1,23 @@
+version: '3'
+services:
+  rayqueue:
+    build: .
+    image: "rayqueue:latest"
+    restart: always
+    networks:
+      - web
+    ports:
+      - "5000:5000"
+    volumes:
+      - rayqueue_data:/home/rayqueue/src/data
+    environment:
+      MAIL_SERVER: exim-relay
+      MAIL_PORT: 8025
+
+networks:
+  web:
+    external: true
+
+
+volumes:
+  rayqueue_data:
