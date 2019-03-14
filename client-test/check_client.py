@@ -19,7 +19,7 @@ if rq.login():
 
     #time.sleep(20)
 
-    projects = Project.query(rq)
+    projects = Project.queryall(rq)
 
     for p in projects:
         print(p.name)

@@ -3,7 +3,7 @@
 client/projects.py
 
 written by: Oliver Cordes 2019-02-12
-changed by: Oliver Cordes 2019-03-09
+changed by: Oliver Cordes 2019-03-14
 
 """
 
@@ -41,7 +41,17 @@ class Project(BaseObject):
 
 
     @staticmethod
-    def query(session):
+    def query(session, id):
+        status, data = session.request('/project/%i' % id, request_type=session.rsession.get )
+
+        if status == 200:
+            return Project(data=data)
+        else:
+            return None
+
+
+    @staticmethod
+    def queryall(session):
         projects = []
         status, data = session.request('/projects', request_type=session.rsession.get)
 
