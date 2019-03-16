@@ -6,6 +6,8 @@ from client.images import Image
 import time
 import os
 
+import tarfile
+
 
 class PovrayWorker(object):
     def __init__(self, session, tempdir='.' ):
@@ -39,12 +41,27 @@ class PovrayWorker(object):
             return
 
 
-    def _download_extract_file(self, fileid, msg, subdir='.'):
+    def _extract(self, filename, subdir):
         dir = os.path.join(self._tempdir, subdir)
+
+        if tarfile.is_tarfile(filename):
+            with tarfile.open(filename) as tar:
+                tar.extractall(dir)
+        return True
+
+
+    def _download_extract_file(self, fileid, msg, subdir='.'):
+        dir = os.path.join(self._tempdir, 'downloads')
+        try:
+            os.mkdir(dir)
+        except:
+            pass
         status, filename = File.get_by_id(self._session, fileid, dir)
 
         print('Downloaded \'%s\' file: %s (%s)' % (msg, filename, (status and 'OK' or 'Fail' )) )
 
+        if status:
+            status = self._extract(filename, subdir)
         return status
 
 
@@ -53,6 +70,10 @@ class PovrayWorker(object):
         if self._download_extract_file(self._image.model_id, 'Model') == False:
             return False
 
+        print(self._project.base_files)
+        for ffile in self._project.base_files:
+            if self._download_extract_file(ffile, 'BaseFiles') == False:
+                return False
 
         return True
 

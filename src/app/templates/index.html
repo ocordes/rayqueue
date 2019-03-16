@@ -16,6 +16,9 @@
 
     <h1>Dashboard</h1>
 
+    <div>
+      Current client time: <b><span id="timer"></span></b>
+    </div>
     <div style="margin-top:50px" class="mainbox">
       <div class="panel panel-info">
           <div class="panel-heading">
@@ -23,26 +26,9 @@
           </div>
           <div class="panel-body">
             <div class="table-responsive">
-              <table class="table table-bordered">
-                <thead>
-                  <td>ID</td>
-                  <td>Name</td>
-                  <td>Images</td>
-                </thead>
-                {% if projects|length==0 %}
-                <tr>
-                  <td colspan="3">No files</td>
-                </tr>
-                {% else %}
-                {% for project in projects %}
-                <tr>
-                  <td><a href="{{url_for('projects.show_project',projectid=project.id)}}">{{project.id}}</a></td>
-                  <td><a href="{{url_for('projects.show_project',projectid=project.id)}}">{{project.name}}</a></td>
-                  <td>{{project.number_of_finished_images()}}/{{project.number_of_open_images()}}</td>
-                </tr>
-                {% endfor %}
-                {% endif %}
-              </table>
+              <div id="running_projects">
+              </div>
+            </div>
           </div>
       </div>
     </div>
@@ -54,39 +40,52 @@
           </div>
           <div class="panel-body">
             <div class="table-responsive">
-              <table class="table table-bordered">
-                <thead>
-                  <td>ID</td>
-                  <td>State</td>
-                  <td>Project</td>
-                  <td>Created</td>
-                  <td>Requested</td>
-                </thead>
-                {% if qes|length==0 %}
-                <tr>
-                  <td colspan="5">No images</td>
-                </tr>
-                {% else %}
-                {% for qe in qes %}
-                <tr>
-                  <td><a href="{{url_for('projects.show_image',imageid=qe.image_id)}}">{{qe.id}}</a>
-                  </td>
-                  <td> {{qe.state2str}} </td>
-                  <td>{{qe.project}}</td>
-                  <td>{{qe.created.strftime('%Y-%m-%d %H:%M:%S')}}</td>
-                  <td>
-                    {% if qe.requested %}
-                    {{qe.requested.strftime('%Y-%m-%d %H:%M:%S')}}
-                    {% else %}
-                    None
-                    {% endif %}
-                  </td>
-                </tr>
-                {% endfor %}
-                {% endif %}
-              </table>
+              <div id="running_queue">
+              </div>
+            </div>
           </div>
       </div>
     </div>
+
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+
+{# ajax code #}
+<script>
+  var myVar = setInterval(myTimer, 1000);
+
+  function myTimer() {
+    var d = new Date();
+    var t = d.toLocaleTimeString();
+    document.getElementById("timer").innerHTML = t;
+  }
+
+
+  function update_data() {
+    $.get("/ajax/running_projects", function(data) {
+      $("#running_projects").html(data);
+    });
+    $.get("/ajax/running_queue", function(data) {
+      $("#running_queue").html(data);
+    });
+  }
+
+  function update_data_cycle() {
+
+    update_data();
+    window.setTimeout(update_data_cycle, 60*1000);
+  }
+
+  // initial call
+  //update_data_cycle();
+  //window.setTimeout(update_data_cycle, 1000);
+
+  $(document).ready(function() {
+  // executes when HTML-Document is loaded and DOM is ready
+    update_data_cycle();
+  });
+</script>
 
 {% endblock %}

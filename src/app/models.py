@@ -160,7 +160,8 @@ class Project(db.Model):
             'version': self.version,
             'is_public': self.is_public,
             'project_type': self.project_type,
-            'state': self.status
+            'state': self.status,
+            'base_files' : [i.id for i in self.base_files],
             }
         return data
 

@@ -1,0 +1,31 @@
+<table class="table table-bordered">
+  <thead>
+    <td>ID</td>
+    <td>State</td>
+    <td>Project</td>
+    <td>Created</td>
+    <td>Requested</td>
+  </thead>
+  {% if qes|length==0 %}
+  <tr>
+    <td colspan="5">No images</td>
+  </tr>
+  {% else %}
+  {% for qe in qes %}
+  <tr>
+    <td><a href="{{url_for('projects.show_image',imageid=qe.image_id)}}">{{qe.id}}</a>
+    </td>
+    <td> {{qe.state2str}} </td>
+    <td>{{qe.project}}</td>
+    <td>{{qe.created.strftime('%Y-%m-%d %H:%M:%S')}}</td>
+    <td>
+      {% if qe.requested %}
+      {{qe.requested.strftime('%Y-%m-%d %H:%M:%S')}}
+      {% else %}
+      None
+      {% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+  {% endif %}
+</table>

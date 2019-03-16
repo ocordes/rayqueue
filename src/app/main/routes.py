@@ -3,7 +3,7 @@
 app/main/routes.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-03-10
+changed by: Oliver Cordes 2019-03-16
 
 """
 
@@ -39,33 +39,7 @@ def before_request():
 @bp.route('/index')
 @login_required
 def index():
-    all_projects = Project.query.filter(Project.status==Project.PROJECT_RENDERING).all()
-
-    projects = []
-    for project in all_projects:
-        if current_user.administrator == False:
-            if project.user_id != current_user.id:
-                if project.is_public == False:
-                    continue
-        projects.append(project)
-
-
-    all_qes = QueueElement.query.all()
-
-    qes = []
-    for qe in all_qes:
-        project = qe.project
-        if current_user.administrator == False:
-            if project.user_id != current_user.id:
-                if project.is_public == False:
-                    continue
-        qes.append(qe)
-
-    return render_template('index.html', title='Dashboard',
-        projects=projects,
-        qes=qes )
-
-
+    return render_template('index.html', title='Dashboard')
 
 
 @bp.route("/upload", methods=['POST'])
@@ -84,3 +58,49 @@ def upload():
         file.save(destination)
 
     return render_template("complete.html")
+
+
+"""
+server_time
+
+simple AJAX test
+"""
+@bp.route("/ajax/server_time", methods=['GET'])
+def server_time():
+    return datetime.utcnow().strftime('%H:%M:%S')
+
+
+@bp.route('/ajax/running_projects')
+@login_required
+def running_projects():
+    all_projects = Project.query.filter(Project.status==Project.PROJECT_RENDERING).all()
+
+    projects = []
+    for project in all_projects:
+        if current_user.administrator == False:
+            if project.user_id != current_user.id:
+                if project.is_public == False:
+                    continue
+        projects.append(project)
+
+    return render_template('ajax/running_projects.html',
+                    projects=projects)
+
+
+
+@bp.route('/ajax/running_queue')
+@login_required
+def running_queue():
+    all_qes = QueueElement.query.all()
+
+    qes = []
+    for qe in all_qes:
+        project = qe.project
+        if current_user.administrator == False:
+            if project.user_id != current_user.id:
+                if project.is_public == False:
+                    continue
+        qes.append(qe)
+
+    return render_template('ajax/running_queue.html',
+                    qes=qes)

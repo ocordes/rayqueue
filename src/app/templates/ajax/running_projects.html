@@ -1,0 +1,20 @@
+<table class="table table-bordered">
+<thead>
+  <td>ID</td>
+  <td>Name</td>
+  <td>Images</td>
+</thead>
+{% if projects|length==0 %}
+<tr>
+  <td colspan="3">No files</td>
+</tr>
+{% else %}
+{% for project in projects %}
+<tr>
+  <td><a href="{{url_for('projects.show_project',projectid=project.id)}}">{{project.id}}</a></td>
+  <td><a href="{{url_for('projects.show_project',projectid=project.id)}}">{{project.name}}</a></td>
+  <td>{{project.number_of_finished_images()}}/{{project.number_of_open_images()}}</td>
+</tr>
+{% endfor %}
+{% endif %}
+</table>
