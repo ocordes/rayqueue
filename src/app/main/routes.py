@@ -3,7 +3,7 @@
 app/main/routes.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-03-16
+changed by: Oliver Cordes 2019-03-17
 
 """
 
@@ -70,9 +70,9 @@ def server_time():
     return datetime.utcnow().strftime('%H:%M:%S')
 
 
-@bp.route('/ajax/running_projects')
+@bp.route('/ajax/running_data')
 @login_required
-def running_projects():
+def running_data():
     all_projects = Project.query.filter(Project.status==Project.PROJECT_RENDERING).all()
 
     projects = []
@@ -83,14 +83,6 @@ def running_projects():
                     continue
         projects.append(project)
 
-    return render_template('ajax/running_projects.html',
-                    projects=projects)
-
-
-
-@bp.route('/ajax/running_queue')
-@login_required
-def running_queue():
     all_qes = QueueElement.query.all()
 
     qes = []
@@ -102,5 +94,7 @@ def running_queue():
                     continue
         qes.append(qe)
 
-    return render_template('ajax/running_queue.html',
-                    qes=qes)
+    return jsonify( { 'projects': render_template('ajax/running_projects.html',
+                    projects=projects),
+                      'queue':  render_template('ajax/running_queue.html',
+                    qes=qes) } )

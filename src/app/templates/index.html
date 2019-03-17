@@ -64,11 +64,9 @@
 
 
   function update_data() {
-    $.get("/ajax/running_projects", function(data) {
-      $("#running_projects").html(data);
-    });
-    $.get("/ajax/running_queue", function(data) {
-      $("#running_queue").html(data);
+    $.get("/ajax/running_data", function(data) {
+      $("#running_projects").html(data.projects);
+      $("#running_queue").html(data.queue);
     });
   }
 
