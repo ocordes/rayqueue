@@ -56,6 +56,12 @@ class PovrayWorker(object):
             os.mkdir(dir)
         except:
             pass
+
+        # if md5sum is not provided, ask the database
+        if md5sum is None:
+            dbfile = File.get_db_by_id(self._session, fileid)
+            md5sum = dbfile.md5sum
+
         status, filename = File.get_by_id(self._session, fileid, dir, md5sum=md5sum)
 
         print('Downloaded \'%s\' file: %s (%s)' % (msg, filename, (status and 'OK' or 'Fail' )) )

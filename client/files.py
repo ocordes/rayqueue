@@ -60,6 +60,15 @@ class File(BaseObject):
         return status, full_filename
 
 
+    @staticmethod
+    def get_db_by_id(session, id):
+        endpoint = '/files/id/{}/db'.format(id)
+        status_code, data = session.request(endpoint, request_type=session.rsession.get)
+
+        if status_code == 200:
+            return File(data)
+
+        return None
 
 
     @staticmethod

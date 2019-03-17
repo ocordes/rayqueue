@@ -40,6 +40,8 @@ class Image(BaseObject):
         if status == 200:
             return Image(data=data)
 
+        return None
+
 
     @staticmethod
     def queue_next(session):
@@ -49,5 +51,5 @@ class Image(BaseObject):
         if status == 200:
             if data.get('msg') == None:
                 return Image(data=data)
-            else:
-                return None
+
+        return None

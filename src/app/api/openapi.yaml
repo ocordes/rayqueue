@@ -367,6 +367,31 @@ paths:
       - jwt: []
 
 
+  /files/id/{file_id}/db:
+    get:
+      summary: Get file entry from database by ID
+      tags: [Files]
+      operationId: app.api.files.get_file_db_by_id
+      parameters:
+      - name: file_id
+        description: File unique identifier
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: File
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/File'
+        404:
+          description: File not found
+      security:
+      - jwt: []
+
+
   /queue/next:
     get:
       summary: return the next image data
@@ -409,6 +434,16 @@ components:
     Message:
       properties:
         msg:
+          type: string
+    File:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        size:
+          type: integer
+        md5sum:
           type: string
     Project:
       properties:

@@ -42,9 +42,6 @@ def show_project(projectid):
     project = Project.query.get(projectid)
     user    = User.query.get(project.user_id)
 
-    print(project.images)
-    print(type(project.images))
-
     if form.validate_on_submit():
         project.name = form.name.data
         project.is_public = form.is_public.data

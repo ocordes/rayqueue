@@ -39,3 +39,21 @@ def get_file_by_id(user, token_info, file_id):
     filename = ffile.full_filename()
     orig_name = ffile.name[37:]
     return send_file(filename, as_attachment=True, attachment_filename=orig_name)
+
+
+
+"""
+get_file_db_by_id
+"""
+
+def get_file_db_by_id(user, token_info, file_id):
+    ffile = File.query.get(file_id)
+
+    if ffile is None:
+        abort(404, 'No file with such id')
+
+    if ffile.user_id != user:
+        abort(401, 'You are not the owner of this file')
+
+
+    return jsonify(ffile.to_dict())
