@@ -16,9 +16,26 @@
 
     <h1>Dashboard</h1>
 
-    <div>
-      Current client time: <b><span id="timer"></span></b>
+    <div style="margin-top:50px" class="mainbox">
+      <div class="panel panel-info">
+          <div class="panel-heading">
+              <div class="panel-title">Current time</div>
+          </div>
+          <div class="panel-body">
+            <div class="form-horizontal">
+              <div class="form-group">
+                <label class="col-md-2 control-label">
+                  Client time
+                </label>
+                <div class="col-md-3">
+                  <input id="timer" type='text' class="form-control" />
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
     </div>
+
     <div style="margin-top:50px" class="mainbox">
       <div class="panel panel-info">
           <div class="panel-heading">
@@ -58,8 +75,10 @@
 
   function myTimer() {
     var d = new Date();
-    var t = d.toLocaleTimeString();
-    document.getElementById("timer").innerHTML = t;
+    //var t = d.toLocaleTimeString();
+    var t = d.toLocaleString();
+    //document.getElementById("timer").innerHTML = t;
+    document.getElementById("timer").value= t;
   }
 
 
