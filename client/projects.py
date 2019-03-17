@@ -3,17 +3,27 @@
 client/projects.py
 
 written by: Oliver Cordes 2019-02-12
-changed by: Oliver Cordes 2019-03-14
+changed by: Oliver Cordes 2019-03-17
 
 """
 
 from client.baseobjects import BaseObject
+from client.files import File
 
 
 PROJECT_TYPE_IMAGE     = 0
 PROJECT_TYPE_ANIMATION = 1
 
+
 class Project(BaseObject):
+
+    def filtervalue(self, name, value):
+        if name == 'base_files':
+            return [File(i) for i in value]
+
+        return value
+
+
     def clear_images(self, session):
         if self.project_type == PROJECT_TYPE_IMAGE:
             endpoint = '/image/%i/clear' % self.id
@@ -23,6 +33,7 @@ class Project(BaseObject):
             return status == 200
         else:
             return False
+
 
     def _command(self, session, command ):
         endpoint = '/project/%i/%s' % (self.id, command)

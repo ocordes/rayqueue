@@ -3,7 +3,7 @@
 app/models.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-03-13
+changed by: Oliver Cordes 2019-03-17
 
 """
 
@@ -161,7 +161,8 @@ class Project(db.Model):
             'is_public': self.is_public,
             'project_type': self.project_type,
             'state': self.status,
-            'base_files' : [i.id for i in self.base_files],
+            #'base_files' : [i.id for i in self.base_files],
+            'base_files': [i.to_dict() for i in self.base_files],
             }
         return data
 
@@ -223,6 +224,16 @@ class File(db.Model):
 
     def __repr__(self):
         return '<File {}>'.format(self.name)
+
+
+    def to_dict(self):
+        data = {
+            'id': self.id,
+            'name': self.name,
+            'size': self.size,
+            'md5sum': self.md5sum,
+        }
+        return data;
 
 
     def full_filename(self):

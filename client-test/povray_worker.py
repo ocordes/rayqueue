@@ -70,9 +70,8 @@ class PovrayWorker(object):
         if self._download_extract_file(self._image.model_id, 'Model') == False:
             return False
 
-        print(self._project.base_files)
         for ffile in self._project.base_files:
-            if self._download_extract_file(ffile, 'BaseFiles') == False:
+            if self._download_extract_file(ffile.id, 'BaseFiles') == False:
                 return False
 
         return True
