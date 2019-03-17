@@ -50,13 +50,13 @@ class PovrayWorker(object):
         return True
 
 
-    def _download_extract_file(self, fileid, msg, subdir='.'):
+    def _download_extract_file(self, fileid, msg, subdir='.', md5sum=None):
         dir = os.path.join(self._tempdir, 'downloads')
         try:
             os.mkdir(dir)
         except:
             pass
-        status, filename = File.get_by_id(self._session, fileid, dir)
+        status, filename = File.get_by_id(self._session, fileid, dir, md5sum=md5sum)
 
         print('Downloaded \'%s\' file: %s (%s)' % (msg, filename, (status and 'OK' or 'Fail' )) )
 
@@ -71,7 +71,7 @@ class PovrayWorker(object):
             return False
 
         for ffile in self._project.base_files:
-            if self._download_extract_file(ffile.id, 'BaseFiles') == False:
+            if self._download_extract_file(ffile.id, 'BaseFiles', md5sum=ffile.md5sum) == False:
                 return False
 
         return True
