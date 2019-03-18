@@ -3,7 +3,7 @@
 app/api/images.py
 
 written by: Oliver Cordes 2019-03-07
-changed by: Oliver Cordes 2019-03-11
+changed by: Oliver Cordes 2019-03-18
 
 """
 
@@ -96,7 +96,7 @@ def image_upload_model(user, token_info, project_id, filename):
         abort(401, 'You are not the owner of this project')
 
 
-    if (project.project_type == PROJECT_TYPE_IMAGE) and (project.status != PROJECT_OPEN):
+    if (project.project_type == PROJECT_TYPE_IMAGE) and (project.status != Project.PROJECT_OPEN):
         abort(401, 'Project is not open for new images')
 
     # save the uploaded file and return the ID
@@ -112,7 +112,7 @@ def image_upload_model(user, token_info, project_id, filename):
     db.session.add(model_image)
     db.session.commit()
 
-    if (project.project_type == PROJECT_TYPE_ANIMATION) and (project.status != PROJECT_RENDERING):
+    if (project.project_type == PROJECT_TYPE_ANIMATION) and (project.status != Project.PROJECT_RENDERING):
         # update queue manager
         queue_manager.update()
 

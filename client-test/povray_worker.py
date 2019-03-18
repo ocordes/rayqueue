@@ -125,9 +125,34 @@ class PovrayWorker(object):
         return True
 
 
+    def _load_scene_ini(self):
+        filename = os.path.join(self._tempdir, self.model_dir, 'scene.ini')
+
+        config = configparser.ConfigParser()
+        try:
+            config.read(filename)
+            return config['DEFAULT']
+        except:
+            return None
+
+
+
+
     def _povray_execute(self):
+        data = self._load_scene_ini()
+        if data is None:
+            print('No scene.ini file found. No rendering!')
+            return
         # povray model/master.ini -w640 -h480 -imodel/scene.pov -oscene.png
-        pass
+
+        command = '{} {} -w{} -h{} -i{} -o{}'.format('povray',
+                                                     os.path.join(self._tempdir, self.model_dir, 'master.ini'),
+                                                     data.get('width', '640'),
+                                                     data.get('height', '480'),
+                                                     os.path.join(self._tempdir, self.model_dir, data.get('scene', 'scene.pov')),
+                                                     os.path.join(self._tempdir, self.model_dir, data.get('outfile', 'scene.png'))
+                                                    )
+        print(command)
 
 
     def run(self):
@@ -146,6 +171,8 @@ class PovrayWorker(object):
 
 
         self._create_master_ini(basefiles_dirs)
+
+        self._povray_execute()
 
         return False
 
