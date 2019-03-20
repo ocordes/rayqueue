@@ -1,3 +1,10 @@
+"""
+
+written by: Oliver Cordes 2019-03-06
+changed by: Oliver Cordes 2019-03-20
+
+"""
+
 from client.api import Session
 from client.projects import Project
 from client.files import File
@@ -8,6 +15,7 @@ import os
 
 import tarfile
 import configparser
+import subprocess
 
 
 class PovrayWorker(object):
@@ -22,6 +30,8 @@ class PovrayWorker(object):
 
         self._tempdir = tempdir
         self._default_libs = default_libs
+
+        self._logfile = None
 
 
     def _check_tmpdir(self):
@@ -49,7 +59,7 @@ class PovrayWorker(object):
 
     def _create_master_ini(self, base_files_dirs):
         fname = os.path.join(self._tempdir, self.model_dir, 'master.ini')
-        print('Generating master ini file ...')
+        print('Generating master ini file ...', file=self._logfile)
         with open(fname,'w') as master_file:
             master_file.write('; POVRAY master file\n')
             if self._default_libs is not None:
@@ -58,7 +68,7 @@ class PovrayWorker(object):
             for dir in base_files_dirs:
                 master_file.write('Library_Path="%s"\n' % dir)
 
-        print( 'Master file \'%s\' successfully written!' % fname)
+        print( 'Master file \'%s\' successfully written!' % fname, file=self._logfile)
 
 
     def _read_input_directories(self, subdir='.'):
@@ -67,7 +77,7 @@ class PovrayWorker(object):
         with os.scandir(path) as it:
             for entry in it:
                 if entry.name.endswith('.ini') and entry.is_file():
-                    print(entry.name)
+                    print('Processing %s ...' % entry.name, file=self._logfile)
                     fname = os.path.join(path, entry.name)
                     config = configparser.ConfigParser()
                     config.read(fname)
@@ -101,7 +111,7 @@ class PovrayWorker(object):
 
         status, filename = File.get_by_id(self._session, fileid, dir, md5sum=md5sum)
 
-        print('Downloaded \'%s\' file: %s (%s)' % (msg, filename, (status and 'OK' or 'Fail' )) )
+        print('Downloaded \'%s\' file: %s (%s)' % (msg, filename, (status and 'OK' or 'Fail' )), file=self._logfile )
 
         if status:
             status = self._extract(filename, subdir)
@@ -141,38 +151,64 @@ class PovrayWorker(object):
     def _povray_execute(self):
         data = self._load_scene_ini()
         if data is None:
-            print('No scene.ini file found. No rendering!')
+            print('No scene.ini file found. No rendering!', file=self._logfile)
             return
         # povray model/master.ini -w640 -h480 -imodel/scene.pov -oscene.png
 
         command = '{} {} -w{} -h{} -i{} -o{}'.format('povray',
-                                                     os.path.join(self._tempdir, self.model_dir, 'master.ini'),
+                                                     os.path.join(self.model_dir, 'master.ini'),
                                                      data.get('width', '640'),
                                                      data.get('height', '480'),
-                                                     os.path.join(self._tempdir, self.model_dir, data.get('scene', 'scene.pov')),
-                                                     os.path.join(self._tempdir, self.model_dir, data.get('outfile', 'scene.png'))
+                                                     os.path.join(self.model_dir, data.get('scene', 'scene.pov')),
+                                                     os.path.join(self.model_dir, data.get('outfile', 'scene.png'))
                                                     )
-        print(command)
+        print('Executing: %s' % command, file=self._logfile)
+        cmd = '(cd {};{})'.format( self._tempdir, command)
+        p = subprocess.Popen( cmd, shell=True, bufsize=-1,
+                             stdin=subprocess.PIPE,
+                             stdout=self._logfile,
+                             stderr=self._logfile, close_fds=True )
 
 
     def run(self):
         self._check_tmpdir()  # creates a tempdir
+
+        # start logging
+        self._logfile = open( os.path.join(self._tempdir, 'scene.log'), 'w')
+
+        print('----------------------------------------------------------------------------',
+                file=self._logfile)
+
         self._next_image()
 
         if (self._image is None) or (self._project is None) :
             return False
 
+        print('----------------------------------------------------------------------------',
+                file=self._logfile)
+
         if self._download_extract_files():
-            print('All files downloaded correctly')
+            print('All files downloaded correctly', file=self._logfile)
         else:
-            print('Files are not downloaded correctly')
+            print('Files are not downloaded correctly', file=self._logfile)
+
+        print('----------------------------------------------------------------------------',
+                file=self._logfile)
 
         basefiles_dirs = self._read_input_directories(subdir=self.base_files_dir)
 
-
         self._create_master_ini(basefiles_dirs)
 
+        print('----------------------------------------------------------------------------',
+                file=self._logfile)
+
         self._povray_execute()
+
+        print('----------------------------------------------------------------------------',
+                file=self._logfile)
+        print('Worker finished: file uploading!', file=self._logfile)
+
+        self._logfile.close()
 
         return False
 
