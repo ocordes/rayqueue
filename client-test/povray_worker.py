@@ -163,11 +163,21 @@ class PovrayWorker(object):
                                                      os.path.join(self.model_dir, data.get('outfile', 'scene.png'))
                                                     )
         print('Executing: %s' % command, file=self._logfile)
-        cmd = '(cd {};{})'.format( self._tempdir, command)
-        p = subprocess.Popen( cmd, shell=True, bufsize=-1,
+        cmd = '(cd {};{})'.format(self._tempdir, command)
+        p = subprocess.Popen(cmd, shell=True, bufsize=-1, close_fds=True,
                              stdin=subprocess.PIPE,
-                             stdout=self._logfile,
-                             stderr=self._logfile, close_fds=True )
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.STDOUT)
+
+        for line in p.stdout:
+            #print(line.decode("utf-8") ,file=self._logfile)
+            self._logfile.write(line.decode('utf-8'))
+
+
+        return_code = p.wait()
+
+
+        print('povray returns with exit code: {}'.format(return_code), file=self._logfile)
 
 
     def run(self):
