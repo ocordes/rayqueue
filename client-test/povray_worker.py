@@ -27,11 +27,13 @@ class PovrayWorker(object):
         self._session = session
 
         self._image = None
+        self._image_name = None
 
         self._tempdir = tempdir
         self._default_libs = default_libs
 
         self._logfile = None
+        self._logfile_name = None
 
 
     def _check_tmpdir(self):
@@ -155,12 +157,14 @@ class PovrayWorker(object):
             return
         # povray model/master.ini -w640 -h480 -imodel/scene.pov -oscene.png
 
+        self._image_name = os.path.join(self.model_dir, data.get('outfile', 'scene.png'))
+
         command = '{} {} -w{} -h{} -i{} -o{}'.format('povray',
                                                      os.path.join(self.model_dir, 'master.ini'),
                                                      data.get('width', '640'),
                                                      data.get('height', '480'),
                                                      os.path.join(self.model_dir, data.get('scene', 'scene.pov')),
-                                                     os.path.join(self.model_dir, data.get('outfile', 'scene.png'))
+                                                     self._image_name
                                                     )
         print('Executing: %s' % command, file=self._logfile)
         cmd = '(cd {};{})'.format(self._tempdir, command)
@@ -180,11 +184,22 @@ class PovrayWorker(object):
         print('povray returns with exit code: {}'.format(return_code), file=self._logfile)
 
 
+    def _upload_files(self):
+        filename = os.path.join(self._tempdir, self._image_name)
+        result = Image.upload_render_image(self._session, self._image.id, filename)
+        if result == -1:
+            print('Image upload failed!')
+        result = Image.upload_log_file(self._session, self._image.id, self._logfile_name)
+        if result == -1:
+            print('Logfile upload failed!')
+
+
     def run(self):
         self._check_tmpdir()  # creates a tempdir
 
         # start logging
-        self._logfile = open( os.path.join(self._tempdir, 'scene.log'), 'w')
+        self._logfile_name = os.path.join(self._tempdir, 'scene.log')
+        self._logfile = open(self._logfile_name, 'w')
 
         print('----------------------------------------------------------------------------',
                 file=self._logfile)
@@ -219,6 +234,10 @@ class PovrayWorker(object):
         print('Worker finished: file uploading!', file=self._logfile)
 
         self._logfile.close()
+
+        self._upload_files()
+
+        print('Files uploaded!')
 
         return False
 
