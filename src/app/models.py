@@ -220,6 +220,7 @@ class File(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
     file_type = db.Column(db.Integer)
+    icon_name = db.Column(db.String)
 
 
     def __repr__(self):
@@ -232,6 +233,7 @@ class File(db.Model):
             'name': self.name,
             'size': self.size,
             'md5sum': self.md5sum,
+            'icon_name': self.icon_name
         }
         return data;
 
@@ -242,16 +244,39 @@ class File(db.Model):
         return os.path.join(full_dir, self.name)
 
 
+    def full_icon_name(self):
+        directory = 'icons'
+        full_dir = os.path.join(current_app.config['DATA_DIR'], directory)
+        return os.path.join(full_dir, self.icon_name)
+
+
     def remove(self):
         filename = self.full_filename()
-        if os.access(filename, os.R_OK):
-            try:
-                os.remove(filename)
-            except:
-                return True, 'File error'
-            return True, 'OK'
-        else:
+        if os.access(filename, os.R_OK) == False:
             return False, 'Access error/not found'
+
+        msg = ''
+        try:
+            os.remove(filename)
+        except:
+            msg += 'Main file remove error!'
+
+        if self.icon_name is not None:
+            filename = self.full_icon_name()
+            if os.access(filename, os.R_OK):
+                # do something if icon file exists
+                try:
+                    os.remove(filename)
+                except:
+                    msg += 'Icon file remove error!'
+
+        if msg == '':
+            msg = 'OK'
+        return True, msg
+
+
+
+        #FILE_RENDERED_IMAGE
 
 
 

@@ -183,7 +183,7 @@ def image_upload_log_file(user, token_info, image_id, filename):
 
 
     # save the uploaded file and return the ID
-    new_file = File.save_file(filename, filename.filename, FILE_RENDERED_IMAGE, image.project)
+    new_file = File.save_file(filename, filename.filename, FILE_LOGFILE, image.project)
     db.session.add(new_file)
     db.session.commit()
 
