@@ -11,7 +11,7 @@ import os
 import uuid
 
 from app import db, login
-from app.utils.files import save_md5file
+from app.utils.files import save_md5file, create_thumbnail
 
 from flask import current_app, flash
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -289,17 +289,21 @@ class File(db.Model):
         id = uuid.uuid4()
         dir = FILE_TYPES[ftype]
         dfilename = '{}_{}'.format(id, name)
-        full_dir = os.path.join(current_app.config['DATA_DIR'], dir )
+        full_dir = os.path.join(current_app.config['DATA_DIR'], dir)
+        icon_dir = os.path.join(current_app.config['DATA_DIR'], 'icons')
         os.makedirs(full_dir, exist_ok = True)   # no problems if full_dir exists
         filename = os.path.join(full_dir, dfilename)
 
         md5sum, size = save_md5file(src, filename)
+
+        icon_name = create_thumbnail(dfilename, full_dir, icon_dir)
 
         return File(name=dfilename,
                     md5sum=md5sum,
                     size=size,
                     user_id=project.user_id,
                     project_id=project.id,
+                    icon_name=icon_name,
                     file_type=ftype)
 
 
