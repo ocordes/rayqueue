@@ -11,17 +11,17 @@ COPY requirements.dat requirements.dat
 
 
 # add a build structure
-RUN apk add --virtual .build-dependencies zlib-dev jpeg-dev gcc libc-dev
+RUN apk --no-cache add --virtual .build-dependencies zlib-dev jpeg-dev gcc libc-dev
 
 RUN python -m venv venv
-RUN venv/bin/pip install -r requirements.dat
-RUN venv/bin/pip install gunicorn
+RUN venv/bin/pip install --no-cache-dir -r requirements.dat
+RUN venv/bin/pip install --no-cache-dir gunicorn
 
 # remove build structure
 RUN apk del .build-dependencies
 
 COPY src src
-RUN rm src/data/app.db
+RUN rm -rf src/data/*
 RUN rm src/logs/*
 COPY boot.sh .
 RUN chmod +x boot.sh
