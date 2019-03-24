@@ -1,6 +1,6 @@
 """
 
-app/utils/email.py
+app/utils/email_utils.py
 
 written by: Oliver Cordes 2019-01-26
 changed by: Oliver Cordes 2019-02-24

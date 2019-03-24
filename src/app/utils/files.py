@@ -3,13 +3,18 @@
 app/utils/files.py
 
 written by: Oliver Cordes 2019-02-25
-changed by: Oliver Cordes 2019-03-02
+changed by: Oliver Cordes 2019-03-24
 
 
 """
 
 
 import hashlib
+import os
+
+from PIL import Image
+
+size = (256, 256)
 
 """
 size2human
@@ -75,3 +80,32 @@ def save_md5file(src, dst):
         outf.close()
 
     return md5.hexdigest(), size
+
+
+
+"""
+create_thumbnail
+"""
+
+def create_thumbnail(filename, srcdir, destdir):
+    outfile = os.path.splitext(filename)[0] + '.thumbnail.png'
+    outname = os.path.join(destdir, outfile)
+    try:
+        im = Image.open(os.path.join(srcdir,filename))
+        im.thumbnail(size, Image.ANTIALIAS)
+        im.save(outname)
+    except:
+        outname = None
+
+    return outname
+
+
+
+# demo test code
+if __name__ == '__main__':
+    import sys
+
+    for i in sys.argv[1:]:
+        print(i)
+        fname = create_thumbnail(i,'.','.')
+        print(fname)
