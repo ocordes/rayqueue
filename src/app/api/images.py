@@ -69,6 +69,9 @@ def image_clear_all(user, token_info, project_id):
         current_app.logger.info(msg)
     db.session.commit()
 
+    # update the queue if images are removed!
+    queue_manager.update()
+
     return jsonify({'msg': 'OK'})
 
 
