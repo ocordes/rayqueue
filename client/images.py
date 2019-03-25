@@ -28,6 +28,7 @@ class Image(BaseObject):
         if status == 200:
             id = data['id']
         else:
+            print('Error while image creation: %s' % data['detail'])
             id = -1
         return id
 

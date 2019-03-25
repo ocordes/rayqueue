@@ -60,7 +60,7 @@ def add_project(user, token_info, body):
 
     project = Project.query.filter_by(name=name).first()
     if project is not None:
-        abort( 400,
+        abort( 403,
                'Project with name={} already exists'.format(name) )
 
     project = Project(name=name,
@@ -87,7 +87,7 @@ def get_project(user, token_info, project_id):
         abort(404, 'No project with such id')
 
     if project.user_id != user:
-        abort(401, 'You are not the owner of this project')
+        abort(403, 'You are not the owner of this project')
 
     return jsonify(project.to_dict())
 
@@ -103,12 +103,12 @@ def update_project(user, token_info, project_id, body):
         abort(404, 'No project with such id')
 
     if project.user_id != user:
-        abort(401, 'You are not the owner of this project')
+        abort(403, 'You are not the owner of this project')
 
     # extract the name from body and checks for duplicate entries!
     name = body_get(body, 'name')
     if len(Project.query.filter_by(name=name).all()) > 0:
-        abort(401, 'name={} already used for another project!'.format(name))
+        abort(403, 'name={} already used for another project!'.format(name))
 
     version = Project.correct_version( body_get(body, 'version'))
     is_public = body_get(body, 'is_public')
@@ -138,7 +138,7 @@ def remove_project(user, token_info, project_id):
         abort(404, 'No project with such id')
 
     if project.user_id != user:
-        abort(401, 'You are not the owner of this project')
+        abort(403, 'You are not the owner of this project')
 
     db.session.delete(project)
     db.session.commit()
@@ -169,7 +169,7 @@ def project_cmd(user, token_info, project_id, command):
         abort(404, 'No project with such id')
 
     if project.user_id != user:
-        abort(401, 'You are not the owner of this project')
+        abort(403, 'You are not the owner of this project')
 
     command = command.lower()
 

@@ -27,13 +27,18 @@ class Manager(object):
             # check positive, if nothing positive matches,
             # remove the element from the queue
 
+
+
             image = qe.image
 
-            if image.project.status == Project.PROJECT_RENDERING:
-                continue
+            # check if image was removed during other processes...
+            if image != None:
 
-            if image.project.status == Project.PROJECT_OPEN:
-                image.state = Image.IMAGE_STATE_UNKNOWN
+                if image.project.status == Project.PROJECT_RENDERING:
+                    continue
+
+                if image.project.status == Project.PROJECT_OPEN:
+                    image.state = Image.IMAGE_STATE_UNKNOWN
 
             db.session.delete(qe)
 

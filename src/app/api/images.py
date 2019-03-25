@@ -3,7 +3,7 @@
 app/api/images.py
 
 written by: Oliver Cordes 2019-03-07
-changed by: Oliver Cordes 2019-03-18
+changed by: Oliver Cordes 2019-03-25
 
 """
 
@@ -34,7 +34,7 @@ def get_image(user, token_info, image_id):
         abort(404, 'No image with such id')
 
     if image.user_id != user:
-        abort(401, 'You are not the owner of this image')
+        abort(403, 'You are not the owner of this image')
 
     return jsonify(image.to_dict())
 
@@ -55,7 +55,7 @@ def image_clear_all(user, token_info, project_id):
         abort(404, 'No project with such id')
 
     if project.user_id != user:
-        abort(401, 'You are not the owner of this project')
+        abort(403, 'You are not the owner of this project')
 
     for image in project.images:
         ret, retmsg = image.remove()
@@ -93,11 +93,11 @@ def image_upload_model(user, token_info, project_id, filename):
         abort(404, 'No project with such id')
 
     if project.user_id != user:
-        abort(401, 'You are not the owner of this project')
+        abort(403, 'You are not the owner of this project')
 
 
     if (project.project_type == PROJECT_TYPE_IMAGE) and (project.status != Project.PROJECT_OPEN):
-        abort(401, 'Project is not open for new images')
+        abort(403, 'Project is not open for new images')
 
     # save the uploaded file and return the ID
     new_file = File.save_file(filename, filename.filename, FILE_MODEL, project)
@@ -140,7 +140,7 @@ def image_upload_render_image(user, token_info, image_id, filename):
         abort(404, 'No image with such id')
 
     if image.user_id != user:
-        abort(401, 'You are not the owner of this image')
+        abort(403, 'You are not the owner of this image')
 
 
     # save the uploaded file and return the ID
@@ -179,7 +179,7 @@ def image_upload_log_file(user, token_info, image_id, filename):
         abort(404, 'No image with such id')
 
     if image.user_id != user:
-        abort(401, 'You are not the owner of this image')
+        abort(403, 'You are not the owner of this image')
 
 
     # save the uploaded file and return the ID
