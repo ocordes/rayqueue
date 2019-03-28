@@ -35,9 +35,9 @@ if rq.login():
     #print(status)
     #print(filename)
 
-    projects[0].clear_images(rq)
+    #projects[0].clear_images(rq)
     #print(projects[0].reset(rq))
-    #print(projects[0].start_rendering(rq))
+    print(projects[0].start_rendering(rq))
     #print(projects[0].reset(rq))
 
 

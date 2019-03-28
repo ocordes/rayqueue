@@ -36,6 +36,9 @@ def show_image(imageid):
 
     image = Image.query.get(imageid)
 
+    if image is None:
+        return redirect(url_for('main.index'))
+
     if (image.user_id != current_user.id) and (current_user.administrator == False):
         flash('You are not allowed to view this image!')
         return redirect(target)

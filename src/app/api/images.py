@@ -3,7 +3,7 @@
 app/api/images.py
 
 written by: Oliver Cordes 2019-03-07
-changed by: Oliver Cordes 2019-03-25
+changed by: Oliver Cordes 2019-03-28
 
 """
 
@@ -67,6 +67,9 @@ def image_clear_all(user, token_info, project_id):
         else:
             msg = 'Removing id=\'{}\' failed ({})'.format(image.id, retmsg)
         current_app.logger.info(msg)
+
+    project.status = Project.PROJECT_OPEN
+
     db.session.commit()
 
     # update the queue if images are removed!
@@ -153,10 +156,18 @@ def image_upload_render_image(user, token_info, image_id, filename):
 
     image.render_image = new_file.id
 
+    if image.log_file != -1:
+        # image is now complete
+        image.finished = datetime.utcnow()
+        image.state = Image.IMAGE_STATE_FINISHED
+
+        image.project.update_status()
+
     db.session.commit()
 
     # update queue manager
     queue_manager.update()
+
 
     return jsonify(image.to_dict())
 
@@ -192,6 +203,13 @@ def image_upload_log_file(user, token_info, image_id, filename):
 
     image.log_file = new_file.id
 
+    if image.render_image != -1:
+        # image is now complete
+        image.finished = datetime.utcnow()
+        image.state = Image.IMAGE_STATE_FINISHED
+
+        image.project.update_status()
+
     db.session.commit()
 
     # update queue manager
@@ -209,10 +227,10 @@ def queue_next(user, token_info):
         return jsonify( {'msg': 'No images available'} )
 
     # wait for testing!
-    ## prepare all files for rendering
-    #qe.state = QueueElement.QUEUE_ELEMENT_RENDERING
-    #qe.requested = datetime.utcnow()
-    #qe.worker_id = user
+    # prepare all files for rendering
+    qe.state = QueueElement.QUEUE_ELEMENT_RENDERING
+    qe.requested = datetime.utcnow()
+    qe.worker_id = user
 
     image = qe.image
     #image.state = Image.IMAGE_STATE_RENDERING

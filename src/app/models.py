@@ -190,6 +190,11 @@ class Project(db.Model):
         return complete, msgs
 
 
+    def number_of_images(self):
+        # use the database count method to get the numbers
+        return Image.query.filter(Image.project_id==self.id).count()
+
+
     def number_of_open_images(self):
         # use the database count method to get the numbers
         return Image.query.filter(Image.project_id==self.id).filter(Image.state<Image.IMAGE_STATE_FINISHED).count()
@@ -198,6 +203,17 @@ class Project(db.Model):
     def number_of_finished_images(self):
         # use the database count method to get the numbers
         return Image.query.filter(Image.project_id==self.id).filter(Image.state==Image.IMAGE_STATE_FINISHED).count()
+
+
+    def update_status(self):
+        nr_total = self.number_of_images()
+        nr_finished = self.number_of_finished_images()
+
+        print(nr_total)
+        print(nr_finished)
+
+        if (nr_total > 0) and (nr_total == nr_finished):
+            self.status = Project.PROJECT_FINISHED
 
 
     @staticmethod
