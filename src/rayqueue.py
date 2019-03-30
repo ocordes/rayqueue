@@ -4,12 +4,12 @@
 rayqueue.py
 
 written by: 2019-01-20
-changed by; 2019-03-17
+changed by; 2019-03-30
 
 """
 
 __author__  = 'Oliver Cordes'
-__version__ = '0.0.5'
+__version__ = '0.0.6'
 
 
 # used for the cli extension
@@ -17,8 +17,8 @@ import click
 from flask.cli import AppGroup
 
 # the defaults for the APP
-from app import create_app,db
-from app.models import User, Project
+from app import create_app, db, socketio
+from app.models import User, Project, File, Image
 
 import logging
 
@@ -35,7 +35,8 @@ environment
 """
 @app.shell_context_processor
 def make_shell_context():
-    return {'db': db, 'User': User, 'Project': Project}
+    return {'db': db, 'User': User, 'Project': Project,
+            'File': File, 'Image': Image }
 
 
 """
@@ -75,7 +76,9 @@ if 'gunicorn' in app.config['SERVER_SOFTWARE']:
 
 # test this file
 if __name__ == "__main__":
-    app.run(host='0.0.0.0',
+    #app.run(host='0.0.0.0',
+    socketio.run(app,
+            host='0.0.0.0',
             port=4555,
             debug=True,
             extra_files=['./app/api/openapi.yaml'])

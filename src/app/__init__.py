@@ -3,7 +3,7 @@
 app/__init__.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-03-10
+changed by: Oliver Cordes 2019-03-30
 
 """
 
@@ -25,6 +25,8 @@ from flask_debugtoolbar import DebugToolbarExtension
 from flask_apscheduler import APScheduler
 
 
+from flask_socketio import SocketIO
+
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -38,6 +40,8 @@ bootstrap = Bootstrap()
 toolbar = DebugToolbarExtension()
 
 scheduler = APScheduler()
+
+socketio = SocketIO()
 
 
 # define the app in the module ;-)
@@ -65,6 +69,11 @@ def create_app(config_class=Config):
     toolbar.init_app(app.app)
     scheduler.init_app(app.app)
     scheduler.start()
+
+    socketio.init_app(app.app)
+    app.app.config["fd"] = None
+    app.app.config["child_pid"] = None
+    app.app.config["cmd"] = '/bin/bash'
 
     # register the blueprints
     from app.errors import bp as errors_bp

@@ -206,3 +206,10 @@ def preferences():
     return render_template('auth/preferences.html',
                             logfile_data=logfile_data,
                             test_email_form=test_email_form)
+
+
+@bp.route('/terminal', methods=['GET','POST'])
+@login_required
+@admin_required
+def terminal():
+    return render_template('auth/terminal.html')
