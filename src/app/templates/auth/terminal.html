@@ -1,3 +1,15 @@
+{% extends "base.html" %}
+
+{% block styles %}
+{{super()}}
+
+<link rel="stylesheet" href="https://unpkg.com/xterm@3.6.0/dist/xterm.css" />
+
+{% endblock %}
+
+{% block app_content %}
+
+<!---
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -9,16 +21,17 @@
   </style>
   <link rel="stylesheet" href="https://unpkg.com/xterm@3.6.0/dist/xterm.css" />
 </head>
-<body>
+<body>--->
 
-<span style="font-size: 1.4em;">pyxterm.js</span>&nbsp;&nbsp;&nbsp;
 <span style="font-size: small;">status: <span style="font-size: small;" id="status">connecting...</span></span>
 
 <div style="width: 100%; height: calc(100% - 50px);" id="terminal"></div>
 
-<p style="text-align: right; font-size: small;">
-  built by <a href="https://grassfedcode.com">Chad Smith</a> <a href="https://github.com/cs01">GitHub</a>
-</p>
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+
 <!-- xterm -->
 <script src="https://unpkg.com/xterm@3.6.0/dist/xterm.js"></script>
 <script src="https://unpkg.com/xterm@3.6.0/dist/addons/fit/fit.js"></script>
@@ -40,13 +53,13 @@
   term.open(document.getElementById('terminal'));
   term.fit()
   term.resize(15, 50)
-  console.log(`size: ${term.cols} columns, ${term.rows} rows`)
+  //console.log(`size: ${term.cols} columns, ${term.rows} rows`)
   // term.toggleFullScreen(true)
   term.fit()
-  term.write("Welcome to pyxterm.js!\nhttps://github.com/cs01/pyxterm.js\n")
+  //term.write("Welcome to pyxterm.js!\nhttps://github.com/cs01/pyxterm.js\n")
   term.on('key', (key, ev) => {
-    console.log("pressed key", key)
-    console.log("event", ev)
+    //console.log("pressed key", key)
+    //console.log("event", ev)
     socket.emit("pty-input", {"input": key})
   });
 
@@ -54,7 +67,7 @@
   const status = document.getElementById("status")
 
   socket.on("pty-output", function(data){
-    console.log("new output", data)
+    //console.log("new output", data)
     term.write(data.output)
   })
 
@@ -88,5 +101,4 @@
 
 </script>
 
-</body>
-</html>
+{% endblock %}

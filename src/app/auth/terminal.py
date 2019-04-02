@@ -1,3 +1,24 @@
+"""
+
+app/auth/terminal.py
+
+written by: Oliver Cordes 2019-03-30
+changed by: Oliver Cordes 2019-04-02
+
+
+"""
+
+
+"""
+
+This code part is adopted from:
+
+https://pypi.org/project/pyxtermjs/
+
+pyxtermjs version 0.4.0.1 by Chad Smith grassfedcode@gmail.com
+
+"""
+
 
 from flask import current_app
 
@@ -9,6 +30,8 @@ import termios
 import struct
 import fcntl
 import shlex
+
+import sys
 
 
 from app import db, socketio
@@ -31,7 +54,6 @@ def read_and_forward_pty_output(app):
                     output = os.read(app.config["fd"], max_read_bytes).decode()
                     socketio.emit("pty-output", {"output": output}, namespace="/pty")
 
-    print('Done.')
 
 
 @socketio.on("pty-input", namespace="/pty")
@@ -64,9 +86,12 @@ def connect():
         # this is the child process fork.
         # anything printed here will show up in the pty, including the output
         # of this subprocess
+        print('Starting subcommand %s ...' % current_app.config["cmd"])
         subprocess.run(current_app.config["cmd"])
-        print('Child done')
-        socketio.emit("disconnect")
+        print('Exit the child!')
+        print(current_app.config["child_pid"])
+        #sys.exit(0)
+        #os._exit(0)
     else:
         # this is the parent process fork.
         # store child fd and pid
