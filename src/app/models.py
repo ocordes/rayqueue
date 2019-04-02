@@ -306,13 +306,19 @@ class File(db.Model):
         dir = FILE_TYPES[ftype]
         dfilename = '{}_{}'.format(id, name)
         full_dir = os.path.join(current_app.config['DATA_DIR'], dir)
-        icon_dir = os.path.join(current_app.config['DATA_DIR'], 'icons')
         os.makedirs(full_dir, exist_ok = True)   # no problems if full_dir exists
         filename = os.path.join(full_dir, dfilename)
 
         md5sum, size = save_md5file(src, filename)
 
-        icon_name = create_thumbnail(dfilename, full_dir, icon_dir)
+
+        # if file is a rendered image, create a thumbnail
+        if ftype == FILE_RENDERED_IMAGE:
+            icon_dir = os.path.join(current_app.config['DATA_DIR'], 'icons')
+            os.makedirs(icon_dir, exist_ok = True)   # no problems if icon_dir exists
+            icon_name = create_thumbnail(dfilename, full_dir, icon_dir)
+        else:
+            icon_name = None
 
         return File(name=dfilename,
                     md5sum=md5sum,
