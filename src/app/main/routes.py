@@ -3,7 +3,7 @@
 app/main/routes.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-03-17
+changed by: Oliver Cordes 2019-04-04
 
 """
 
@@ -87,7 +87,7 @@ def running_data():
 
     qes = []
     for qe in all_qes:
-        project = qe.project
+        project = Project.query.get(qe.project)
         if current_user.administrator == False:
             if project.user_id != current_user.id:
                 if project.is_public == False:

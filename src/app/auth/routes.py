@@ -3,7 +3,7 @@
 app/auth/routes.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-03-06
+changed by: Oliver Cordes 2019-04-04
 
 """
 
@@ -26,6 +26,8 @@ from app.models import User
 from app.auth.email import send_password_reset_email, send_email_verify_email, \
                            send_test_email
 from app.auth.admin import admin_required
+
+from app.utils.files import read_logfile
 
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -195,11 +197,8 @@ def preferences():
     test_email_form = PreferencesForm()
     logfile_data = 'Empty logfile'
     if current_app.config['SERVER_SOFTWARE'] == 'FLASK':
-        try:
-            with open(current_app.config['logfile'], 'r') as f:
-                logfile_data = f.read()
-        except:
-            logfile_data = 'Error readign logfile'
+        logfile_data = read_logfile(current_app.config['logfile'])
+        
     if test_email_form.validate_on_submit():
         send_test_email(test_email_form.test_email.data)
         flash('Send test email to \'{}\''.format(test_email_form.test_email.data))

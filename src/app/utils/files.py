@@ -3,7 +3,7 @@
 app/utils/files.py
 
 written by: Oliver Cordes 2019-02-25
-changed by: Oliver Cordes 2019-03-24
+changed by: Oliver Cordes 2019-04-04
 
 
 """
@@ -98,6 +98,25 @@ def create_thumbnail(filename, srcdir, destdir):
         outname = None
 
     return outname
+
+
+
+"""
+read_logfile
+
+reads a logfile and return a string representing the complete file!
+"""
+
+def read_logfile(filename):
+    logfile_data = 'Empty logfile'
+    print(filename)
+    try:
+        with open(filename, 'r') as f:
+            logfile_data = f.read()
+    except:
+        logfile_data = 'Error reading logfile'
+
+    return logfile_data
 
 
 

@@ -3,7 +3,7 @@
 app/api/images.py
 
 written by: Oliver Cordes 2019-03-07
-changed by: Oliver Cordes 2019-03-28
+changed by: Oliver Cordes 2019-04-04
 
 """
 
@@ -233,9 +233,9 @@ def queue_next(user, token_info):
     qe.worker_id = user
 
     image = qe.image
-    #image.state = Image.IMAGE_STATE_RENDERING
+    image.state = Image.IMAGE_STATE_RENDERING
 
-    ##db.session.commit()  # wait for testing!
+    db.session.commit()  # wait for testing!
 
     # return the image data
     return jsonify(image.to_dict())
