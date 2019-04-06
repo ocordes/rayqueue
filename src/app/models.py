@@ -382,7 +382,7 @@ class Image(db.Model):
         if self.log_file != -1:
             data['log_file_id'] = self.log_file
 
-        if self.state == IMAGE_STATE_FINISHED:
+        if self.state == self.IMAGE_STATE_FINISHED:
             data['error_code'] = self.error_code
             data['finished'] = self.finished.isoformat() + 'Z',
         return data

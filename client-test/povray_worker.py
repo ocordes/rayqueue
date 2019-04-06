@@ -34,6 +34,7 @@ class PovrayWorker(object):
 
         self._logfile = None
         self._logfile_name = None
+        self._has_base_files = False
 
 
     def _check_tmpdir(self):
@@ -75,17 +76,18 @@ class PovrayWorker(object):
 
     def _read_input_directories(self, subdir='.'):
         dirs = []
-        path = os.path.join(self._tempdir, subdir)
-        with os.scandir(path) as it:
-            for entry in it:
-                if entry.name.endswith('.ini') and entry.is_file():
-                    print('Processing %s ...' % entry.name, file=self._logfile)
-                    fname = os.path.join(path, entry.name)
-                    config = configparser.ConfigParser()
-                    config.read(fname)
-                    dir = config.get('DEFAULT', 'DIR', fallback=None)
-                    if dir is not None:
-                        dirs.append(os.path.join(subdir, dir))
+        if self._has_base_files:
+            path = os.path.join(self._tempdir, subdir)
+            with os.scandir(path) as it:
+                for entry in it:
+                    if entry.name.endswith('.ini') and entry.is_file():
+                        print('Processing %s ...' % entry.name, file=self._logfile)
+                        fname = os.path.join(path, entry.name)
+                        config = configparser.ConfigParser()
+                        config.read(fname)
+                        dir = config.get('DEFAULT', 'DIR', fallback=None)
+                        if dir is not None:
+                            dirs.append(os.path.join(subdir, dir))
 
         return dirs
 
@@ -127,12 +129,14 @@ class PovrayWorker(object):
                                         subdir=self.model_dir ) == False:
             return False
 
+        self._has_base_files = False
         for ffile in self._project.base_files:
             if self._download_extract_file(ffile.id,
                                             'BaseFiles',
                                             subdir=self.base_files_dir,
                                             md5sum=ffile.md5sum) == False:
                 return False
+            self._has_base_files = True
 
         return True
 
@@ -183,15 +187,25 @@ class PovrayWorker(object):
 
         print('povray returns with exit code: {}'.format(return_code), file=self._logfile)
 
+        return return_code
+
 
     def _upload_files(self):
         filename = os.path.join(self._tempdir, self._image_name)
-        result = Image.upload_render_image(self._session, self._image.id, filename)
+        if os.access(filename, os.R_OK):
+            result = Image.upload_render_image(self._session, self._image.id, filename)
+            if result == -1:
+                print('Image upload failed!')
+        if os.access(self._logfile_name, os.R_OK):
+            result = Image.upload_log_file(self._session, self._image.id, self._logfile_name)
+            if result == -1:
+                print('Logfile upload failed!')
+
+
+    def _upload_error_code(self, error_code):
+        result = Image.image_finish(self._session, self._image.id, error_code)
         if result == -1:
-            print('Image upload failed!')
-        result = Image.upload_log_file(self._session, self._image.id, self._logfile_name)
-        if result == -1:
-            print('Logfile upload failed!')
+            print('Error code upload failed!')
 
 
     def run(self):
@@ -227,7 +241,7 @@ class PovrayWorker(object):
         print('----------------------------------------------------------------------------',
                 file=self._logfile)
 
-        self._povray_execute()
+        error_code = self._povray_execute()
 
         print('----------------------------------------------------------------------------',
                 file=self._logfile)
@@ -236,6 +250,8 @@ class PovrayWorker(object):
         self._logfile.close()
 
         self._upload_files()
+
+        self._upload_error_code(error_code)
 
         print('Files uploaded!')
 

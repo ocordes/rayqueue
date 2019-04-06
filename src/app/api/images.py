@@ -3,7 +3,7 @@
 app/api/images.py
 
 written by: Oliver Cordes 2019-03-07
-changed by: Oliver Cordes 2019-04-04
+changed by: Oliver Cordes 2019-04-06
 
 """
 
@@ -156,12 +156,12 @@ def image_upload_render_image(user, token_info, image_id, filename):
 
     image.render_image = new_file.id
 
-    if image.log_file != -1:
-        # image is now complete
-        image.finished = datetime.utcnow()
-        image.state = Image.IMAGE_STATE_FINISHED
-
-        image.project.update_status()
+    # if image.log_file != -1:
+    #     # image is now complete
+    #     image.finished = datetime.utcnow()
+    #     image.state = Image.IMAGE_STATE_FINISHED
+    #
+    #     image.project.update_status()
 
     db.session.commit()
 
@@ -203,12 +203,52 @@ def image_upload_log_file(user, token_info, image_id, filename):
 
     image.log_file = new_file.id
 
-    if image.render_image != -1:
-        # image is now complete
-        image.finished = datetime.utcnow()
-        image.state = Image.IMAGE_STATE_FINISHED
+    # if image.render_image != -1:
+    #     # image is now complete
+    #     image.finished = datetime.utcnow()
+    #     image.state = Image.IMAGE_STATE_FINISHED
+    #
+    #     image.project.update_status()
 
-        image.project.update_status()
+    db.session.commit()
+
+    # update queue manager
+    queue_manager.update()
+
+    return jsonify(image.to_dict())
+
+
+""""
+image_finish
+
+finish the rendering of an image and provides an error code of
+the rendering process
+
+:param user:         the login user
+:param token_info:   the request token
+:param image_id:     the ID of the parent image
+:param error_code:   the error code of the rendering process
+
+:rvalue:             json-object of the image data
+"""
+
+def image_finish(user, token_info, image_id, body):
+    image = Image.query.get(image_id)
+
+    if image is None:
+        abort(404, 'No image with such id')
+
+    if image.user_id != user:
+        abort(403, 'You are not the owner of this image')
+
+
+    # save the error code
+    error_code = body_get(body, 'error_code')
+    image.error_code = error_code
+
+    image.state = Image.IMAGE_STATE_FINISHED
+
+    image.project.update_status()
 
     db.session.commit()
 

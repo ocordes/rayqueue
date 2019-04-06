@@ -56,6 +56,17 @@ class Image(BaseObject):
 
 
     @staticmethod
+    def image_finish(session, image_id, error_code):
+        endpoint = '/image/%i/finish' % image_id
+        data = { 'error_code': error_code }
+        status, data = session.request(endpoint, data=data, request_type=session.rsession.post)
+        if status == 200:
+            id = data['id']
+        else:
+            id = -1
+        return id
+
+    @staticmethod
     def query(session, image_id):
         endpoint = '/image/%i' % image_id
         status, data = session.request(endpoint, request_type=session.rsession.get)

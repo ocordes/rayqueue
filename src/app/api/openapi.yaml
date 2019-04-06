@@ -341,6 +341,40 @@ paths:
       - jwt: []
 
 
+  /image/{image_id}/finish:
+    post:
+      tags: [Images]
+      operationId: app.api.images.image_finish
+      summary: Uploading the error code for the rendered image
+      parameters:
+      - name: image_id
+        description: Image unique identifier
+        in: path
+        required: true
+        schema:
+          type: integer
+      requestBody:
+        description: Update a project
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                error_code:
+                  type: integer
+      responses:
+        200:
+          description: Return Image
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Image'
+        404:
+          description: Image does not exist
+      security:
+      - jwt: []
+
+
   /files/id/{file_id}:
     get:
       summary: Get file by ID
