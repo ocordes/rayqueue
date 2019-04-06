@@ -337,6 +337,7 @@ class Image(db.Model):
     created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     finished = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     state = db.Column(db.Integer, default=-1)
+    error_code = db.Column(db.Integer)
     # files referenced by ID
     model = db.Column(db.Integer, default=-1)
     render_image = db.Column(db.Integer, default=-1)
@@ -378,9 +379,12 @@ class Image(db.Model):
             }
         if self.render_image != -1:
             data['render_image_id'] = self.render_image
-            data['finished'] = self.finished.isoformat() + 'Z',
         if self.log_file != -1:
             data['log_file_id'] = self.log_file
+
+        if self.state == IMAGE_STATE_FINISHED:
+            data['error_code'] = self.error_code
+            data['finished'] = self.finished.isoformat() + 'Z',
         return data
 
 
