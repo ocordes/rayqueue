@@ -16,12 +16,32 @@ PROJECT_TYPE_ANIMATION = 1
 
 
 class Project(BaseObject):
+    def update(self, session):
+        status, data = session.request('/project/%i' % self.id,
+                                        request_type=session.rsession.get )
+
+        if status == 200:
+            self._set_attributes(data)
+        else:
+            print('Update of image failed!')
+
 
     def filtervalue(self, name, value):
         if name == 'base_files':
             return [File(i) for i in value]
 
         return value
+
+
+    def status(self):
+        if self.state == 0:
+            return 'Queued'
+        elif self.state == 1:
+            return 'Rendering'
+        elif self.state == 2:
+            return 'Finished'
+        else:
+            return 'Unknown'
 
 
     def clear_images(self, session):

@@ -1,7 +1,7 @@
 """
 
 written by: Oliver Cordes 2019-03-06
-changed by: Oliver Cordes 2019-03-20
+changed by: Oliver Cordes 2019-04-04
 
 """
 
@@ -12,6 +12,7 @@ from client.images import Image
 
 import time
 import os
+import shutil
 
 import tarfile
 import configparser
@@ -51,13 +52,15 @@ class PovrayWorker(object):
         self._image = Image.queue_next(self._session)
 
         if self._image is None:
-            return
+            return False
 
         # get project description
         self._project = Project.query(self._session, self._image.project_id)
 
         if self._project is None:
-            return
+            return False
+
+        return True
 
 
     def _create_master_ini(self, base_files_dirs):
@@ -119,6 +122,7 @@ class PovrayWorker(object):
 
         if status:
             status = self._extract(filename, subdir)
+            os.remove(filename)
         return status
 
 
@@ -196,10 +200,14 @@ class PovrayWorker(object):
             result = Image.upload_render_image(self._session, self._image.id, filename)
             if result == -1:
                 print('Image upload failed!')
+            model_dir = os.path.join(self._tempdir, self.model_dir)
+            shutil.rmtree(model_dir,ignore_errors=True)
         if os.access(self._logfile_name, os.R_OK):
             result = Image.upload_log_file(self._session, self._image.id, self._logfile_name)
             if result == -1:
                 print('Logfile upload failed!')
+            # remove file
+            os.remove(self._logfile_name)
 
 
     def _upload_error_code(self, error_code):
@@ -208,17 +216,13 @@ class PovrayWorker(object):
             print('Error code upload failed!')
 
 
-    def run(self):
-        self._check_tmpdir()  # creates a tempdir
-
+    def run_single_image(self):
         # start logging
         self._logfile_name = os.path.join(self._tempdir, 'scene.log')
         self._logfile = open(self._logfile_name, 'w')
 
         print('----------------------------------------------------------------------------',
                 file=self._logfile)
-
-        self._next_image()
 
         if (self._image is None) or (self._project is None) :
             return False
@@ -257,6 +261,12 @@ class PovrayWorker(object):
 
         return False
 
+
+    def run(self):
+        self._check_tmpdir()  # creates a tempdir
+
+        self._next_image()
+        self.run_single_image()
 
 # main
 rq = Session(username='ocordes', password='cTower',

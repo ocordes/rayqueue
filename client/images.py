@@ -3,13 +3,23 @@
 client/images.py
 
 written by: Oliver Cordes 2019-03-07
-changed by: Oliver Cordes 2019-03-09
+changed by: Oliver Cordes 2019-04-07
 
 """
 
 from client.baseobjects import BaseObject
 
 class Image(BaseObject):
+    def update(self, session):
+        endpoint = '/image/%i' % self.id
+        status, data = session.request(endpoint, request_type=session.rsession.get)
+
+        if status == 200:
+            self._set_attributes(data)
+        else:
+            print('Update of image failed!')
+
+
     def status(self):
         if self.state == 0:
             return 'Queued'
