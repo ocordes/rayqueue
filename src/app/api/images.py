@@ -3,12 +3,12 @@
 app/api/images.py
 
 written by: Oliver Cordes 2019-03-07
-changed by: Oliver Cordes 2019-04-06
+changed by: Oliver Cordes 2019-04-07
 
 """
 
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from flask import current_app, make_response, abort, jsonify
 
@@ -69,6 +69,7 @@ def image_clear_all(user, token_info, project_id):
         current_app.logger.info(msg)
 
     project.status = Project.PROJECT_OPEN
+    project.project_time = timedelta(seconds=0)
 
     db.session.commit()
 
@@ -109,7 +110,6 @@ def image_upload_model(user, token_info, project_id, filename):
     new_file = File.save_file(filename, filename.filename, FILE_MODEL, project)
     db.session.add(new_file)
     db.session.commit()
-    print(new_file.id)
 
     model_image = Image(user_id=user,
                         project_id=project_id,
@@ -156,13 +156,6 @@ def image_upload_render_image(user, token_info, image_id, filename):
 
     image.render_image = new_file.id
 
-    # if image.log_file != -1:
-    #     # image is now complete
-    #     image.finished = datetime.utcnow()
-    #     image.state = Image.IMAGE_STATE_FINISHED
-    #
-    #     image.project.update_status()
-
     db.session.commit()
 
     # update queue manager
@@ -203,13 +196,6 @@ def image_upload_log_file(user, token_info, image_id, filename):
 
     image.log_file = new_file.id
 
-    # if image.render_image != -1:
-    #     # image is now complete
-    #     image.finished = datetime.utcnow()
-    #     image.state = Image.IMAGE_STATE_FINISHED
-    #
-    #     image.project.update_status()
-
     db.session.commit()
 
     # update queue manager
@@ -247,6 +233,10 @@ def image_finish(user, token_info, image_id, body):
     image.error_code = error_code
 
     image.state = Image.IMAGE_STATE_FINISHED
+    image.finished = datetime.utcnow()
+
+    td = image.finished - image.requested
+    image.project.project_time += td
 
     image.project.update_status()
 
@@ -274,6 +264,7 @@ def queue_next(user, token_info):
 
     image = qe.image
     image.state = Image.IMAGE_STATE_RENDERING
+    image.requested = qe.requested
 
     db.session.commit()  # wait for testing!
 

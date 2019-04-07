@@ -19,7 +19,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
 from hashlib import md5
-from datetime import datetime
+from datetime import datetime, timedelta
 from time import time
 import jwt
 
@@ -129,6 +129,8 @@ class Project(db.Model):
     project_type = db.Column(db.Integer)
     status = db.Column(db.Integer)
 
+    project_time = db.Column(db.Interval, default=timedelta(seconds=0))
+
     # relationships
     #files = db.relationship('File', backref='project', lazy='dynamic')
     files = db.relationship('File', #backref='project', lazy='dynamic',
@@ -203,6 +205,11 @@ class Project(db.Model):
     def number_of_finished_images(self):
         # use the database count method to get the numbers
         return Image.query.filter(Image.project_id==self.id).filter(Image.state==Image.IMAGE_STATE_FINISHED).count()
+
+
+    def number_of_error_images(self):
+        # use the database count method to get the numbers
+        return Image.query.filter(Image.project_id==self.id).filter(Image.state==Image.IMAGE_STATE_FINISHED).filter(Image.error_code != 0).count()
 
 
     def update_status(self):
@@ -336,6 +343,7 @@ class Image(db.Model):
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
     created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     finished = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    requested = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     state = db.Column(db.Integer, default=-1)
     error_code = db.Column(db.Integer)
     # files referenced by ID
