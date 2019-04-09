@@ -1,13 +1,13 @@
 """
 
-client/files.py
+rq_client/files.py
 
 written by: Oliver Cordes 2019-03-07
-changed by: Oliver Cordes 2019-03-17
+changed by: Oliver Cordes 2019-04-09
 
 """
 
-from client.baseobjects import BaseObject
+from rq_client.baseobjects import BaseObject
 
 import hashlib
 import shutil

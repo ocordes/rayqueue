@@ -1,14 +1,14 @@
 """
 
 written by: Oliver Cordes 2019-03-06
-changed by: Oliver Cordes 2019-04-04
+changed by: Oliver Cordes 2019-04-09
 
 """
 
-from client.api import Session
-from client.projects import Project
-from client.files import File
-from client.images import Image
+from rq_client.api import Session
+from rq_client.projects import Project
+from rq_client.files import File
+from rq_client.images import Image
 
 import time
 import os

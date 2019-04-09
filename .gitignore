@@ -110,3 +110,4 @@ venv.bak/
 /src/app.db*
 /src/data/
 create_docker.sh
+/client-test/worker

@@ -1,6 +1,6 @@
 """
 
-client/api.py
+rq_client/api.py
 
 written by: Oliver Cordes 2019-02-12
 changed by: Oliver Cordes 2019-03-04

@@ -1,6 +1,6 @@
 """
 
-client/baseobjects.py
+rq_client/baseobjects.py
 
 written by: Oliver Cordes 2019-03-09
 changed by: Oliver Cordes 2019-03-17

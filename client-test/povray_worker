@@ -1,8 +1,5 @@
 #!/bin/sh
 
-PYTHONPATH="${PYTHONPATH}:../"
-
-export PYTHONPATH
 
 PRG=$(basename $0).py
 

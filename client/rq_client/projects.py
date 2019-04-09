@@ -1,14 +1,14 @@
 """
 
-client/projects.py
+rq_client/projects.py
 
 written by: Oliver Cordes 2019-02-12
 changed by: Oliver Cordes 2019-03-17
 
 """
 
-from client.baseobjects import BaseObject
-from client.files import File
+from rq_client.baseobjects import BaseObject
+from rq_client.files import File
 
 
 PROJECT_TYPE_IMAGE     = 0

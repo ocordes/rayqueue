@@ -1,13 +1,13 @@
 """
 
-client/images.py
+rq_client/images.py
 
 written by: Oliver Cordes 2019-03-07
-changed by: Oliver Cordes 2019-04-07
+changed by: Oliver Cordes 2019-04-09
 
 """
 
-from client.baseobjects import BaseObject
+from rq_client.baseobjects import BaseObject
 
 class Image(BaseObject):
     def update(self, session):
