@@ -3,7 +3,7 @@
 config.py
 
 written by: Oliver Cordes 2019-01-31
-changed by: Oliver Cordes 2019-03-02
+changed by: Oliver Cordes 2019-04-10
 
 """
 
@@ -39,3 +39,6 @@ class Config(object):
 
     # gunicorn check
     SERVER_SOFTWARE = os.environ.get('SERVER_SOFTWARE') or 'FLASK'
+
+    # terminal Settings
+    CMD = os.environ.get('TERMINAL_CMD') or '/bin/bash'

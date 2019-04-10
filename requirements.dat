@@ -7,7 +7,9 @@ chardet==3.0.4
 Click==7.0
 clickclick==1.2.2
 connexion==2.2.0
+dnspython==1.16.0
 dominate==2.3.5
+eventlet==0.24.1
 Flask==1.0.2
 Flask-APScheduler==1.11.0
 Flask-Bootstrap==3.3.7.1
@@ -19,7 +21,6 @@ Flask-SocketIO==3.3.2
 Flask-SQLAlchemy==2.3.2
 Flask-WTF==0.14.2
 get==2018.11.19
-gevent==1.4.0
 greenlet==0.4.15
 idna==2.8
 inflection==0.3.1
@@ -28,6 +29,7 @@ Jinja2==2.10
 jsonschema==2.6.0
 Mako==1.0.7
 MarkupSafe==1.1.1
+monotonic==1.5
 openapi-spec-validator==0.2.4
 Pillow==5.4.1
 post==2018.11.20

@@ -71,9 +71,9 @@ def create_app(config_class=Config):
     scheduler.start()
 
     socketio.init_app(app.app)
-    app.app.config["fd"] = None
-    app.app.config["child_pid"] = None
-    app.app.config["cmd"] = '/bin/bash'
+    app.app.config['fd'] = None
+    app.app.config['child_pid'] = None
+    #app.app.config['cmd'] = '/bin/bash'
 
     # register the blueprints
     from app.errors import bp as errors_bp
