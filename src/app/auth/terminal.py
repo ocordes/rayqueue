@@ -53,8 +53,15 @@ def read_and_forward_pty_output(app):
                 timeout_sec = 0
                 (data_ready, _, _) = select.select([app.config['fd']], [], [], timeout_sec)
                 if data_ready:
+                   try:
                     output = os.read(app.config['fd'], max_read_bytes).decode()
                     socketio.emit('pty-output', {'output': output}, namespace='/pty')
+                   except:
+                     msg = 'Close the connection to childpid={}'.format(current_app.config['child_pid'])
+                     current_app.logger.info(msg)
+                     os.waitpid(current_app.config['child_pid'], os.WNOHANG)
+                     current_app.config['child_pid'] = None
+                     current_app.config['fd'] = None
             else:
                 # break the loop
                 msg = 'Stop the backgroud pty forward loop!'
@@ -115,7 +122,7 @@ def connect():
         #sys.stdin.close()
         #sys.stdout.close()
         #sys.stderr.close()
-        os.kill(os.getpid(), signal.SIGKILL)
+        #os.kill(os.getpid(), signal.SIGKILL)
         os._exit(0)  # quit the child process  leaves the process as zombie ...
         print('Immer noch da!')
         sys.stdout.flush()
