@@ -1,8 +1,10 @@
 from setuptools import setup
 
+from rq_client import __version__
+
 setup(
     name='rq_client',
-    version='0.0.1',
+    version=__version__,
     packages=['rq_client'],
     install_requires=[
        'requests',
