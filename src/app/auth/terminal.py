@@ -30,7 +30,6 @@ import termios
 import struct
 import fcntl
 import shlex
-import signal
 
 import sys
 
@@ -110,22 +109,14 @@ def connect():
         # this is the child process fork.
         # anything printed here will show up in the pty, including the output
         # of this subprocess
-        print('Starting subcommand %s ...' % current_app.config['CMD'])
         print('Using pid %i ...' % os.getpid() )
+        print('Starting subcommand %s ...' % current_app.config['CMD'])
         sys.stdout.flush()
         subprocess.run(current_app.config['CMD'])
-        with open('blubber.dat', 'w') as f:
-            f.write('child is dead')
         print('Exit the child!')
         sys.stdout.flush()
         #sys.exit(0)
-        #sys.stdin.close()
-        #sys.stdout.close()
-        #sys.stderr.close()
-        #os.kill(os.getpid(), signal.SIGKILL)
         os._exit(0)  # quit the child process  leaves the process as zombie ...
-        print('Immer noch da!')
-        sys.stdout.flush()
     else:
         # this is the parent process fork.
         # store child fd and pid

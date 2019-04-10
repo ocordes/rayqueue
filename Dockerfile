@@ -10,7 +10,7 @@ WORKDIR /home/rayqueue
 COPY requirements.dat requirements.dat
 
 # add graphics and sqlite
-RUN apk --no-cache add libjpeg-turbo sqlite bash
+RUN apk --no-cache add libjpeg-turbo sqlite
 
 # add a build structure for python modules
 RUN apk --no-cache add --virtual .build-dependencies zlib-dev jpeg-dev gcc libc-dev
