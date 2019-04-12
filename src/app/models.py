@@ -3,7 +3,7 @@
 app/models.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-03-18
+changed by: Oliver Cordes 2019-04-12
 
 """
 
@@ -472,3 +472,9 @@ class QueueElement(db.Model):
     def check_image(image_id):
         image = QueueElement.query.filter_by(image_id=image_id).first()
         return image is not None
+
+
+class DayActivity(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    

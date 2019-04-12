@@ -9,7 +9,7 @@ changed by; 2019-04-10
 """
 
 __author__  = 'Oliver Cordes'
-__version__ = '0.0.8'
+__version__ = '0.0.9'
 
 
 # used for the cli extension

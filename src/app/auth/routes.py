@@ -3,7 +3,7 @@
 app/auth/routes.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-04-04
+changed by: Oliver Cordes 2019-04-12
 
 """
 
@@ -71,14 +71,20 @@ def login():
             user = User.query.filter_by(username=form.username.data).first()
             if user is None or not user.check_password(form.password.data):
                 flash('Invalid username or password')
+                msg = 'Invalid username or password (username={})'.format(form.username.data)
+                current_app.logger.info(msg)
                 return redirect(url_for('auth.login'))
             if login_user(user, remember=form.remember_me.data):
+                msg = 'User \'{}\' logged in!'.format(user.username)
+                current_app.logger.info(msg)
                 next_page = request.args.get('next')
                 if not next_page or url_parse(next_page).netloc != '':
                     next_page = url_for('main.index')
                 return redirect(next_page)
             else:
-                flash('User account is not active!')
+                msg = 'User account is not active!'
+                flash(msg)
+                current_app.logger.info(msg)
                 return redirect(url_for('auth.login'))
         return render_template('auth/login.html', title='Sign In',
                                 form=form,
@@ -89,7 +95,10 @@ def login():
 
 @bp.route('/logout')
 def logout():
+    username = current_user.username
     logout_user()
+    msg = 'User \'{}\' logged out!'.format(username)
+    current_app.logger.info(msg)
     return redirect(url_for('main.index'))
 
 
@@ -165,6 +174,8 @@ def reset_password(token):
         user.set_password(form.password.data)
         db.session.commit()
         flash('Your password has been reset.')
+        msg = 'Password reset for user \'{}\''.format(current_user.username)
+        current_app.logger.info(msg)
         return redirect(url_for('auth.login'))
     return render_template('auth/reset_password.html', form=form)
 
@@ -182,10 +193,10 @@ def verify_email(token):
 
     user.is_active = True
     db.session.commit()
-    msg = 'Your account is now complete.'
+    flash('Your account is now complete.')
+    msg = 'Accout for user \'{}\' is now complete!'.format(user.username)
     current_app.logger.info(msg)
-    flash(msg)
-
+    
     return redirect(url_for('auth.login'))
 
 
@@ -198,7 +209,7 @@ def preferences():
     logfile_data = 'Empty logfile'
     if current_app.config['SERVER_SOFTWARE'] == 'FLASK':
         logfile_data = read_logfile(current_app.config['logfile'])
-        
+
     if test_email_form.validate_on_submit():
         send_test_email(test_email_form.test_email.data)
         flash('Send test email to \'{}\''.format(test_email_form.test_email.data))
