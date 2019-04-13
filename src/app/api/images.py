@@ -3,7 +3,7 @@
 app/api/images.py
 
 written by: Oliver Cordes 2019-03-07
-changed by: Oliver Cordes 2019-04-07
+changed by: Oliver Cordes 2019-04-13
 
 """
 
@@ -14,7 +14,7 @@ from flask import current_app, make_response, abort, jsonify
 
 from flask_login import current_user, login_user, logout_user, login_required
 
-from app import db
+from app import db, activity
 from app.api import bp
 
 from app.models import *
@@ -117,6 +117,9 @@ def image_upload_model(user, token_info, project_id, filename):
 
     db.session.add(model_image)
     db.session.commit()
+
+    # record the activity
+    activity.add_submit()
 
     if (project.project_type == PROJECT_TYPE_ANIMATION) and (project.status != Project.PROJECT_RENDERING):
         # update queue manager
@@ -241,6 +244,10 @@ def image_finish(user, token_info, image_id, body):
     image.project.update_status()
 
     db.session.commit()
+
+
+    # record the activity
+    activity.add_image(error=error_code!=0, render_time=td)
 
     # update queue manager
     queue_manager.update()

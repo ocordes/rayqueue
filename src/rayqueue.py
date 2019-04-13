@@ -4,7 +4,7 @@
 rayqueue.py
 
 written by: 2019-01-20
-changed by; 2019-04-10
+changed by; 2019-04-13
 
 """
 
@@ -17,7 +17,7 @@ import click
 from flask.cli import AppGroup
 
 # the defaults for the APP
-from app import create_app, db, socketio
+from app import create_app, db, socketio, activity
 from app.models import User, Project, File, Image
 
 import logging
@@ -49,7 +49,8 @@ current app status is used!
 @app.context_processor
 def utility_processor():
     return { 'rq_version': __version__,
-             'rq_copyright': '2019 by {}'.format(__author__)}
+             'rq_copyright': '2019 by {}'.format(__author__),
+             'activity': activity }
 
 
 

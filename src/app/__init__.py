@@ -28,6 +28,7 @@ from flask_apscheduler import APScheduler
 from flask_socketio import SocketIO
 
 
+
 db = SQLAlchemy()
 migrate = Migrate()
 login = LoginManager()
@@ -42,6 +43,10 @@ toolbar = DebugToolbarExtension()
 scheduler = APScheduler()
 
 socketio = SocketIO()
+
+
+from app.utils.activity import Activity
+activity = Activity(db)
 
 
 # define the app in the module ;-)
@@ -94,6 +99,7 @@ def create_app(config_class=Config):
 
     from app.main import bp as main_bp
     app.app.register_blueprint(main_bp)
+
 
     # data dir
     if not os.path.exists(app.app.config['DATA_DIR']):

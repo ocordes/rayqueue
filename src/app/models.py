@@ -3,7 +3,7 @@
 app/models.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-04-12
+changed by: Oliver Cordes 2019-04-13
 
 """
 
@@ -476,5 +476,12 @@ class QueueElement(db.Model):
 
 class DayActivity(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    
+    date = db.Column(db.String, default='')
+    stat_total_images = db.Column(db.Integer, default=0)
+    stat_total_errors = db.Column(db.Integer, default=0)
+    stat_total_submits = db.Column(db.Integer, default=0)
+    stat_render_time = db.Column(db.Interval, default=timedelta(seconds=0))
+
+
+    def __repr__(self):
+        return '<DayActivity {}>'.format(self.date)

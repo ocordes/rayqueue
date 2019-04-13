@@ -16,6 +16,13 @@
 
     <h1>Dashboard</h1>
 
+    <div>
+      Total Activity: {{activity.get_total_images()}} {{activity.get_total_errors()}} {{activity.get_total_submits()}} {{activity.get_total_render_time().total_seconds()}}
+    </div>
+    <div>
+      Day activity: {{activity.get_today_images()}} {{activity.get_today_errors()}} {{activity.get_today_submits()}} {{activity.get_today_render_time().total_seconds()}}
+    </div>
+
     <div style="margin-top:50px" class="mainbox">
       <div class="panel panel-info">
           <div class="panel-heading">
