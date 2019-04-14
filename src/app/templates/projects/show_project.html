@@ -139,7 +139,7 @@
                 Project duration
               </label>
               <div class="col-md-6">
-                {{project.project_time.total_seconds()}}s
+                {{'%0.1f'|format(project.project_time.total_seconds())}}s
               </div>
             </div>
             <hr>

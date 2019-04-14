@@ -74,7 +74,7 @@
             Process time:
           </label>
           <div class="col-md-2">
-            {{(image.finished-image.requested).total_seconds()}}s
+            {{'%0.3f'|format((image.finished-image.requested).total_seconds())}}s
           </div>
         </div>
         <hr>

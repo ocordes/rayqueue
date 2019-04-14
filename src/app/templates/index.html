@@ -16,13 +16,6 @@
 
     <h1>Dashboard</h1>
 
-    <div>
-      Total Activity: {{activity.get_total_images()}} {{activity.get_total_errors()}} {{activity.get_total_submits()}} {{activity.get_total_render_time().total_seconds()}}
-    </div>
-    <div>
-      Day activity: {{activity.get_today_images()}} {{activity.get_today_errors()}} {{activity.get_today_submits()}} {{activity.get_today_render_time().total_seconds()}}
-    </div>
-
     <div style="margin-top:50px" class="mainbox">
       <div class="panel panel-info">
           <div class="panel-heading">
@@ -37,6 +30,78 @@
                 <div class="col-md-3">
                   <input id="timer" type='text' class="form-control" />
                 </div>
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+
+    <div style="margin-top:50px" class="mainbox">
+      <div class="panel panel-info">
+          <div class="panel-heading">
+              <div class="panel-title">Total Activity</div>
+          </div>
+          <div class="panel-body">
+            <div class="row">
+              <label class="col-md-1 control-label">
+                Today:
+              </label>
+            </div>
+            <div class="row">
+              <label class="col-md-offset-1 col-md-1 control-label">
+                Image(s)
+              </label>
+              <div class="col-md-1">
+                {{activity.get_today_images()}}
+              </div>
+              <label class="col-md-1 control-label">
+                Error(s)
+              </label>
+              <div class="col-md-1">
+                {{activity.get_today_errors()}}
+              </div>
+              <label class="col-md-1 control-label">
+                Submit(s)
+              </label>
+              <div class="col-md-1">
+                {{activity.get_today_submits()}}
+              </div>
+              <label class="col-md-2 control-label">
+                Render time
+              </label>
+              <div class="col-md-1">
+                {{'%0.1f'| format(activity.get_today_render_time().total_seconds())}}s
+              </div>
+            </div>
+            <div class="row">
+              <label class="col-md-1 control-label">
+                Total:
+              </label>
+            </div>
+            <div class="row">
+              <label class="col-md-offset-1 col-md-1 control-label">
+                Image(s)
+              </label>
+              <div class="col-md-1">
+                {{activity.get_total_images()}}
+              </div>
+              <label class="col-md-1 control-label">
+                Error(s)
+              </label>
+              <div class="col-md-1">
+                {{activity.get_total_errors()}}
+              </div>
+              <label class="col-md-1 control-label">
+                Submit(s)
+              </label>
+              <div class="col-md-1">
+                {{activity.get_total_submits()}}
+              </div>
+              <label class="col-md-2 control-label">
+                Render time
+              </label>
+              <div class="col-md-1">
+                {{'%0.1f'| format(activity.get_total_render_time().total_seconds())}}s
               </div>
             </div>
           </div>
