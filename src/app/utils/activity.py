@@ -3,7 +3,7 @@
 app/utils/activity.py
 
 written by: Oliver Cordes 2019-04-12
-changed by: Oliver Cordes 2019-04-13
+changed by: Oliver Cordes 2019-04-14
 
 
 """
@@ -36,7 +36,7 @@ class Activity(object):
             self._db.session.add(total)
             self._db.session.commit()
         else:
-            current_app.logger.info('Load data for the total statistics')
+            #current_app.logger.info('Load data for the total statistics')
             total = DayActivity.query.get(1)
 
         return total
@@ -54,7 +54,7 @@ class Activity(object):
     def _today_data(self):
         date = self._today_strdate()
 
-        current_app.logger.info('Load data for today\'s statistics')
+        #current_app.logger.info('Load data for today\'s statistics')
         today = DayActivity.query.filter_by(date=date).first()
 
         if today is None:

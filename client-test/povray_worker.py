@@ -58,6 +58,8 @@ class PovrayWorker(object):
         self._project = Project.query(self._session, self._image.project_id)
 
         if self._project is None:
+            print('Image requested, but in a unreliable situation')
+            # discard request if possible
             return False
 
         return True
@@ -265,8 +267,25 @@ class PovrayWorker(object):
     def run(self):
         self._check_tmpdir()  # creates a tempdir
 
-        self._next_image()
-        self.run_single_image()
+        running = True
+        sleep_time = 0
+        max_sleep_time = 60
+        try:
+            while running:
+                work_todo = self._next_image()
+                if work_todo:
+                    print('Process request ...')
+                    self.run_single_image()
+                    print('Done.')
+                    sleep_time = 0
+                else:
+                    sleep_time += 5
+                    if sleep_time > max_sleep_time:
+                        sleep_time = max_sleep_time
+                    print('Sleeping for (%i seconds) ...' % sleep_time)
+                    time.sleep(sleep_time)
+        except KeyboardInterrupt:
+            running = False
 
 # main
 rq = Session(username='ocordes', password='cTower',
@@ -285,4 +304,4 @@ default_libs = ['/Users/ocordes/software/PovrayCommandLineMacV2',
                 '/Users/ocordes/software/PovrayCommandLineMacV2/include']
 
 pw = PovrayWorker(rq, 'worker', default_libs=default_libs)
-ret = pw.run()
+pw.run()

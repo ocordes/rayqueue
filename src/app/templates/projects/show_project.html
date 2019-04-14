@@ -294,7 +294,7 @@
                   </td>
                   <td>
                     {% if image.state == image.IMAGE_STATE_FINISHED %}
-                    {{(image.finished-image.requested).total_seconds()}}s
+                    {{'%0.1f'|format((image.finished-image.requested).total_seconds())}}s
                     {% else %}
                     None
                     {% endif %}
