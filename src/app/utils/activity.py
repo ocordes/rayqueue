@@ -26,24 +26,30 @@ class Activity(object):
     """
     _check_init
 
-    loads the data for the total statistics, if no data is available
-    create a new empty dataset, which has the id=0!
+    create a new empty dataset is database is empty,
+    this is always teh first dataset and has the id=1!
     """
     def _check_init(self):
         if DayActivity.query.count() == 0:
             current_app.logger.info('Create data for the total statistics')
-            total = DayActivity(date='')
+            total = DayActivity(date='total')
             self._db.session.add(total)
             self._db.session.commit()
-        else:
-            #current_app.logger.info('Load data for the total statistics')
-            total = DayActivity.query.get(1)
-
-        return total
 
 
     def _today_strdate(self):
         return datetime.utcnow().strftime('%Y-%m-%d')
+
+
+    """
+    _total_data
+
+    returns the total data set
+    """
+    def _total_data(self):
+        self._check_init()
+        return DayActivity.query.get(1)
+
 
     """
     _today_data
@@ -52,6 +58,7 @@ class Activity(object):
     data is available create a dataset
     """
     def _today_data(self):
+        self._check_init()
         date = self._today_strdate()
 
         #current_app.logger.info('Load data for today\'s statistics')
@@ -67,7 +74,7 @@ class Activity(object):
 
 
     def get_total_images(self):
-        total = self._check_init()
+        total = self._total_data()
 
         if total is not None:
             return total.stat_total_images
@@ -76,7 +83,7 @@ class Activity(object):
 
 
     def get_total_errors(self):
-        total = self._check_init()
+        total = self._total_data()
 
         if total is not None:
             return total.stat_total_errors
@@ -85,7 +92,7 @@ class Activity(object):
 
 
     def get_total_submits(self):
-        total = self._check_init()
+        total = self._total_data()
 
         if total is not None:
             return total.stat_total_submits
@@ -94,7 +101,7 @@ class Activity(object):
 
 
     def get_total_render_time(self):
-        total = self._check_init()
+        total = self._total_data()
 
         if total is not None:
             return total.stat_render_time
@@ -148,7 +155,7 @@ class Activity(object):
         if today is not None:
             today.stat_total_submits += 1
 
-        total = self._check_init()
+        total = self._total_data()
         if total is not None:
             total.stat_total_submits += 1
 
