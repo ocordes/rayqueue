@@ -1,7 +1,7 @@
 """
 
 written by: Oliver Cordes 2019-03-06
-changed by: Oliver Cordes 2019-04-09
+changed by: Oliver Cordes 2019-04-17
 
 """
 
@@ -24,7 +24,11 @@ class PovrayWorker(object):
     base_files_dir = 'base_files'
     model_dir      = 'model'
 
-    def __init__(self, session, tempdir='.', default_libs=None ):
+    def __init__(self,
+                    session,
+                    tempdir='.',
+                    default_libs=None,
+                    max_cores=None ):
         self._session = session
 
         self._image = None
@@ -32,6 +36,14 @@ class PovrayWorker(object):
 
         self._tempdir = tempdir
         self._default_libs = default_libs
+
+        self._max_cores = None
+
+        if self._max_cores is not None:
+            try:
+                self._max_cores = int(self._max_cores)
+            except:
+                self._max_cores = None
 
         self._logfile = None
         self._logfile_name = None
@@ -169,12 +181,18 @@ class PovrayWorker(object):
 
         self._image_name = os.path.join(self.model_dir, data.get('outfile', 'scene.png'))
 
-        command = '{} {} -w{} -h{} -i{} -o{}'.format('povray',
+
+        options = ''
+        if self._max_cores is not None:
+            options += ' +WT%i' % self._max_cores
+
+        command = '{} {} -w{} -h{} -i{} -o{} {}'.format('povray',
                                                      os.path.join(self.model_dir, 'master.ini'),
                                                      data.get('width', '640'),
                                                      data.get('height', '480'),
                                                      os.path.join(self.model_dir, data.get('scene', 'scene.pov')),
-                                                     self._image_name
+                                                     self._image_name,
+                                                     options
                                                     )
         print('Executing: %s' % command, file=self._logfile)
         cmd = '(cd {};{})'.format(self._tempdir, command)
