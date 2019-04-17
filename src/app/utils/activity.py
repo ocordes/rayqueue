@@ -176,7 +176,7 @@ class Activity(object):
                 today.stat_total_errors += 1
             today.stat_render_time += render_time
 
-        total = self._check_init()
+        total = self._total_data()
         if total is not None:
             total.stat_total_images += 1
             if error:
