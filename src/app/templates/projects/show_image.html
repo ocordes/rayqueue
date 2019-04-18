@@ -80,19 +80,40 @@
         <hr>
         {% endif %}
         {% if image.render_image != -1 %}
-        <div class="form-group">
-          Preview:
+        <div class="row">
+          <h4>
+            <label class="col-md-2 control-label">
+              Rendered image
+            </label>
+          </h4>
+        </div>
+        <div class="row" style="margin-top: 1em">
+          <label class="col-md-offset-1 col-md-2 control-label">
+            Image size:
+          </label>
+          <div class="col-md-2">
+            {{image.im_width()}}x{{image.im_height()}} pixels
+          </div>
+        </div>
+        <div class="row" style="margin-top: 1em">
+          <label class="col-md-offset-1 col-md-2 control-label">
+            Preview
+          </label>
         </div>
         <div class="row">
           <a href="{{url_for('projects.get_render_image',imageid=image.id)}}">
-            <img class="col-md-offset-1" src="{{url_for('projects.get_render_icon',imageid=image.id)}}">
+            <img class="col-md-offset-2" src="{{url_for('projects.get_render_icon',imageid=image.id)}}">
           </a>
         </div>
         <hr>
         {% endif %}
         {% if image.log_file != -1 %}
-        <div class="form-group">
-          Logfile:
+        <div class="row">
+          <h4>
+            <label class="col-md-2 control-label">
+              Logfile
+            </label>
+          </h4>
         </div>
         <div class="row">
           <pre class="col-md-offset-1 pre-scrollable">{{logfile_data}}
@@ -100,8 +121,12 @@
         </div>
         <hr>
         {% endif %}
-        <div class="form-group">
-          Downloads
+        <div class="row">
+          <h4>
+            <label class="col-md-2 control-label">
+              Downloads
+            </label>
+          </h4>
         </div>
         <div class="row">
           <label class="col-md-offset-1 col-md-2 control-label">

@@ -3,7 +3,7 @@
 app/utils/files.py
 
 written by: Oliver Cordes 2019-02-25
-changed by: Oliver Cordes 2019-04-04
+changed by: Oliver Cordes 2019-04-18
 
 
 """
@@ -100,6 +100,16 @@ def create_thumbnail(filename, srcdir, destdir):
     return outname
 
 
+"""
+sizeofimage
+
+returns the width, height of an image
+"""
+def sizeofimage(filename):
+    with Image.open(filename) as im:
+        return im.size
+
+
 
 """
 read_logfile
@@ -124,7 +134,9 @@ def read_logfile(filename):
 if __name__ == '__main__':
     import sys
 
-    for i in sys.argv[1:]:
-        print(i)
-        fname = create_thumbnail(i,'.','.')
-        print(fname)
+    #for i in sys.argv[1:]:
+    #    print(i)
+    #    fname = create_thumbnail(i,'.','.')
+    #    print(fname)
+    width, height = sizeofimage(sys.argv[1])
+    print('%i x %i' % (width, height))

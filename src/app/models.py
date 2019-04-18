@@ -3,7 +3,7 @@
 app/models.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-04-13
+changed by: Oliver Cordes 2019-04-18
 
 """
 
@@ -11,7 +11,7 @@ import os
 import uuid
 
 from app import db, login
-from app.utils.files import save_md5file, create_thumbnail
+from app.utils.files import save_md5file, create_thumbnail, sizeofimage
 
 from flask import current_app, flash
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -244,6 +244,8 @@ class File(db.Model):
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
     file_type = db.Column(db.Integer)
     icon_name = db.Column(db.String)
+    im_width = db.Column(db.Integer)
+    im_height = db.Column(db.Integer)
 
 
     def __repr__(self):
@@ -324,8 +326,11 @@ class File(db.Model):
             icon_dir = os.path.join(current_app.config['DATA_DIR'], 'icons')
             os.makedirs(icon_dir, exist_ok = True)   # no problems if icon_dir exists
             icon_name = create_thumbnail(dfilename, full_dir, icon_dir)
+            width, height = sizeofimage(filename)
         else:
             icon_name = None
+            width = 0
+            height = 0
 
         return File(name=dfilename,
                     md5sum=md5sum,
@@ -333,7 +338,9 @@ class File(db.Model):
                     user_id=project.user_id,
                     project_id=project.id,
                     icon_name=icon_name,
-                    file_type=ftype)
+                    file_type=ftype,
+                    im_width=width,
+                    im_height=height)
 
 
 
@@ -429,6 +436,22 @@ class Image(db.Model):
 
         return complete, msgs
 
+
+    def im_width(self):
+        ffile = File.query.get(self.render_image)
+        if ffile is None:
+            return 0
+        else:
+            return ffile.im_width
+
+
+    def im_height(self):
+        ffile = File.query.get(self.render_image)
+        if ffile is None:
+            return 0
+        else:
+            return ffile.im_height
+            
 
 class QueueElement(db.Model):
     id = db.Column(db.Integer, primary_key=True)

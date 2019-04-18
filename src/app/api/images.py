@@ -106,6 +106,10 @@ def image_upload_model(user, token_info, project_id, filename):
     if (project.project_type == PROJECT_TYPE_IMAGE) and (project.status != Project.PROJECT_OPEN):
         abort(403, 'Project is not open for new images')
 
+
+    if (project.project_type == PROJECT_TYPE_IMAGE) and (len(project.images) != 0 ):
+        abort(403, 'Image project contains already an image')
+
     # save the uploaded file and return the ID
     new_file = File.save_file(filename, filename.filename, FILE_MODEL, project)
     db.session.add(new_file)
