@@ -3,7 +3,7 @@
 app/api/images.py
 
 written by: Oliver Cordes 2019-03-07
-changed by: Oliver Cordes 2019-04-13
+changed by: Oliver Cordes 2019-04-18
 
 """
 
@@ -22,6 +22,8 @@ from app.models import *
 from app.api.checks import body_get
 
 from app.queueing import queue_manager
+
+from app.utils.thread_files import remove_project_images
 
 import connexion
 
@@ -57,16 +59,8 @@ def image_clear_all(user, token_info, project_id):
     if project.user_id != user:
         abort(403, 'You are not the owner of this project')
 
-    for image in project.images:
-        ret, retmsg = image.remove()
-        if ret:
-            # image files were removed successfully
-            # remove from database
-            msg = 'Remove id=\'{}\' from Image'.format(image.id)
-            db.session.delete(image)
-        else:
-            msg = 'Removing id=\'{}\' failed ({})'.format(image.id, retmsg)
-        current_app.logger.info(msg)
+    # better algorithm to remove all files
+    remove_project_images(project)
 
     project.status = Project.PROJECT_OPEN
     project.project_time = timedelta(seconds=0)
