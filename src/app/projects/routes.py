@@ -225,7 +225,9 @@ def create_project():
         db.session.add(project)
         db.session.commit()
         flash('Added project \'{}\''. format(project.name))
-        return redirect(url_for('main.index'))
+        #return redirect(url_for('main.index'))
+        # refer to the new created project
+        return redirect(url_for('projects.show_project',projectid=project.id))
     elif request.method == 'GET':
         # this is necessary, since WTF RadioField has no
         # default values ...
