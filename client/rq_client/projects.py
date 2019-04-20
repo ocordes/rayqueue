@@ -45,15 +45,12 @@ class Project(BaseObject):
 
 
     def clear_images(self, session):
-        if self.project_type == PROJECT_TYPE_IMAGE:
-            endpoint = '/image/%i/clear' % self.id
+        endpoint = '/image/%i/clear' % self.id
 
-            status, data = session.request(endpoint, request_type=session.rsession.post)
+        status, data = session.request(endpoint, request_type=session.rsession.post)
 
-            return status == 200
-        else:
-            return False
-
+        return status == 200
+        
 
     def _command(self, session, command ):
         endpoint = '/project/%i/%s' % (self.id, command)

@@ -3,7 +3,7 @@
 rq_client/images.py
 
 written by: Oliver Cordes 2019-03-07
-changed by: Oliver Cordes 2019-04-09
+changed by: Oliver Cordes 2019-04-20
 
 """
 
@@ -55,7 +55,10 @@ class Image(BaseObject):
 
 
     @staticmethod
-    def upload_log_file(session, image_id, logfile):
+    def upload_log_file(session, image_id, logfile, real_name=None):
+        if real_name is not None:
+            os.rename(logfile, real_name)
+            logfile = real_name
         endpoint = '/image/%i/logfile' % image_id
         status, data = session.file_upload(endpoint, logfile)
         if status == 200:
