@@ -238,6 +238,7 @@ def image_finish(user, token_info, image_id, body):
 
     td = image.finished - image.requested
     image.project.project_time += td
+    image.project.project_images += 1
 
     image.project.update_status()
 

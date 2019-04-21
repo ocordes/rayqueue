@@ -174,6 +174,9 @@ class PovrayWorker(object):
 
     def _povray_execute(self):
         data = self._load_scene_ini()
+        self._real_logfile = data.get('logfile', None)
+        if self._real_logfile is not None:
+            self._real_logfile = os.path.join(self._tempdir, self.model_dir, self._real_logfile)
         if data is None:
             print('No scene.ini file found. No rendering!', file=self._logfile)
             return
@@ -220,14 +223,22 @@ class PovrayWorker(object):
             result = Image.upload_render_image(self._session, self._image.id, filename)
             if result == -1:
                 print('Image upload failed!')
-            model_dir = os.path.join(self._tempdir, self.model_dir)
-            shutil.rmtree(model_dir,ignore_errors=True)
+        if self._real_logfile is not None:
+            try:
+                os.rename(self._logfile_name, self._real_logfile)
+                self._logfile_name = self._real_logfile
+            except OSError as e:
+                print('Cannot rename logfile! (%s)' % e)
         if os.access(self._logfile_name, os.R_OK):
             result = Image.upload_log_file(self._session, self._image.id, self._logfile_name)
             if result == -1:
                 print('Logfile upload failed!')
             # remove file
             os.remove(self._logfile_name)
+
+        # remove anim directory
+        model_dir = os.path.join(self._tempdir, self.model_dir)
+        shutil.rmtree(model_dir,ignore_errors=True)
 
 
     def _upload_error_code(self, error_code):
@@ -238,6 +249,7 @@ class PovrayWorker(object):
 
     def run_single_image(self):
         # start logging
+        self._real_logfile = None
         self._logfile_name = os.path.join(self._tempdir, 'scene.log')
         self._logfile = open(self._logfile_name, 'w')
 
@@ -297,7 +309,7 @@ class PovrayWorker(object):
                     print('Done.')
                     sleep_time = 0
                 else:
-                    sleep_time += 5
+                    sleep_time += 2
                     if sleep_time > max_sleep_time:
                         sleep_time = max_sleep_time
                     print('Sleeping for (%i seconds) ...' % sleep_time)

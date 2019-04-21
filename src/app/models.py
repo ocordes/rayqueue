@@ -3,7 +3,7 @@
 app/models.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-04-18
+changed by: Oliver Cordes 2019-04-21
 
 """
 
@@ -130,6 +130,7 @@ class Project(db.Model):
     status = db.Column(db.Integer)
 
     project_time = db.Column(db.Interval, default=timedelta(seconds=0))
+    project_images = db.Column(db.Integer, default=0)
 
     # relationships
     #files = db.relationship('File', backref='project', lazy='dynamic')
@@ -451,7 +452,7 @@ class Image(db.Model):
             return 0
         else:
             return ffile.im_height
-            
+
 
 class QueueElement(db.Model):
     id = db.Column(db.Integer, primary_key=True)
