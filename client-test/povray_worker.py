@@ -308,6 +308,7 @@ class PovrayWorker(object):
                     self.run_single_image()
                     print('Done.')
                     sleep_time = 0
+                    #time.sleep(30)
                 else:
                     sleep_time += 2
                     if sleep_time > max_sleep_time:

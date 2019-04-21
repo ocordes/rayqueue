@@ -34,11 +34,15 @@ class Manager(object):
             # check if image was removed during other processes...
             if image != None:
 
-                if image.project.status == Project.PROJECT_RENDERING:
-                    continue
+                #if image.project.status == Project.PROJECT_RENDERING:
+                #    continue
 
                 if image.project.status == Project.PROJECT_OPEN:
                     image.state = Image.IMAGE_STATE_UNKNOWN
+
+                # remove from queue if finished or unknown
+                if image.state in (Image.IMAGE_STATE_QUEUED, Image.IMAGE_STATE_RENDERING):
+                    continue
 
             db.session.delete(qe)
 
