@@ -104,7 +104,7 @@ class PovrayWorker(object):
                         config.read(fname)
                         dir = config.get('DEFAULT', 'DIR', fallback=None)
                         if dir is not None:
-                            dirs.append(os.path.join(subdir, dir))
+                            dirs.append(os.path.join('..', subdir, dir))
 
         return dirs
 
@@ -182,23 +182,24 @@ class PovrayWorker(object):
             return
         # povray model/master.ini -w640 -h480 -imodel/scene.pov -oscene.png
 
-        self._image_name = os.path.join(self.model_dir, data.get('outfile', 'scene.png'))
-
+        #self._image_name = os.path.join(self.model_dir, data.get('outfile', 'scene.png'))
+        self._image_name = data.get('outfile', 'scene.png')
 
         options = ''
         if self._max_cores is not None:
             options += ' +WT%i' % self._max_cores
 
         command = '{} {} -w{} -h{} -i{} -o{} {}'.format('povray',
-                                                     os.path.join(self.model_dir, 'master.ini'),
+                                                     'master.ini',
                                                      data.get('width', '640'),
                                                      data.get('height', '480'),
-                                                     os.path.join(self.model_dir, data.get('scene', 'scene.pov')),
+                                                     data.get('scene', 'scene.pov'),
                                                      self._image_name,
                                                      options
                                                     )
         print('Executing: %s' % command, file=self._logfile)
-        cmd = '(cd {};{})'.format(self._tempdir, command)
+        workdir = os.path.join(self._tempdir, self.model_dir)
+        cmd = '(cd {};{})'.format(workdir, command)
         p = subprocess.Popen(cmd, shell=True, bufsize=-1, close_fds=True,
                              stdin=subprocess.PIPE,
                              stdout=subprocess.PIPE,
@@ -218,7 +219,7 @@ class PovrayWorker(object):
 
 
     def _upload_files(self):
-        filename = os.path.join(self._tempdir, self._image_name)
+        filename = os.path.join(self._tempdir, self.model_dir, self._image_name)
         if os.access(filename, os.R_OK):
             result = Image.upload_render_image(self._session, self._image.id, filename)
             if result == -1:
