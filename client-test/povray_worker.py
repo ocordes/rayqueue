@@ -326,7 +326,7 @@ rq = Session(username='ocordes', password='cTower',
 
 if rq.login() == False:
     print('Error logging into the RQ API! Program exits!')
-    os.exit(-1)
+    sys.exit(-1)
 
 print('successfully logged into the RQ API')
 
