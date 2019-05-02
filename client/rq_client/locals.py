@@ -3,7 +3,7 @@
 rq_client/locals.py
 
 written by: Oliver Cordes 2019-05-01
-changed by: Oliver Cordes 2019-05-01
+changed by: Oliver Cordes 2019-05-02
 
 
 purpose:
@@ -17,6 +17,7 @@ to the rq_server for statistics
 import socket
 import psutil
 from psutil._common import bytes2human
+import platform
 
 
 def get_ip1():
@@ -54,11 +55,17 @@ def get_ip():
 def get_host_info():
     data = {'ip': get_ip(),
             'hostname': socket.gethostname(),
-            'cpus': psutil.cpu_count(logical=False),
-            'mem' : bytes2human(psutil.virtual_memory()[0]),
+            'cpus'    : psutil.cpu_count(logical=False),
+            'mem'     : bytes2human(psutil.virtual_memory()[0]),
+            'os'      : platform.platform(),
+            'python'  : platform.python_version(),
             }
 
     return data
+
+
+def submit_host_info(session):
+    pass
 
 
 if __name__ == '__main__':

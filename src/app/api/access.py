@@ -3,7 +3,7 @@
 app/api/users.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-03-08
+changed by: Oliver Cordes 2019-05-02
 
 """
 
@@ -121,3 +121,11 @@ def get_secret2(user, token_info) -> str:
     You are user_id {user} and the secret is 'wbevuec'.
     Decoded token claims: {token_info}.
     '''.format(user=user, token_info=token_info)
+
+
+"""
+"""
+def host_info(user, token_info, body):
+    hostid = 1234
+    print(body)
+    return jsonify({'hostid': hostid})

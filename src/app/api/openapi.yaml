@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Rayqueue API
-  version: '0.9'
+  version: '0.9.1'
 
 servers:
   - url: /api
@@ -441,6 +441,31 @@ paths:
       security:
       - jwt: []
 
+  /hostinfo:
+    post:
+      tags: [Info]
+      summary: Add a new hostinfo
+      operationId: app.api.access.host_info
+      requestBody:
+        description: Create a new hostinfo
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HostInfo'
+      responses:
+        200:
+          description: hostid
+          content:
+            application/json:
+              schema:
+                properties:
+                  hostid:
+                    type: integer
+      security:
+      - jwt: []
+
+
   /secret:
     get:
       summary: Return secret string
@@ -538,4 +563,18 @@ components:
         state:
           type: integer
         created:
+          type: string
+    HostInfo:
+      properties:
+        ip:
+          type: string
+        hostname:
+          type: string
+        cpus:
+          type: integer
+        mem:
+          type: string
+        os:
+          type: string
+        python:
           type: string

@@ -3,7 +3,7 @@
 app/api/projects.py
 
 written by: Oliver Cordes 2019-02-11
-changed by: Oliver Cordes 2019-03-10
+changed by: Oliver Cordes 2019-05-02
 
 """
 
@@ -49,9 +49,6 @@ add_project
 :param body: the json dictonary of the request
 """
 def add_project(user, token_info, body):
-    print(user)
-    print(body)
-
     name = body_get(body, 'name')
     version = Project.correct_version( body_get(body, 'version'))
     is_public = body_get(body, 'is_public')
