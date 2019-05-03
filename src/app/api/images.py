@@ -3,7 +3,7 @@
 app/api/images.py
 
 written by: Oliver Cordes 2019-03-07
-changed by: Oliver Cordes 2019-04-18
+changed by: Oliver Cordes 2019-05-03
 
 """
 
@@ -88,6 +88,9 @@ sends a file as a model and creates a new image instance
 """
 
 def image_upload_model(user, token_info, project_id, filename):
+    # extract hostid for submitter from header
+    hostid = connexion.request.headers.get('hostid', -1)
+
     project = Project.query.get(project_id)
 
     if project is None:
@@ -220,6 +223,10 @@ the rendering process
 """
 
 def image_finish(user, token_info, image_id, body):
+
+    # extract hostid of the worker from header
+    hostid = connexion.request.headers.get('hostid', -1)
+
     image = Image.query.get(image_id)
 
     if image is None:
@@ -256,6 +263,9 @@ def image_finish(user, token_info, image_id, body):
 
 
 def queue_next(user, token_info):
+    # extract hostid for worker from header
+    # the worker with this hostid is active -> set flag
+    hostid = connexion.request.headers.get('hostid', -1)
 
     qe = queue_manager.next(user)
 

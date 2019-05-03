@@ -331,6 +331,8 @@ if rq.login() == False:
 print('successfully logged into the RQ API')
 
 
+rq.send_host_info()
+
 default_libs = ['/Users/ocordes/software/PovrayCommandLineMacV2',
                 '/Users/ocordes/software/PovrayCommandLineMacV2/ini',
                 '/Users/ocordes/software/PovrayCommandLineMacV2/include']

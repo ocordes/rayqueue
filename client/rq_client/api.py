@@ -3,7 +3,7 @@
 rq_client/api.py
 
 written by: Oliver Cordes 2019-02-12
-changed by: Oliver Cordes 2019-03-04
+changed by: Oliver Cordes 2019-05-03
 
 """
 
@@ -11,6 +11,8 @@ changed by: Oliver Cordes 2019-03-04
 import sys
 import configparser
 import json
+
+from rq_client.locals import get_host_info
 
 try:
     import requests
@@ -41,6 +43,7 @@ class Session(object):
 
         self.set_base_url(self._base_url)
         self._token    = None
+        self._hostid   = None
 
         self.rsession = requests.Session()
 
@@ -92,6 +95,23 @@ class Session(object):
 
 
         return False
+
+
+
+    """
+    """
+    def send_host_info(self):
+        data = get_host_info()
+        status, data = self.raw_request('/hostinfo', data=data,
+                            request_type=self.rsession.post)
+        if status == 200:
+            self._hostid = data['hostid']
+            print(self._hostid)
+            data = {'hostid' : str(self._hostid)}
+            self.rsession.headers.update(data)
+        else:
+            if self._verbose:
+                print(self._err_msg(data))
 
 
 

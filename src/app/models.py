@@ -3,7 +3,7 @@
 app/models.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-04-21
+changed by: Oliver Cordes 2019-05-03
 
 """
 
@@ -509,3 +509,26 @@ class DayActivity(db.Model):
 
     def __repr__(self):
         return '<DayActivity {}>'.format(self.date)
+
+
+class HostInfo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    ip = db.Column(db.String, default='0.0.0.0')
+    hostname = db.Column(db.String, default='')
+    cpus = db.Column(db.Integer, default=0)
+    mem = db.Column(db.String, default='0M')
+    os = db.Column(db.String, default='')
+    python = db.Column(db.String, default='')
+    active = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+
+
+    def __repr__(self):
+        return '<HostInfo {} ({})>'.format(self.hostname, self.ip)
+
+
+    """
+    get_hostinfo
+    """
+    @staticmethod
+    def get_hostinfo(data):
+        pass
