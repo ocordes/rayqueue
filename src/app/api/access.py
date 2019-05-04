@@ -3,7 +3,7 @@
 app/api/users.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-05-02
+changed by: Oliver Cordes 2019-05-04
 
 """
 
@@ -16,10 +16,10 @@ from flask_login import current_user, login_user, logout_user, login_required
 
 from werkzeug.exceptions import Unauthorized
 
-#from app import db
+from app import db
 from app.api import bp
 
-from app.models import User
+from app.models import User, HostInfo
 
 from time import time
 import jwt
@@ -124,8 +124,21 @@ def get_secret2(user, token_info) -> str:
 
 
 """
+host_info
+
+register the host info dataset in database and returns the id
+
+:param user:        the user id of the login user
+:param token_info:  the token
+:param body:        the dataset with the hostinfo
+:rvalue:            the id of the hostinfo in database
 """
 def host_info(user, token_info, body):
-    hostid = 1234
-    print(body)
-    return jsonify({'hostid': hostid})
+    info = HostInfo.get_hostinfo(body)
+    if info is None:
+        abort(404, 'Cannot create hostinfo from data')
+
+    db.session.add(info)
+    db.session.commit()
+
+    return jsonify({'hostid': info.id})

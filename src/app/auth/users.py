@@ -12,10 +12,11 @@ from flask import current_app, request, render_template, \
                   url_for, flash, redirect
 from flask_login import current_user, login_required
 
+from sqlalchemy import desc
 
 from app import db
 from app.auth import bp
-from app.models import User, Project
+from app.models import User, Project, HostInfo
 
 from app.auth.forms import UserListForm, EditProfileForm, UpdatePasswordForm
 
@@ -90,3 +91,12 @@ def user(username):
                             form=form,
                             projects=user.projects.all(),
                             pform=UpdatePasswordForm())
+
+
+@bp.route('/workers', methods=['GET','POST'])
+@login_required
+@admin_required
+def workers():
+    workers = HostInfo.query.order_by(desc(HostInfo.active)).all()
+    return render_template('auth/workers.html',
+                            workers=workers)

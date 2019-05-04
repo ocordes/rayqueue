@@ -3,7 +3,7 @@
 app/models.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-05-03
+changed by: Oliver Cordes 2019-05-04
 
 """
 
@@ -521,6 +521,10 @@ class HostInfo(db.Model):
     python = db.Column(db.String, default='')
     active = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
+    # the important information
+    submits  = db.Column(db.Integer, default=0)
+    rendered = db.Column(db.Integer, default=0)
+
 
     def __repr__(self):
         return '<HostInfo {} ({})>'.format(self.hostname, self.ip)
@@ -531,4 +535,70 @@ class HostInfo(db.Model):
     """
     @staticmethod
     def get_hostinfo(data):
-        pass
+        ip = data.get('ip', None)
+        if ip is not None:
+            cpus = data.get('cpus',0)
+            mem = data.get('mem', '')
+            python = data.get('python', '')
+            os = data.get('os', '')
+            hostname = data.get('hostname', '')
+
+            # select all infos from one ip
+            infos = HostInfo.query.filter_by(ip=ip).all()
+
+            for info in infos:
+                if cpus != info.cpus:
+                    continue
+                if mem != info.mem:
+                    continue
+                if python != info.python:
+                    continue
+                if os != info.os:
+                    continue
+                # check for hostname is not suitable ...
+
+                # found!
+                return info
+
+            # no entry available create a new one
+            return HostInfo(ip=ip, cpus=cpus, mem=mem, python=python, os=os, hostname=hostname)
+
+        return None
+
+
+    """
+    update_activity
+
+    updates the activity of host
+    """
+    def update_activity(hostid):
+        if hostid != -1:
+            info = HostInfo.query.get(hostid)
+            info.active = datetime.utcnow()
+            db.session.commit()
+
+
+    """
+    add_submits
+
+    updates the activity of host and adds a new submit
+    """
+    def add_submits(hostid):
+        if hostid != -1:
+            info = HostInfo.query.get(hostid)
+            info.active = datetime.utcnow()
+            info.submits += 1
+            db.session.commit()
+
+
+    """
+    add_rendered
+
+    updates the activity of host and adds a new rendered image
+    """
+    def add_rendered(hostid):
+        if hostid != -1:
+            info = HostInfo.query.get(hostid)
+            info.active = datetime.utcnow()
+            info.rendered += 1
+            db.session.commit()

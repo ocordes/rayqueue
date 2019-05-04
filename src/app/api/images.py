@@ -30,6 +30,7 @@ import connexion
 
 
 def get_image(user, token_info, image_id):
+    HostInfo.update_activity(connexion.request.headers.get('hostid', -1))
     image = Image.query.get(image_id)
 
     if image is None:
@@ -89,7 +90,7 @@ sends a file as a model and creates a new image instance
 
 def image_upload_model(user, token_info, project_id, filename):
     # extract hostid for submitter from header
-    hostid = connexion.request.headers.get('hostid', -1)
+    HostInfo.add_submits(connexion.request.headers.get('hostid', -1))
 
     project = Project.query.get(project_id)
 
@@ -225,7 +226,7 @@ the rendering process
 def image_finish(user, token_info, image_id, body):
 
     # extract hostid of the worker from header
-    hostid = connexion.request.headers.get('hostid', -1)
+    HostInfo.add_rendered(connexion.request.headers.get('hostid', -1))
 
     image = Image.query.get(image_id)
 
@@ -265,7 +266,7 @@ def image_finish(user, token_info, image_id, body):
 def queue_next(user, token_info):
     # extract hostid for worker from header
     # the worker with this hostid is active -> set flag
-    hostid = connexion.request.headers.get('hostid', -1)
+    HostInfo.update_activity(connexion.request.headers.get('hostid', -1))
 
     qe = queue_manager.next(user)
 

@@ -4,12 +4,12 @@
 rayqueue.py
 
 written by: 2019-01-20
-changed by; 2019-04-21
+changed by; 2019-05-04
 
 """
 
 __author__  = 'Oliver Cordes'
-__version__ = '0.0.11'
+__version__ = '0.0.12'
 
 
 # used for the cli extension
