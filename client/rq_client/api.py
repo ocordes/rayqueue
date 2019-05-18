@@ -3,7 +3,7 @@
 rq_client/api.py
 
 written by: Oliver Cordes 2019-02-12
-changed by: Oliver Cordes 2019-05-03
+changed by: Oliver Cordes 2019-05-18
 
 """
 
@@ -13,6 +13,10 @@ import configparser
 import json
 
 from rq_client.locals import get_host_info
+
+from rq_client import __version__
+
+
 
 try:
     import requests
@@ -80,7 +84,9 @@ class Session(object):
     login into the api
     """
     def login(self):
-        data = { 'username:': self._username, 'password': self._password }
+        data = { 'username:': self._username,
+                 'password': self._password,
+                 'client_version': __version__ }
         status, data = self.raw_request('/login', data=data,
                             request_type=self.rsession.post)
 

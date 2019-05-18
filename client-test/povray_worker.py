@@ -102,9 +102,10 @@ class PovrayWorker(object):
                         fname = os.path.join(path, entry.name)
                         config = configparser.ConfigParser()
                         config.read(fname)
-                        dir = config.get('DEFAULT', 'DIR', fallback=None)
-                        if dir is not None:
-                            dirs.append(os.path.join('..', subdir, dir))
+                        cdirs = config.get('DEFAULT', 'DIR', fallback=None)
+                        if cdirs is not None:
+                            for dir in [i.strip() for i in cdirs.split(',')]:
+                                dirs.append(os.path.join('..', subdir, dir))
 
         return dirs
 
@@ -116,6 +117,22 @@ class PovrayWorker(object):
             with tarfile.open(filename) as tar:
                 tar.extractall(dir)
         return True
+
+
+    def check_extracted_file(self, fileid, md5sum, subdir='.'):
+        check_filename = os.path.join(self._tempdir, subdir, '{}.info'.format(fileid))
+        if os.access(check_filename, os.R_OK) == False:
+            return False
+
+        with open(check_filename, 'r') as f:
+            rmd5sum = f.readline().rstrip('\n')
+        return rmd5sum==md5sum
+
+
+    def mark_extracted_file(self, fileid, md5sum, subdir='.'):
+        check_filename = os.path.join(self._tempdir, subdir, '{}.info'.format(fileid))
+        with open(check_filename, 'w') as f:
+            f.write('%s\n' % md5sum)
 
 
     def _download_extract_file(self, fileid, msg, subdir='.', md5sum=None):
@@ -130,6 +147,11 @@ class PovrayWorker(object):
             dbfile = File.get_db_by_id(self._session, fileid)
             md5sum = dbfile.md5sum
 
+
+        # check if this file is already on disk?
+        if self.check_extracted_file(fileid, md5sum, subdir=subdir):
+            return True
+
         status, filename = File.get_by_id(self._session, fileid, dir, md5sum=md5sum)
 
         print('Downloaded \'%s\' file: %s (%s)' % (msg, filename, (status and 'OK' or 'Fail' )), file=self._logfile )
@@ -137,6 +159,7 @@ class PovrayWorker(object):
         if status:
             status = self._extract(filename, subdir)
             os.remove(filename)
+            self.mark_extracted_file(fileid, md5sum, subdir=subdir)
         return status
 
 

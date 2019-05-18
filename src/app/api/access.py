@@ -3,7 +3,7 @@
 app/api/users.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-05-04
+changed by: Oliver Cordes 2019-05-18
 
 """
 
@@ -55,8 +55,10 @@ def login(user):
     :return:        200 on success + access_token
                     401 if checks were not successful
     """
-    username = user.get("username", None)
-    password = user.get("password", None)
+    username = user.get('username', None)
+    password = user.get('password', None)
+    client_version = user.get('client_version', None)
+
 
     # check if username/password combination is valid
     user_info = User.query.filter_by(username=username).first()
@@ -87,6 +89,9 @@ def login(user):
 
     resp = jsonify(data)
     resp.status_code = 200
+
+
+    current_app.logger.info('API-Login: User {} successfully logged in (client_version={})'.format(user_info.username, client_version))
 
     return resp
 
