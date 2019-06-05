@@ -20,6 +20,7 @@ setup(
     packages=['rq_client'],
     install_requires=[
        'requests',
-       'psutil>=5.6.2'
+       'psutil>=5.6.2',
+       'toml'
     ]
 )
