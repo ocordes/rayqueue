@@ -21,4 +21,4 @@ done
 # flask commands
 #exec flask run -h 0.0.0.0
 #exec gunicorn -b :5000 --access-logfile - --error-logfile - rayqueue:app
-exec gunicorn --worker-class eventlet -w 1 -b :5000 --access-logfile - --error-logfile - rayqueue:app
+exec gunicorn --no-sendfile --worker-class eventlet -w 1 -b :5000 --access-logfile - --error-logfile - rayqueue:app

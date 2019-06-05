@@ -6,8 +6,16 @@ services:
     restart: always
     networks:
       - web
-    ports:
-      - "5000:5000"
+    expose:
+      - "5000"
+    labels:
+      - "traefik.docker.network=web"
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=Host:rayqueue.amac171.astro.uni-bonn.de"
+      - "traefik.port=5000"
+      - "traefik.protocol=http"
+    #ports:
+    #  - "5000:5000"
     volumes:
       - rayqueue_data:/home/rayqueue/src/data
     environment:
