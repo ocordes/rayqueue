@@ -9,35 +9,22 @@ WORKDIR /home/rayqueue
 
 COPY requirements.dat requirements.dat
 
+# add graphics and sqlite
+RUN apk --no-cache add libjpeg-turbo sqlite linux-headers
+
 # add a build structure for python modules
-RUN apk --no-cache add --virtual .build-dependencies zlib-dev jpeg-dev gcc libc-dev linux-headers
+RUN apk --no-cache add --virtual .build-dependencies zlib-dev jpeg-dev gcc libc-dev
 
 RUN python -m venv venv
 RUN venv/bin/pip install --no-cache-dir -r requirements.dat
 RUN venv/bin/pip install --no-cache-dir gunicorn
 
-
-
-FROM python:3.7-alpine
-
-# add graphics and sqlite
-RUN apk --no-cache add libjpeg-turbo sqlite
-
-# add the rayqueue user
-RUN adduser -D rayqueue
-
-# copy from previous build
-COPY --from=0 /home /home
-
-# we are now in our home
-WORKDIR /home/rayqueue
+# remove build structure
+RUN apk del .build-dependencies
 
 COPY src src
-
-# prepare some directories
-RUN mkdir src/data
-RUN mkdir src/logs
-
+RUN rm -rf src/data/*
+RUN rm src/logs/*
 COPY boot.sh .
 RUN chmod +x boot.sh
 
