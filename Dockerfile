@@ -23,8 +23,8 @@ RUN venv/bin/pip install --no-cache-dir gunicorn
 RUN apk del .build-dependencies
 
 COPY src src
-RUN rm -rf src/data/*
-RUN rm src/logs/*
+RUN mkdir -p src/data
+RUN mkdir -p src/logs
 COPY boot.sh .
 RUN chmod +x boot.sh
 
