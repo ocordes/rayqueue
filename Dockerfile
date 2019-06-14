@@ -33,8 +33,11 @@ COPY --from=0 /home /home
 WORKDIR /home/rayqueue
 
 COPY src src
-RUN rm -rf src/data/*
-RUN rm src/logs/*
+
+# prepare some directories
+RUN mkdir src/data
+RUN mkdir src/logs
+
 COPY boot.sh .
 RUN chmod +x boot.sh
 
