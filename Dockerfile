@@ -35,8 +35,8 @@ WORKDIR /home/rayqueue
 COPY src src
 
 # prepare some directories
-RUN mkdir src/data
-RUN mkdir src/logs
+RUN mkdir -p src/data
+RUN mkdir -p src/logs
 
 COPY boot.sh .
 RUN chmod +x boot.sh

@@ -1,8 +1,7 @@
 version: '3'
 services:
   rayqueue:
-    build: .
-    image: "rayqueue:latest"
+    image: ocordes/rayqueue:latest
     restart: always
     networks:
       - web
