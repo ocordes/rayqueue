@@ -111,3 +111,4 @@ venv.bak/
 /src/data/
 create_docker.sh
 /client-test/worker
+*.ini

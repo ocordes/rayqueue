@@ -2,6 +2,10 @@
 
 # this script is used to boot a Docker container
 
+# handle TZ for pytz!
+
+[ -n "$TZ" ] || export TZ=UTC
+
 source venv/bin/activate
 cd src
 export FLASK_APP=rayqueue.py
