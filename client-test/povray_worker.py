@@ -343,8 +343,7 @@ class PovrayWorker(object):
             running = False
 
 # main
-rq = Session(username='ocordes', password='cTower',
-                base_url='http://localhost:4555/api', verbose=True)
+rq = Session(config='rayqueue.ini')
 
 
 if rq.login() == False:
