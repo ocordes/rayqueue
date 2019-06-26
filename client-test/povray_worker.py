@@ -1,9 +1,14 @@
 """
 
 written by: Oliver Cordes 2019-03-06
-changed by: Oliver Cordes 2019-04-20
+changed by: Oliver Cordes 2019-06-26
 
 """
+
+from dotenv import load_dotenv
+load_dotenv()
+
+
 
 from rq_client.api import Session
 from rq_client.projects import Project
@@ -355,9 +360,8 @@ print('successfully logged into the RQ API')
 
 rq.send_host_info()
 
-default_libs = ['/Users/ocordes/software/PovrayCommandLineMacV2',
-                '/Users/ocordes/software/PovrayCommandLineMacV2/ini',
-                '/Users/ocordes/software/PovrayCommandLineMacV2/include']
+# read the default libs from environment
+default_libs=os.getenv('default_libs').split(':')
 
 pw = PovrayWorker(rq, 'worker', default_libs=default_libs)
 pw.run()

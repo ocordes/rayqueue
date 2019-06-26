@@ -19,6 +19,7 @@ setup(
     version=__version__,
     packages=['rq_client'],
     install_requires=[
+       'python-dotenv',
        'requests',
        'psutil>=5.6.2',
        'toml'
