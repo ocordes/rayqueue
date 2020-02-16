@@ -37,13 +37,14 @@ class Session(object):
 
         self._verbose = verbose
 
-        if config is None:
+        if not self.read_config(config):
             self._username = username
             self._password = password
 
             self._base_url = base_url
-        else:
-            self.read_config(config)
+            print('Omit rayqueue config files!')
+
+
 
         self.set_base_url(self._base_url)
         self._token    = None
@@ -58,13 +59,20 @@ class Session(object):
     reads a config file with all parameters
     """
     def read_config(self, configfile):
+        if configfile is None:
+            return False
         config = configparser.ConfigParser()
-        config.read(configfile)
+        read_files = config.read(configfile)
+        # check if a config was read
+        if len(read_files) == 0:
+            return False
+
         rayqueue = config['rayqueue']
         self._username = rayqueue.get('username')
         self._password = rayqueue.get('password')
         self._base_url = rayqueue.get('url')
 
+        return True
 
     """
     set_base_url
