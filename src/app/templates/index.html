@@ -1,40 +1,97 @@
-{% extends "base.html" %}
+{% extends "dashbase.html" %}
+
+{% block styles %}
+{{super()}}
+  <link rel="stylesheet" href="{{url_for('static', filename='clock.css')}}">
+{% endblock %}
+
 
 {% block app_content %}
 
-<div class="media">
-  <div class="media-left">
-    <img src="{{current_user.avatar(120)}}" class="media-object" style="width:120px">
-  </div>
-  <div class="media-body">
-    <h4 class="media-heading">
-      {{current_user.first_name}} {{current_user.last_name}}</h4>
-    <p>({{current_user.username}})</p>
-  </div>
-</div>
-<hr>
 
-    <h1>Dashboard</h1>
-
-    <div style="margin-top:50px" class="mainbox">
-      <div class="panel panel-info">
-          <div class="panel-heading">
-              <div class="panel-title">Current time</div>
-          </div>
-          <div class="panel-body">
-            <div class="form-horizontal">
-              <div class="form-group">
-                <label class="col-md-2 control-label">
-                  Client time
-                </label>
-                <div class="col-md-3">
-                  <input id="timer" type='text' class="form-control" />
-                </div>
-              </div>
-            </div>
-          </div>
+<div class="row justify-content-between">
+    <div class="card-col-6">
+      <div class="card-header">
+        Last image
       </div>
     </div>
+    <!-- <div class="card col-2">-->
+    <div class="card" style="width: 130px;">
+      <div class="card-header">
+        Time
+      </div>
+      <div class="clock mx-auto my-3">
+        <div class="clock__second"></div>
+        <div class="clock__minute"></div>
+        <div class="clock__hour"></div>
+        <div class="clock__axis"></div>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+          <section class="clock__indicator"></section>
+      </div>
+    </div>
+</div>
+
+<hr>
+
+
 
     <div style="margin-top:50px" class="mainbox">
       <div class="panel panel-info">
@@ -141,18 +198,10 @@
 {% block scripts %}
 {{super()}}
 
+<script src="{{url_for('static', filename='clock.js')}}"></script>
+
 {# ajax code #}
 <script>
-  var myVar = setInterval(myTimer, 1000);
-
-  function myTimer() {
-    var d = new Date();
-    //var t = d.toLocaleTimeString();
-    var t = d.toLocaleString();
-    //document.getElementById("timer").innerHTML = t;
-    document.getElementById("timer").value= t;
-  }
-
 
   function update_data() {
     $.get("/ajax/running_data", function(data) {

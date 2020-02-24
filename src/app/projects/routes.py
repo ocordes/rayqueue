@@ -57,7 +57,7 @@ def show_project(projectid):
         form.process()
 
     return render_template('projects/show_project.html',
-                            title='Project',
+                            title='Project \'{}\''.format(project.name),
                             form=form,
                             uform=UploadBaseFilesForm(prefix='Upload'),
                             mform=ManageBaseFileForm(prefix='Manage'),

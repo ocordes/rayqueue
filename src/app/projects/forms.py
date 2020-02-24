@@ -42,7 +42,7 @@ class UpdateProjectForm(FlaskForm):
 
 
 class UploadBaseFilesForm(FlaskForm):
-    upload = FileField('BaseFile', validators=[
+    upload = FileField('Choose Basefile ...', validators=[
                     FileRequired(),
                     FileAllowed(['tgz', 'zip', 'tar.gz'], 'Archives only!')
                     ])
@@ -59,4 +59,4 @@ class ManageImageForm(FlaskForm):
 
 class ProjectListForm(FlaskForm):
     remove = SubmitField('Remove')
-    create = SubmitField('Create')
+    create = SubmitField('+ Add New')

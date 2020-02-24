@@ -1,65 +1,64 @@
-{% extends "base.html" %}
+{% extends "dashbase.html" %}
 
 {% block app_content %}
-<div style="margin-top:50px" class="mainbox">
-  <div class="panel panel-info">
-      <div class="panel-heading">
-          <div class="panel-title">List of available users</div>
+
+<div class="card">
+  <h5 class="card-header">List of available users</h5>
+  <div class="card-body">
+    <form id="usersform" class="form-horizontal" role="form" method="post" action="">
+      {{form.hidden_tag()}}
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead>
+            <td></td>
+            <td>ID</td>
+            <td>Username</td>
+            <td>First name</td>
+            <td>Last name</td>
+            <td>Email</td>
+            <td>Status</td>
+            <td>isActive</td>
+            <td>Last seen</td>
+          </thead>
+          {% for user in users %}
+          <tr>
+            <td>
+              {% if user.id != 1 %}
+              <label>
+                <input type="checkbox" name="users" value="{{user.id}}">
+              </label>
+              {% endif %}
+            </td>
+            <td>{{user.id}}</td>
+            <td>{{user.username}} </td>
+            <td>{{user.first_name}}</td>
+            <td>{{user.last_name}}</td>
+            <td>
+              {% if user.email != '' %}
+              <a href="mailto:{{user.email}}">{{user.email}}</a>
+              {% else %}
+                <sl>no email</sl>
+              {% endif %}
+            </td>
+            <td>
+              {% if user.administrator %}
+                Admin
+              {% else %}
+                Member
+              {% endif %}
+            </td>
+            <td>{{user.is_active}}</td>
+            <td>{{user.last_seen.strftime('%Y-%m-%d %H:%M:%S')}}</td>
+          </tr>
+          {% endfor %}
+        </table>
       </div>
-      <div class="panel-body">
-        <form id="usersform" class="form-horizontal" role="form" method="post" action="">
-          {{form.hidden_tag()}}
-          <div class="table-responsive">
-            <table class="table table-bordered">
-              <thead>
-                 <td></td>
-                 <td>ID</td>
-                 <td>Username</td>
-                 <td>First name</td>
-                 <td>Last name</td>
-                 <td>Email</td>
-                 <td>Status</td>
-                 <td>isActive</td>
-                 <td>Last seen</td>
-              </thead>
-            {% for user in users %}
-              <tr>
-                <td>
-                  {% if user.id != 1 %}
-                  <label>
-                    <input type="checkbox" name="users" value="{{user.id}}">
-                  </label>
-                  {% endif %}
-                </td>
-                <td>{{user.id}}</td>
-                <td>{{user.username}} </td>
-                <td>{{user.first_name}}</td>
-                <td>{{user.last_name}}</td>
-                <td>
-                  {% if user.email != '' %}
-                  <a href="mailto:{{user.email}}">{{user.email}}</a>
-                  {% else %}
-                  <sl>no email</sl>
-                  {% endif %}
-                </td>
-                <td> {% if user.administrator %}
-                     Admin
-                     {% else %}
-                     Member
-                     {% endif %}
-                </td>
-                <td>{{user.is_active}}</td>
-                <td>{{user.last_seen.strftime('%Y-%m-%d %H:%M:%S')}}</td>
-              </tr>
-            {% endfor %}
-            </table>
-          </div>
-          {{ form.set_admin(class_="btn btn-primary") }}
-          {{ form.clear_admin(class_="btn btn-info") }}
-          {{ form.remove(onclick="return (doStuff())", class_="btn btn-danger") }}
-        </form>
-      </div>
+      {{ form.set_admin(class_="btn btn-primary") }}
+      {{ form.clear_admin(class_="btn btn-info") }}
+      {{ form.remove(onclick="return (doStuff())", class_="btn btn-danger") }}
+    </form>
   </div>
 </div>
+
 
 {% endblock %}

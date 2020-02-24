@@ -1,43 +1,40 @@
-{% extends "base.html" %}
+{% extends "dashbase.html" %}
 
 {% block app_content %}
-<div style="margin-top:50px" class="mainbox">
-  <div class="panel panel-info">
-      <div class="panel-heading">
-          <div class="panel-title">List of all workers</div>
-      </div>
-      <div class="panel-body">
-          <div class="table-responsive">
-            <table class="table table-bordered">
-              <thead>
-                 <td>ID</td>
-                 <td>IP</td>
-                 <td>HostName</td>
-                 <td>CPUs</td>
-                 <td>Memory</td>
-                 <td>OS</td>
-                 <td>Python version</td>
-                 <td>Submits</td>
-                 <td>Rendered</td>
-                 <td>Active</td>
-              </thead>
-            {% for worker in workers %}
-              <tr>
-                <td>{{worker.id}}</td>
-                <td>{{worker.ip}} </td>
-                <td>{{worker.hostname}}</td>
-                <td>{{worker.cpus}}</td>
-                <td>{{worker.mem}}</td>
-                <td>{{worker.os}}</td>
-                <td>{{worker.python}}</td>
-                <td>{{worker.submits}}</td>
-                <td>{{worker.rendered}}</td>
-                <td>{{worker.active.strftime('%Y-%m-%d %H:%M:%S')}}</td>
-              </tr>
-            {% endfor %}
-            </table>
-          </div>
-      </div>
+
+<div class="card">
+  <h5 class="card-header">List of all workers</h5>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead>
+          <td>ID</td>
+          <td>IP</td>
+          <td>HostName</td>
+          <td>CPUs</td>
+          <td>Memory</td>
+          <td>OS</td>
+          <td>Python version</td>
+          <td>Submits</td>
+          <td>Rendered</td>
+          <td>Active</td>
+        </thead>
+        {% for worker in workers %}
+        <tr>
+          <td>{{worker.id}}</td>
+          <td>{{worker.ip}} </td>
+          <td>{{worker.hostname}}</td>
+          <td>{{worker.cpus}}</td>
+          <td>{{worker.mem}}</td>
+          <td>{{worker.os}}</td>
+          <td>{{worker.python}}</td>
+          <td>{{worker.submits}}</td>
+          <td>{{worker.rendered}}</td>
+          <td>{{worker.active.strftime('%Y-%m-%d %H:%M:%S')}}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
   </div>
 </div>
 

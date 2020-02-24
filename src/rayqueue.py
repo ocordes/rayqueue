@@ -4,12 +4,12 @@
 rayqueue.py
 
 written by: 2019-01-20
-changed by; 2019-05-04
+changed by; 2020-02-21
 
 """
 
 __author__  = 'Oliver Cordes'
-__version__ = '0.0.12'
+__version__ = '0.0.13'
 
 
 # used for the cli extension
@@ -48,9 +48,10 @@ current app status is used!
 """
 @app.context_processor
 def utility_processor():
-    return { 'rq_version': __version__,
-             'rq_copyright': '2019 by {}'.format(__author__),
-             'activity': activity }
+    return { 'app_version': __version__,
+             'app_copyright': '2019-2020 by {}'.format(__author__),
+             'activity': activity,
+             'app_name': 'Rayqueue' }
 
 
 

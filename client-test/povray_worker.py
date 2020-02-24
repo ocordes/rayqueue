@@ -1,7 +1,7 @@
 """
 
 written by: Oliver Cordes 2019-03-06
-changed by: Oliver Cordes 2019-06-26
+changed by: Oliver Cordes 2020-02-23
 
 """
 
@@ -16,7 +16,7 @@ from rq_client.files import File
 from rq_client.images import Image
 
 import time
-import os
+import os, sys
 import shutil
 
 import tarfile

@@ -92,7 +92,7 @@ class Session(object):
     login into the api
     """
     def login(self):
-        data = { 'username:': self._username,
+        data = { 'username': self._username,
                  'password': self._password,
                  'client_version': __version__ }
         status, data = self.raw_request('/login', data=data,

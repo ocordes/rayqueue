@@ -1,61 +1,61 @@
-{% extends "base.html" %}
+{% extends "dashbase.html" %}
 
 {% block app_content %}
 
-<div style="margin-top:50px" class="mainbox">
-  <div class="panel panel-info">
-      <div class="panel-heading">
-          <div class="panel-title">List of available projects</div>
-      </div>
-      <div class="panel-body">
-        <form id="projectsform" class="form-horizontal" role="form" method="post" action="">
-          {{form.hidden_tag()}}
 
-          <div class="table-responsive">
-              <table class="table table-bordered">
-                <thead>
-                  <td></td>
-                  <td>ID</td>
-                  <td>Name</td>
-                  <td>Owner</td>
-                  <td>Type</td>
-                  <td>Version</td>
-                  <td>Public</td>
-                  <td>Status</td>
-                  <td>Created</td>
-                </thead>
-                {% if projects is none %}
-                <tr>
-                  <td colspan="4">No projects</td>
-                </tr>
-                {% else %}
-                {% for project in projects %}
-                <tr>
-                  <td>
-                   <input type="checkbox" name="projects" value="{{project.id}}">
-                  </td>
-                  <td><a href="{{url_for('projects.show_project', projectid=project.id)}}">{{project.id}}</a></td>
-                  <td><a href="{{url_for('projects.show_project', projectid=project.id)}}">{{project.name}}</a></td>
-                  <td>{{user_id(project.user_id).username}}</td>
-                  {% if project.project_type == 0 %}
-                  <td>Image</td>
-                  {% else %}
-                  <td>Animation</td>
-                  {% endif %}
-                  <td>{{project.version}}</td>
-                  <td>{{project.is_public}}</td>
-                  <td>{{project.state2str}}</td>
-                  <td>{{project.timestamp.strftime('%Y-%m-%d %H:%M')}}</td>
-                </tr>
-                {% endfor %}
-                {% endif %}
-               </table>
-          </div>
-          {{ form.remove(class_="btn btn-danger", onclick="return (doStuff())") }} {{ form.create(class_="btn btn-info") }}
-        </form>
+<div class="card">
+  <h5 class="card-header">List of available projects</h5>
+  <div class="card-body">
+    <form id="projectsform" class="form-horizontal" role="form" method="post" action="">
+      {{form.hidden_tag()}}
+      <div class="d-flex justify-content-end">
+        {{ form.create(class_="btn btn-info m-3")}}
       </div>
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead>
+            <td></td>
+            <td>ID</td>
+            <td>Name</td>
+            <td>Owner</td>
+            <td>Type</td>
+            <td>Version</td>
+            <td>Public</td>
+            <td>Status</td>
+            <td>Created</td>
+          </thead>
+          {% if projects is none %}
+          <tr>
+            <td colspan="4">No projects</td>
+          </tr>
+          {% else %}
+          {% for project in projects %}
+          <tr>
+            <td>
+              <input type="checkbox" name="projects" value="{{project.id}}">
+            </td>
+            <td><a href="{{url_for('projects.show_project', projectid=project.id)}}">{{project.id}}</a></td>
+            <td><a href="{{url_for('projects.show_project', projectid=project.id)}}">{{project.name}}</a></td>
+            <td>{{user_id(project.user_id).username}}</td>
+            {% if project.project_type == 0 %}
+            <td>Image</td>
+            {% else %}
+            <td>Animation</td>
+            {% endif %}
+            <td>{{project.version}}</td>
+            <td>{{project.is_public}}</td>
+            <td>{{project.state2str}}</td>
+            <td>{{project.timestamp.strftime('%Y-%m-%d %H:%M')}}</td>
+          </tr>
+          {% endfor %}
+          {% endif %}
+        </table>
+      </div>
+      {{form.remove(class_="btn btn-danger",onclick="return (doStuff())")}}
+    </form>
   </div>
 </div>
+
 
 
 <script>

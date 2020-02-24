@@ -94,7 +94,21 @@ def running_data():
                     continue
         qes.append(qe)
 
+
+    print(current_user.images[-1])
+    print(current_user.images[-1].render_image)
+    imageid = current_user.images[-1].render_image
+    print(url_for('projects.get_render_image',imageid=imageid))
+
     return jsonify( { 'projects': render_template('ajax/running_projects.html',
                     projects=projects),
                       'queue':  render_template('ajax/running_queue.html',
                     qes=qes) } )
+
+
+
+@bp.route('/ajax/check_update')
+@login_required
+def check_update():
+    is_update = False
+    return jsonify( {'update' : is_update })

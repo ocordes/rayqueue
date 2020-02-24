@@ -196,7 +196,7 @@ def verify_email(token):
     flash('Your account is now complete.')
     msg = 'Accout for user \'{}\' is now complete!'.format(user.username)
     current_app.logger.info(msg)
-    
+
     return redirect(url_for('auth.login'))
 
 
@@ -214,6 +214,7 @@ def preferences():
         send_test_email(test_email_form.test_email.data)
         flash('Send test email to \'{}\''.format(test_email_form.test_email.data))
     return render_template('auth/preferences.html',
+                            title='Preferences',
                             logfile_data=logfile_data,
                             test_email_form=test_email_form)
 

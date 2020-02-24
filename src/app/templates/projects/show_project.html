@@ -1,320 +1,256 @@
-{% extends "base.html" %}
+{% extends "dashbase.html" %}
 
 {% block app_content %}
-    <div style="margin-top:50px" class="mainbox">
-      <div class="panel panel-info">
-          <div class="panel-heading">
-              <div class="panel-title">Project</div>
-          </div>
-          <div class="panel-body">
-            <div class="media">
-              <div class="media-left">
-                <img src="{{project.owner.avatar(120)}}" class="media-object" style="width:120px">
-              </div>
-              <div class="media-body">
-                <h4 class="media-heading">
-                  {{project.owner.first_name}} {{project.owner.last_name}}</h4>
-                <p>({{project.owner.username}})</p>
-              </div>
-            </div>
-            <hr>
-            <form id="testemailform" class="form-horizontal" role="form" method="post" action="">
-                {{form.hidden_tag()}}
-                <div class="form-group">
-                    <label for="name" class="col-md-2 control-label">
-                      {{form.name.label}}
-                    </label>
-                    <div class="col-md-10">
-                      {{form.name(class_="form-control",placeholder="Name",readonly=readonly)}}
-                    </div>
-                    {% if form.name.errors|length > 0 %}
-                    <div id="signupalert" class="alert alert-danger">
-                    {% for error in form.name.errors %}
-                        <span>{{error}}</span>
-                    {% endfor %}
-                    </div>
-                    {% endif %}
-                </div>
-                <div class="form-group">
-                  <label for="created" class="col-md-2 control-label">
-                      Created
-                  </label>
-                  <div class="col-md-10 radio-inline">
-                      {{ project.timestamp.strftime("%Y-%m-%d %H:%M")}}
-                  </div>
-                </div>
-                <div class="form-group">
-                    <label for="project_type" class="col-md-2 control-label">
-                        {{form.project_type.label}}
-                    </label>
-                    <div class="col-md-10">
-                    {% for subfield in form.project_type %}
-                      <label class="radio-inline {{readonly and 'disabled' or ''}}">
-                        {{subfield()}} {{subfield.label}}
-                      </label>
-                    {% endfor %}
-                    </div>
-                </div>
-                <div class="form-group">
-                  <label for="version" class="col-md-2 control-label">
-                       {{form.version.label}}
-                  </label>
-                  <div class="col-md-1">
-                  {{form.version(class_="form-control",readonly=readonly)}}
-                  </div>
-                </div>
-                <div class="form-group">
-                    <label for="is_public" class="col-md-2 control-label">
-                        Visibility
-                    </label>
-                    <div class="col-md-10">
-                      <label class="checkbox-inline {{readonly and 'disabled' or ''}}">
-                        {{ form.is_public }} {{form.is_public.label}}
-                      </label>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="status" class="col-md-2 control-label">
-                      State
-                    </label>
-                    <div class="col-md-10">
-                      <label class="control-label">
-                        {{project.state2str}}
-                      </label>
-                    </div>
-                </div>
 
+<div class="card">
+  <img class="card-img-top" src="{{project.owner.avatar(128)}}" style="width: 128px;" alt="Avatar">
+  <div class="card-body">
+    <h1 class="card-title">{{project.owner.first_name}} {{project.owner.last_name}}</h1>
+    <p class="card-text">({{project.owner.username}})</p>
+  </div>
+</div>
 
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-10">
-                      {{form.update(class_="btn btn-info", id="btn-update")}}
-                   </div>
-               </div>
-           </form>
-         </div>
-       </div>
-    </div>
-
-    <div style="margin-top:50px" class="mainbox">
-      <div class="panel panel-info">
-          <div class="panel-heading">
-              <div class="panel-title">Statistics</div>
-          </div>
-          <div class="panel-body">
-            <div class="row">
-              <label class="col-md-offset-1 col-md-1 control-label">
-                Images
-              </label>
-              <div class="col-md-6">
-                <b>{{project.number_of_images()}}</b>
-              </div>
-            </div>
-            <div class="row">
-              <label class="col-md-offset-1 col-md-1 control-label">
-                Open
-              </label>
-              <div class="col-md-6">
-                <b>{{project.number_of_open_images()}}</b>
-              </div>
-            </div>
-            <div class="row">
-              <label class="col-md-offset-1 col-md-1 control-label">
-                Finished
-              </label>
-              <div class="col-md-6">
-                <b>{{project.number_of_finished_images()}}</b>
-              </div>
-            </div>
-            <div class="row">
-              <label class="col-md-offset-1 col-md-1 control-label">
-                Error
-              </label>
-              <div class="col-md-6">
-                <b>{{project.number_of_error_images()}}</b>
-              </div>
-            </div>
-            <hr>
-            <div class="row">
-              <label class="col-md-offset-1 col-md-3 control-label">
-                Project duration
-              </label>
-              <div class="col-md-6">
-                {{'%0.1f'|format(project.project_time.total_seconds())}}s
-              </div>
-            </div>
-            <hr>
-            <div class="row">
-              <label class="col-md-offset-1 col-md-3 control-label">
-                Numer of processed images
-              </label>
-              <div class="col-md-6">
-                {{project.project_images}}
-              </div>
-            </div>
+<div class="card mt-3">
+  <h5 class="card-header">Descriptions</h5>
+  <div class="card-body">
+    <form id="updateprojectform" class="form-horizontal" role="form" method="post" action="">
+      {{form.hidden_tag()}}
+      <div class="input-group form-group">
+        <div class="input-group-prepend">
+          {{form.name.label(class_="input-group-text",style="width:150px")}}
+        </div>
+        {{form.name(class_="form-control",placeholder="Name")}}
+        {% if form.name.errors|length > 0 %}
+        <div id="signupalert" class="alert alert-danger">
+          {% for error in form.name.errors %}
+          <span>{{error}}</span>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      <div class="input-group form-group">
+        <div class="input-group-prepend">
+          {{form.project_type.label(class_="input-group-text",style="width:150px")}}
+        </div>
+        {% for subfield in form.project_type %}
+        <div class="input-group-text">
+          {{subfield()}}
+        </div>
+        {{subfield.label(class_="input-group-text")}}
+        {% endfor %}
+      </div>
+      <div class="input-group form-group">
+        <div class="input-group-prepend">
+          {{form.version.label(class_="input-group-text",style="width:150px")}}
+        </div>
+        {{form.version(class_="form-control")}}
+      </div>
+      <div class="input-group form-group">
+        <div class="input-group-prepend">
+          <div class="input-group-text" style="width:150px">
+            Visibility
           </div>
         </div>
-    </div>
-
-
-    <div style="margin-top:50px" class="mainbox">
-      <div class="panel panel-info">
-          <div class="panel-heading">
-              <div class="panel-title">BaseFiles</div>
-          </div>
-          <div class="panel-body">
-            <form id="basefilesform" class="form-horizontal" role="form" method="post" action="{{url_for('projects.remove_project_basefile',projectid=project.id)}}">
-            <!--<form id="basefilesform" class="form-horizontal" role="form" method="post" action="">-->
-              {{ mform.hidden_tag() }}
-            <div class="table-responsive">
-              <table class="table table-bordered">
-                <thead>
-                  <td></td>
-                  <td>ID</td>
-                  <td>Name</td>
-                  <td>Size</td>
-                  <td>MD5</td>
-                  <td>Created</td>
-                </thead>
-                {% if project.base_files|length==0 %}
-                <tr>
-                  <td colspan="6">No files</td>
-                </tr>
-                {% else %}
-                {% for file in project.base_files %}
-                <tr>
-                  <td>
-                    <input type="checkbox" name="files" value="{{file.id}}">
-                  </td>
-                  <td> {{file.id}} </td>
-                  <td> <a href="{{url_for('projects.get_project_file',projectid=project.id,fileid=file.id)}}">{{file.name[37:]}}</a> </td>
-                  <td> {{size2human(file.size)}} </td>
-                  <td> {{file.md5sum}} </td>
-                  <td> {{file.timestamp.strftime("%Y-%m-%d %H:%M")}} </td>
-                </tr>
-                {% endfor %}
-                {% endif %}
-              </table>
-            </div>
-            <div class="form-group">
-              <div class="col-md-9">
-                <button onclick="checkall('files')" id="btn-checkall" type="button" class="btn btn-info"><i class="icon-hand-right"></i>Select all</button>
-                <button onclick="uncheckall('files')" id="btn-uncheckall" type="button" class="btn btn-info"><i class="icon-hand-right"></i>Unselect all</button>
-                {{mform.remove(onclick="return (remove_confirm())", class_="btn btn-danger", id="btn-remove")}}
-              </div>
-            </div>
-            </form>
-
-            <div style="border-top: 1px solid#888; padding-top:15px; font-size:85%" >
-            <form id="uploadfileform" class="form-horizontal" role="form" method="post" action="{{url_for('projects.upload_project_basefile',projectid=project.id)}}" enctype="multipart/form-data">
-              {{ uform.hidden_tag() }}
-              <div class="form-group">
-                <label for="upload" class="col-md-2 control-label">
-                  New file
-                </label>
-                <label class="col-md-5 btn btn-default btn-file">
-                  {{uform.upload()}}
-                </label>
-                <label class="col-md-2">
-                  {{uform.submit(class_="btn btn-info", id="btn-file-upload")}}
-                </label>
-              </div>
-            </form>
-            </div>
-          </div>
+        <div class="input-group-text">
+          {{ form.is_public }}
+        </div>
+        {{form.is_public.label(class_="input-group-text")}}
       </div>
-    </div>
-
-    <div style="margin-top:50px" class="mainbox">
-      <div class="panel panel-info">
-          <div class="panel-heading">
-              <div class="panel-title">Images</div>
-          </div>
-          <div class="panel-body">
-            <form id="imageform" class="form-horizontal" role="form" method="post" action="{{url_for('projects.remove_project_image',projectid=project.id)}}">
-              {{ iform.hidden_tag() }}
-            <div class="table-responsive">
-              <table class="table table-bordered">
-                <thead>
-                  <td></td>
-                  <td>ID</td>
-                  <td>State</td>
-                  <td>Error code</td>
-                  <td>Model</td>
-                  <td>Created</td>
-                  <td>Rendered Image</td>
-                  <td>Log file</td>
-                  <td>Finished</td>
-                  <td>Process time</td>
-                </thead>
-                {% if project.images|length==0 %}
-                {#{% if project.images %}#}
-                <tr>
-                  <td colspan="8">No files</td>
-                </tr>
-                {% else %}
-                {% for image in project.images %}
-                <tr>
-                  <td>
-                    <input type="checkbox" name="images" value="{{image.id}}">
-                  </td>
-                  <td><a href="{{url_for('projects.show_image',imageid=image.id)}}">{{image.id}}</a>
-                  </td>
-                  <td> {{image.state2str}} </td>
-                  <td>
-                    {% if image.state == image.IMAGE_STATE_FINISHED %}
-                    {{image.error_code}}
-                    {% else %}
-                    Unavailable
-                    {% endif %}
-                  </td>
-                  <td>
-                    <a href="{{url_for('projects.get_project_file',projectid=project.id,fileid=image.model)}}">{{image.model}}</a>
-                  </td>
-                  <td> {{image.created.strftime("%Y-%m-%d %H:%M")}} </td>
-                  <td>
-                    {% if image.render_image == -1 %}
-                    Unavailable
-                    {% else %}
-                    <a href="{{url_for('projects.get_project_file',projectid=project.id,fileid=image.render_image)}}">{{image.render_image}}</a> </td>
-                    {% endif %}
-                  </td>
-                  <td>
-                    {% if image.log_file == -1 %}
-                    Unavailable
-                    {% else %}
-                    <a href="{{url_for('projects.get_project_file',projectid=project.id,fileid=image.log_file)}}">{{image.log_file}}</a> </td>
-                    {% endif %}
-                  </td>
-                  <td>
-                    {% if image.state == image.IMAGE_STATE_FINISHED %}
-                    {{image.finished.strftime("%Y-%m-%d %H:%M")}} </td>
-                    {% else %}
-                    None
-                    {% endif %}
-                  </td>
-                  <td>
-                    {% if image.state == image.IMAGE_STATE_FINISHED %}
-                    {{'%0.1f'|format((image.finished-image.requested).total_seconds())}}s
-                    {% else %}
-                    None
-                    {% endif %}
-                  </td>
-                </tr>
-                {% endfor %}
-                {% endif %}
-              </table>
-            </div>
-            <div class="form-group">
-              <div class="col-md-9">
-                <button onclick="checkall('images')" id="btn-checkall" type="button" class="btn btn-info"><i class="icon-hand-right"></i>Select all</button>
-                <button onclick="uncheckall('images')" id="btn-uncheckall" type="button" class="btn btn-info"><i class="icon-hand-right"></i>Unselect all</button>
-                {{iform.remove(onclick="return (remove_confirm())", class_="btn btn-danger", id="btn-remove")}}
-              </div>
-            </div>
-            </form>
-          </div>
+      <div class="input-group form-group">
+        <div class="input-group-text" style="width:150px">
+          State
+        </div>
+        <div class="input-group-text">
+          {{project.state2str}}
+        </div>
       </div>
+      <div class="input-group form-group">
+        {{form.update(class_="btn btn-info", id="btn-submit")}}
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<div class="card mt-3">
+  <h5 class="card-header">Statistics</h5>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <tr>
+          <td>Total Images</td><td>{{project.number_of_images()}}</td>
+        </tr>
+        <tr>
+          <td>Open Images</td><td>{{project.number_of_open_images()}}</td>
+        </tr>
+        <tr>
+          <td>Finished Images</td><td>{{project.number_of_finished_images()}}</td>
+        </tr>
+        <tr>
+          <td>Error Images</td><td>{{project.number_of_error_images()}}</td>
+        </tr>
+        <tr>
+          <td>Project duration (last run)</td>
+          <td>{{'%0.1f'|format(project.project_time.total_seconds())}}s</td>
+        </tr>
+        <tr>
+          <td>Numer of total processed images</td>
+          <td>{{project.project_images}}</td>
+        </tr>
+      </table>
     </div>
+  </div>
+</div>
+
+<div class="card mt-3">
+  <h5 class="card-header">BaseFiles</h5>
+  <div class="card-body">
+    <form id="basefilesform" class="form-horizontal" role="form" method="post" action="{{url_for('projects.remove_project_basefile',projectid=project.id)}}">
+      {{ mform.hidden_tag() }}
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead>
+            <td></td>
+            <td>ID</td>
+            <td>Name</td>
+            <td>Size</td>
+            <td>MD5</td>
+            <td>Created</td>
+          </thead>
+          {% if project.base_files|length==0 %}
+          <tr>
+            <td colspan="6">No files</td>
+          </tr>
+          {% else %}
+          {% for file in project.base_files %}
+          <tr>
+            <td>
+              <input type="checkbox" name="files" value="{{file.id}}">
+            </td>
+            <td> {{file.id}} </td>
+            <td> <a href="{{url_for('projects.get_project_file',projectid=project.id,fileid=file.id)}}">{{file.name[37:]}}</a> </td>
+            <td> {{size2human(file.size)}} </td>
+            <td> {{file.md5sum}} </td>
+            <td> {{file.timestamp.strftime("%Y-%m-%d %H:%M")}} </td>
+          </tr>
+          {% endfor %}
+          {% endif %}
+        </table>
+      </div>
+      <button onclick="checkall('files')" id="btn-checkall" type="button" class="btn btn-info"><i class="icon-hand-right"></i>Select all</button>
+      <button onclick="uncheckall('files')" id="btn-uncheckall" type="button" class="btn btn-info"><i class="icon-hand-right"></i>Unselect all</button>
+      {{mform.remove(onclick="return (remove_confirm())", class_="btn btn-danger", id="btn-remove")}}
+    </form>
+    <form id="uploadfileform" class="form-horizontal" role="form" method="post" action="{{url_for('projects.upload_project_basefile',projectid=project.id)}}" enctype="multipart/form-data">
+      {{ uform.hidden_tag() }}
+      <div class="input-group form-group mt-3">
+        <div class="input-group-prepend">
+          <div class="input-group-text">
+            New file
+          </div>
+        </div>
+        <div class="custom-file">
+          {{uform.upload(class_="custom-file-input")}}
+            <!-- <label class="custom-file-label" for="Upload-upload">Choose file</label>-->
+          {{uform.upload.label(class_="custom-file-label")}}
+        </div>
+        {{uform.submit(class_="btn btn-info", id="btn-file-upload")}}
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card mt-3">
+  <h5 class="card-header">Images</h5>
+  <div class="card-body">
+    <form id="imageform" class="form-horizontal" role="form" method="post" action="{{url_for('projects.remove_project_image',projectid=project.id)}}">
+      {{ iform.hidden_tag() }}
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead>
+            <td></td>
+            <td>ID</td>
+            <td>State</td>
+            <td>Error code</td>
+            <td>Model</td>
+            <td>Created</td>
+            <td>Rendered Image</td>
+            <td>Log file</td>
+            <td>Finished</td>
+            <td>Process time</td>
+          </thead>
+          {% if project.images|length==0 %}
+          {#{% if project.images %}#}
+          <tr>
+            <td colspan="8">No files</td>
+          </tr>
+          {% else %}
+          {% for image in project.images %}
+          <tr>
+            <td>
+              <input type="checkbox" name="images" value="{{image.id}}">
+            </td>
+            <td><a href="{{url_for('projects.show_image',imageid=image.id)}}">{{image.id}}</a>
+            </td>
+            <td> {{image.state2str}} </td>
+            <td>
+              {% if image.state == image.IMAGE_STATE_FINISHED %}
+              {{image.error_code}}
+              {% else %}
+              Unavailable
+              {% endif %}
+            </td>
+            <td>
+              <a href="{{url_for('projects.get_project_file',projectid=project.id,fileid=image.model)}}">{{image.model}}</a>
+            </td>
+            <td> {{image.created.strftime("%Y-%m-%d %H:%M")}} </td>
+            <td>
+              {% if image.render_image == -1 %}
+              Unavailable
+              {% else %}
+              <a href="{{url_for('projects.get_project_file',projectid=project.id,fileid=image.render_image)}}">{{image.render_image}}</a>
+              {% endif %}
+            </td>
+            <td>
+              {% if image.log_file == -1 %}
+              Unavailable
+              {% else %}
+              <a href="{{url_for('projects.get_project_file',projectid=project.id,fileid=image.log_file)}}">{{image.log_file}}</a>
+              {% endif %}
+            </td>
+            <td>
+              {% if image.state == image.IMAGE_STATE_FINISHED %}
+              {{image.finished.strftime("%Y-%m-%d %H:%M")}}
+              {% else %}
+              None
+              {% endif %}
+            </td>
+            <td>
+              {% if image.state == image.IMAGE_STATE_FINISHED %}
+              {{'%0.1f'|format((image.finished-image.requested).total_seconds())}}s
+              {% else %}
+              None
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+          {% endif %}
+        </table>
+      </div>
+      <div class="input-group form-group">
+        <button onclick="checkall('images')" id="btn-checkall" type="button" class="btn btn-info"><i class="icon-hand-right"></i>Select all</button>
+        <button onclick="uncheckall('images')" id="btn-uncheckall" type="button" class="btn btn-info"><i class="icon-hand-right"></i>Unselect all</button>
+        {{iform.remove(onclick="return (remove_confirm())", class_="btn btn-danger", id="btn-remove")}}
+      </div>
+    </form>
+  </div>
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
 
 <script>
   function checkall(name) {
@@ -340,6 +276,13 @@
   function remove_confirm(){
     return (confirm('Do you really want to remove these items?'))
   }
+
+
+  // Add the following code if you want the name of the file appear on select
+  $(".custom-file-input").on("change", function() {
+    var fileName = $(this).val().split("\\").pop();
+    $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+  });
 
 </script>
 {% endblock %}

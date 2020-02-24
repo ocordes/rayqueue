@@ -62,7 +62,8 @@ def users():
 
         db.session.commit()
     return render_template('auth/users.html',
-        title='List of users', users=User.query.all(), form=form)
+                            title='Users',
+                            users=User.query.all(), form=form)
 
 
 @bp.route('/user/<username>', methods=['GET','POST'])
@@ -87,6 +88,7 @@ def user(username):
         print(user.projects.all())
 
     return render_template('auth/user.html',
+                            title='User preferences',
                             user=user,
                             form=form,
                             projects=user.projects.all(),
@@ -99,4 +101,5 @@ def user(username):
 def workers():
     workers = HostInfo.query.order_by(desc(HostInfo.active)).all()
     return render_template('auth/workers.html',
+                            title='Workers',
                             workers=workers)

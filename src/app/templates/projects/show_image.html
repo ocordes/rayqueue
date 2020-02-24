@@ -1,166 +1,147 @@
-{% extends "base.html" %}
+{% extends "dashbase.html" %}
 
 {% block app_content %}
-  <div style="margin-top:50px" class="mainbox">
-    <div class="panel panel-info">
-      <div class="panel-heading">
-        <div class="panel-title">Image</div>
+
+<div class="card">
+  <img class="card-img-top" src="{{image.owner.avatar(128)}}" style="width: 128px;" alt="Avatar">
+  <div class="card-body">
+    <h1 class="card-title">{{image.owner.first_name}} {{image.owner.last_name}}</h1>
+    <p class="card-text">({{image.owner.username}})</p>
+  </div>
+</div>
+
+
+<div class="card mt-3">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-2">
+        Created:
       </div>
-      <div class="panel-body">
-        <div class="media">
-          <div class="media-left">
-            <img src="{{image.owner.avatar(120)}}" class="media-object" style="width:120px">
-          </div>
-          <div class="media-body">
-            <h4 class="media-heading">
-              {{image.owner.first_name}} {{image.owner.last_name}}</h4>
-            <p>({{image.owner.username}})</p>
-          </div>
-        </div>
-        <hr>
-
-        <div class="row">
-          <label class="col-md-offset-1 col-md-2 control-label">
-            Created
-          </label>
-          <div class="col-md-6">
-            {{image.created.strftime('%Y-%m-%d %H:%M:%S')}}
-          </div>
-        </div>
-        <div class="row">
-          <label class="col-md-offset-1 col-md-2 control-label">
-            Project
-          </label>
-          <div class="col-md-6">
-            <a href="{{url_for('projects.show_project',projectid=image.project_id)}}">{{image.project.name}}</a>
-          </div>
-        </div>
-        <div class="row">
-          <label class="col-md-offset-1 col-md-2 control-label">
-            Status
-          </label>
-          <div class="col-md-6">
-            {% if image.error_code is none or image.error_code == 0 %}
-            {{image.state2str}}
-            {% else %}
-            <span style="color:red">{{image.state2str}} (Error)</span>
-            {% endif %}
-          </div>
-        </div>
-
-        <hr>
-
-        {% if image.state == image.IMAGE_STATE_FINISHED %}
-        <div class="row">
-          <label class="col-md-offset-1 col-md-2 control-label">
-            Finished:
-          </label>
-          <div class="col-md-2">
-            {{image.finished.strftime('%Y-%m-%d %H:%M:%S')}}
-          </div>
-          <label class="col-md-2 control-label">
-            Error code:
-          </label>
-          <div class="col-md-1">
-            {% if image.error_code == 0 %}
-            {{image.error_code}}
-            {% else %}
-            <span style="color:red"><b>{{image.error_code}}</b></span>
-            {% endif %}
-          </div>
-        </div>
-        <div class="row">
-          <label class="col-md-offset-1 col-md-2 control-label">
-            Process time:
-          </label>
-          <div class="col-md-2">
-            {{'%0.3f'|format((image.finished-image.requested).total_seconds())}}s
-          </div>
-        </div>
-        <hr>
+      <div class="col-10">
+        {{image.created.strftime('%Y-%m-%d %H:%M:%S')}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-2">
+        Project:
+      </div>
+      <div class="col-10">
+        <a href="{{url_for('projects.show_project',projectid=image.project_id)}}">{{image.project.name}}</a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-2">
+        Status:
+      </div>
+      <div class="col-10">
+        {% if image.error_code is none or image.error_code == 0 %}
+        {{image.state2str}}
+        {% else %}
+        <span style="color:red">{{image.state2str}} (Error)</span>
         {% endif %}
-        {% if image.render_image != -1 %}
-        <div class="row">
-          <h4>
-            <label class="col-md-2 control-label">
-              Rendered image
-            </label>
-          </h4>
-        </div>
-        <div class="row" style="margin-top: 1em">
-          <label class="col-md-offset-1 col-md-2 control-label">
-            Image size:
-          </label>
-          <div class="col-md-2">
-            {{image.im_width()}}x{{image.im_height()}} pixels
-          </div>
-        </div>
-        <div class="row" style="margin-top: 1em">
-          <label class="col-md-offset-1 col-md-2 control-label">
-            Preview
-          </label>
-        </div>
-        <div class="row">
-          <a href="{{url_for('projects.get_render_image',imageid=image.id)}}">
-            <img class="col-md-offset-2" src="{{url_for('projects.get_render_icon',imageid=image.id)}}">
-          </a>
-        </div>
-        <hr>
+      </div>
+    </div>
+    {% if image.state == image.IMAGE_STATE_FINISHED %}
+    <div class="row">
+      <div class="col-2">
+        Finished:
+      </div>
+      <div class="col-2">
+        {{image.finished.strftime('%Y-%m-%d %H:%M:%S')}}
+      </div>
+      <div class="col-2">
+        Error code:
+      </div>
+      <div class="col-6">
+        {% if image.error_code == 0 %}
+        {{image.error_code}}
+        {% else %}
+        <span style="color:red"><b>{{image.error_code}}</b></span>
         {% endif %}
-        {% if image.log_file != -1 %}
-        <div class="row">
-          <h4>
-            <label class="col-md-2 control-label">
-              Logfile
-            </label>
-          </h4>
-        </div>
-        <div class="row">
-          <pre class="col-md-offset-1 pre-scrollable">{{logfile_data}}
-          </pre>
-        </div>
-        <hr>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-2">
+        Process time:
+      </div>
+      <div class="col-10">
+        {{'%0.3f'|format((image.finished-image.requested).total_seconds())}}s
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+{% if image.render_image != -1 %}
+<div class="card mt-3">
+  <h5 class="card-header">Rendered image</h5>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-2">
+        Image size:
+      </div>
+      <div class="col-10">
+        {{image.im_width()}}x{{image.im_height()}} pixels
+      </div>
+    </div>
+    <div class="row mt-3">
+      <a href="{{url_for('projects.get_render_image',imageid=image.id)}}">
+        <img class="col-12" src="{{url_for('projects.get_render_icon',imageid=image.id)}}">
+      </a>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% if image.log_file != -1 %}
+<div class="card mt-3">
+  <h5 class="card-header">Logfile</h5>
+  <div class="card-body">
+    <div class="row">
+      <pre class="col-12 pre-scrollable">{{logfile_data}}
+      </pre>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<div class="card mt-3">
+  <h5 class="card-header">Downloads</h5>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-2">
+        Model:
+      </div>
+      <div class="col-10">
+        <a href="{{url_for('projects.get_project_file',projectid=image.project_id,fileid=image.model)}}">{{image.model}}</a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-2">
+        Rendered image:
+      </div>
+      <div class="col-10">
+        {% if image.render_image == -1 %}
+        Unavailable
+        {% else %}
+        <a href="{{url_for('projects.get_project_file',projectid=image.project_id,fileid=image.render_image)}}">{{image.render_image}}</a>
         {% endif %}
-        <div class="row">
-          <h4>
-            <label class="col-md-2 control-label">
-              Downloads
-            </label>
-          </h4>
-        </div>
-        <div class="row">
-          <label class="col-md-offset-1 col-md-2 control-label">
-            Model
-          </label>
-          <div class="col-md-9">
-            <a href="{{url_for('projects.get_project_file',projectid=image.project_id,fileid=image.model)}}">{{image.model}}</a>
-          </div>
-        </div>
-        <div class="row">
-          <label class="col-md-offset-1 col-md-2 control-label">
-            Rendered image
-          </label>
-          <div class="col-md-9">
-            {% if image.render_image == -1 %}
-            Unavailable
-            {% else %}
-            <a href="{{url_for('projects.get_project_file',projectid=image.project_id,fileid=image.render_image)}}">{{image.render_image}}</a>
-            {% endif %}
-          </div>
-        </div>
-        <div class="row">
-          <label class="col-md-offset-1 col-md-2 control-label">
-            Log file
-          </label>
-          <div class="col-md-9">
-            {% if image.log_file == -1 %}
-            Unavailable
-            {% else %}
-            <a href="{{url_for('projects.get_project_file',projectid=image.project_id,fileid=image.log_file)}}">{{image.log_file}}</a>
-            {% endif %}
-          </div>
-        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-2">
+        Log file:
+      </div>
+      <div class="col-10">
+        {% if image.log_file == -1 %}
+        Unavailable
+        {% else %}
+        <a href="{{url_for('projects.get_project_file',projectid=image.project_id,fileid=image.log_file)}}">{{image.log_file}}</a>
+        {% endif %}
       </div>
     </div>
   </div>
+</div>
+
+
 {% endblock %}
