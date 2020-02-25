@@ -4,7 +4,7 @@
 rayqueue.py
 
 written by: 2019-01-20
-changed by; 2020-02-21
+changed by; 2020-02-25
 
 """
 
@@ -21,6 +21,13 @@ from app import create_app, db, socketio, activity
 from app.models import User, Project, File, Image
 
 import logging
+
+# load extra local variables from .env in the local directory
+from dotenv import load_dotenv
+load_dotenv()
+
+
+
 
 # create an application
 application = create_app()

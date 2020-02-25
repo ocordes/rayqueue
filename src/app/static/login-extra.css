@@ -18,11 +18,23 @@ align-content: center;
 }
 
 .card{
-height: 370px;
+// height: 370px;
 margin-top: auto;
 margin-bottom: auto;
-width: 400px;
+//width: 400px;
 background-color: rgba(0,0,0,0.5) !important;
+}
+
+.login-card{
+  width: 400px;
+}
+
+.register-card{
+  width: 500px;
+}
+
+.reset-card{
+  width: 500px;
 }
 
 .social_icon span{
@@ -47,10 +59,17 @@ top: -45px;
 }
 
 .input-group-prepend span{
-width: 50px;
 background-color: #FFC312;
 color: black;
 border:0 !important;
+}
+
+.login-group-prepend span{
+width: 50px;
+}
+
+.register-group-prepend span{
+  width: 150px;
 }
 
 input:focus{
@@ -75,6 +94,18 @@ margin-right: 5px;
 color: black;
 background-color: #FFC312;
 width: 100px;
+}
+
+.reset_request_btn{
+  color: black;
+  background-color: #FFC312;
+  width: 200px;
+}
+
+.reset_btn{
+  color: black;
+  background-color: #FFC312;
+  width: 150px;
 }
 
 .login_btn:hover{

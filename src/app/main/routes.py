@@ -111,8 +111,8 @@ def running_data():
         last_image_src  = url_for('projects.get_render_icon',imageid=imageid)
         last_image_time = current_user.images[last_image].finished.strftime('%Y-%m-%d %H:%M:%S')
     else:
-        last_image_lin = ''
-        last_image_src = ''
+        last_image_link = ''
+        last_image_src  = ''
         last_image_time = 'N/A'
 
     data = { 'projects': render_template('ajax/running_projects.html',

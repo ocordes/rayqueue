@@ -120,7 +120,7 @@ def register():
         return redirect(url_for('auth.login'))
 
     # this is the case of an error!
-    return render_template('auth/login.html', title='Sign In',
+    return render_template('auth/register.html', title='Sign In',
                             form=LoginForm(),
                             rform=rform,
                             pform=ResetPasswordRequestForm(),
@@ -154,7 +154,7 @@ def reset_password_request():
         flash('Check your email for the instructions to reset your password')
         return redirect(url_for('auth.login'))
 
-    return render_template('auth/login.html', title='Sign In',
+    return render_template('auth/reset_password_request.html', title='Sign In',
                             form=LoginForm(),
                             rform=RegistrationForm(),
                             pform=pform,
@@ -165,16 +165,18 @@ def reset_password_request():
 @bp.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
     if current_user.is_authenticated:
+        flash('You are still logged in!')
         return redirect(url_for('main.index'))
     user = User.verify_reset_password_token(token)
     if not user:
+        flash('Your reset token is not valid anymore!')
         return redirect(url_for('main.index'))
     form = ResetPasswordForm()
     if form.validate_on_submit():
         user.set_password(form.password.data)
         db.session.commit()
         flash('Your password has been reset.')
-        msg = 'Password reset for user \'{}\''.format(current_user.username)
+        msg = 'Password reset for user \'{}\''.format(user.username)
         current_app.logger.info(msg)
         return redirect(url_for('auth.login'))
     return render_template('auth/reset_password.html', form=form)

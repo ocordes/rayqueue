@@ -1,0 +1,111 @@
+{% extends 'loginbase.html' %}
+
+
+{% block app_content %}
+
+
+<div class="container">
+    <div id="loginbox"
+          {% if mode =='login' %}
+          style="margin-top:50px"
+          {% else %}
+          style="display:none; margin-top:50px"
+          {% endif %}
+          class="d-flex justify-content-end h-100">
+          <div class="card register-card">
+  			       <div class="card-header">
+  				           <h3>Sign Up</h3>
+                     <div class="d-flex justify-content-end">
+                       <a href="{{url_for('auth.login')}}">Sign In</a>
+                     </div>
+  			       </div>
+  			       <div class="card-body">
+  				           <form id="signupform" class="form-horizontal" role="form" method="post" action="{{url_for('auth.register')}}" novalidate>
+                           {{ rform.hidden_tag() }}
+  					               <div class="input-group form-group">
+  						                 <div class="input-group-prepend register-group-prepend">
+  							                   <span class="input-group-text">Username</span>
+  						                 </div>
+                               {{rform.username(id="login-username", class_="form-control", placeholder="username" ) }}
+  					               </div>
+                           {% if rform.username.errors|length > 0 %}
+                           <div id="signupalert" class="alert alert-danger">
+                              {% for error in rform.username.errors %}
+                              <span>{{ error }}</span>
+                              {% endfor %}
+                           </div>
+                           {% endif %}
+                           <div class="input-group form-group">
+  						                 <div class="input-group-prepend register-group-prepend">
+  							                   <span class="input-group-text">Email</span>
+  						                 </div>
+                               {{rform.email(id="login-email", class_="form-control", placeholder="Email Address" ) }}
+  					               </div>
+                           {% if rform.email.errors|length > 0 %}
+                           <div id="signupalert" class="alert alert-danger">
+                              {% for error in rform.email.errors %}
+                              <span>{{ error }}</span>
+                              {% endfor %}
+                           </div>
+                           {% endif %}
+                           <div class="input-group form-group">
+  						                 <div class="input-group-prepend register-group-prepend">
+  							                   <span class="input-group-text">First Name</span>
+  						                 </div>
+                               {{rform.first_name(id="login-first-name", class_="form-control", placeholder="First Name" ) }}
+  					               </div>
+                           {% if rform.first_name.errors|length > 0 %}
+                           <div id="signupalert" class="alert alert-danger">
+                             {% for error in rform.first_name.errors %}
+                             <span>{{ error }}</span>
+                             {% endfor %}
+                           </div>
+                           {% endif %}
+                           <div class="input-group form-group">
+  						                 <div class="input-group-prepend register-group-prepend">
+  							                   <span class="input-group-text">Last Name</span>
+  						                 </div>
+                               {{rform.last_name(id="login-last-name", class_="form-control", placeholder="Last Name" ) }}
+  					               </div>
+                           {% if rform.last_name.errors|length > 0 %}
+                           <div id="signupalert" class="alert alert-danger">
+                             {% for error in rform.last_name.errors %}
+                             <span>{{ error }}</span>
+                             {% endfor %}
+                           </div>
+                           {% endif %}
+  					               <div class="input-group form-group">
+  						                 <div class="input-group-prepend register-group-prepend">
+  							                   <span class="input-group-text">Password</span>
+  						                 </div>
+                               {{rform.password(id="login-password",class_="form-control",placeholder="Password")}}
+  					              </div>
+                          {% if rform.password.errors|length > 0 %}
+                          <div id="signupalert" class="alert alert-danger">
+                            {% for error in rform.password.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                          </div>
+                          {% endif %}
+                          <div class="input-group form-group">
+                              <div class="input-group-prepend register-group-prepend">
+                                  <span class="input-group-text">Repeat Password</span>
+                              </div>
+                              {{rform.password2(id="login-password",class_="form-control",placeholder="Repeat Password")}}
+                          </div>
+                          {% if rform.password2.errors|length > 0 %}
+                          <div id="signupalert" class="alert alert-danger">
+                            {% for error in rform.password2.errors %}
+                            <span>{{ error }}</span>
+                            {% endfor %}
+                          </div>
+                          {% endif %}
+  					              <div class="form-group">
+                              {{rform.submit(class_="btn float-right login_btn", id="btn-login")}}
+  					              </div>
+  				         </form>
+  			       </div>
+  		    </div>
+    </div>
+</div>
+{% endblock %}

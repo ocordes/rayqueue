@@ -12,11 +12,11 @@
           style="display:none; margin-top:50px"
           {% endif %}
           class="d-flex justify-content-end h-100">
-          <div class="card">
+          <div class="card login-card">
   			       <div class="card-header">
   				           <h3>Sign In</h3>
                      <div class="d-flex justify-content-end">
-                       <a href="#">Forgot password?</a>
+                       <a href="{{url_for('auth.reset_password_request')}}">Forgot password?</a>
                      </div>
   			       </div>
   			       <div class="card-body">
@@ -45,7 +45,7 @@
   			       <div class="card-footer">
   				         <div class="d-flex justify-content-center links">
   					           Don't have an account?
-                       <a href="#">
+                       <a href="{{url_for('auth.register')}}">
                          Sign Up Here
                        </a>
   				         </div>

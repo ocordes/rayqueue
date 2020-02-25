@@ -32,8 +32,10 @@ MarkupSafe==1.1.1
 monotonic==1.5
 openapi-spec-validator==0.2.8
 Pillow==7.0.0
+PyJWT==1.7.1
 pyrsistent==0.15.7
 python-dateutil==2.8.1
+python-dotenv==0.11.0
 python-editor==1.0.4
 python-engineio==3.11.2
 python-socketio==4.4.0
@@ -42,6 +44,7 @@ PyYAML==5.3
 requests==2.23.0
 six==1.14.0
 SQLAlchemy==1.3.13
+swagger-ui-bundle==0.0.6
 tzlocal==2.0.0
 urllib3==1.25.8
 visitor==0.1.3
