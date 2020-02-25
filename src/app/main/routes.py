@@ -3,7 +3,7 @@
 app/main/routes.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2019-04-04
+changed by: Oliver Cordes 2020-02-25
 
 """
 
@@ -95,15 +95,36 @@ def running_data():
         qes.append(qe)
 
 
-    print(current_user.images[-1])
-    print(current_user.images[-1].render_image)
-    imageid = current_user.images[-1].render_image
-    print(url_for('projects.get_render_image',imageid=imageid))
 
-    return jsonify( { 'projects': render_template('ajax/running_projects.html',
+    # look for the last image, which is finished and without error!
+    index = 0
+    last_image = -1
+    for image in current_user.images:
+        if image.render_image != -1:
+            last_image = index
+        index += 1
+
+    if last_image != -1:
+        imageid = current_user.images[last_image].id
+
+        last_image_link = url_for('projects.get_render_image',imageid=imageid)
+        last_image_src  = url_for('projects.get_render_icon',imageid=imageid)
+        last_image_time = current_user.images[last_image].finished.strftime('%Y-%m-%d %H:%M:%S')
+    else:
+        last_image_lin = ''
+        last_image_src = ''
+        last_image_time = 'N/A'
+
+    data = { 'projects': render_template('ajax/running_projects.html',
                     projects=projects),
-                      'queue':  render_template('ajax/running_queue.html',
-                    qes=qes) } )
+             'queue': render_template('ajax/running_queue.html', qes=qes),
+             'last_image_link': last_image_link,
+             'last_image_src' : last_image_src,
+             'last_image_time': last_image_time,
+           }
+
+
+    return jsonify(data)
 
 
 
