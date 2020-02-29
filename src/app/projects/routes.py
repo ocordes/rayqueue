@@ -3,7 +3,7 @@
 app/projects/routes.py
 
 written by: Oliver Cordes 2019-02-04
-changed by: Oliver Cordes 2019-03-09
+changed by: Oliver Cordes 2020-02-29
 
 """
 
@@ -11,7 +11,8 @@ import os
 from datetime import datetime
 
 from flask import current_app, request, render_template, \
-                  url_for, flash, redirect, send_file
+                  url_for, flash, redirect, send_file, \
+                  make_response, jsonify
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 from werkzeug.utils import secure_filename
@@ -68,28 +69,33 @@ def show_project(projectid):
                             size2human=size2human )
 
 
+# upload_project_basefile
+#
+# adopted from:
+# https://pythonise.com/categories/javascript/upload-progress-bar-xmlhttprequest
+
 @bp.route('/project/basefile/<projectid>/add', methods=['POST'])
 @login_required
 @owner_required('projectid')
 def upload_project_basefile(projectid):
-    form = UploadBaseFilesForm(prefix='Upload')
-
     project = Project.query.get(projectid)
     user    = User.query.get(project.user_id)
 
-    if form.validate_on_submit():
+    # get the file from the request
+    f = request.files["file"]
+    filename = secure_filename(f.filename)
 
-        f = form.upload.data
-        filename = secure_filename(f.filename)
-        new_file = File.save_file(f, filename, FILE_BASE_FILE, project)
+    new_file = File.save_file(f, filename, FILE_BASE_FILE, project)
 
-        db.session.add(new_file)
-        db.session.commit()
+    db.session.add(new_file)
+    db.session.commit()
 
-        msg = 'Added \'{}\' to BaseFiles'.format(filename)
-        flash(msg)
-        current_app.logger.info(msg)
-    return redirect(url_for('projects.show_project', projectid=projectid))
+    msg = 'Added \'{}\' to BaseFiles'.format(filename)
+
+    res = make_response(jsonify({"message": msg}), 200)
+
+    return res
+
 
 
 @bp.route('/project/basefile/<projectid>/remove', methods=['POST'])
