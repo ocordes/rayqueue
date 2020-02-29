@@ -21,7 +21,7 @@ from werkzeug.utils import secure_filename
 from app import db
 from app.projects import bp
 from app.projects.forms import CreateProjectForm, UpdateProjectForm, \
-                               ProjectListForm, UploadBaseFilesForm, \
+                               ProjectListForm, \
                                ManageBaseFileForm, ManageImageForm
 from app.projects.admin import owner_required, check_access
 from app.models import User, Project, \
@@ -60,7 +60,6 @@ def show_project(projectid):
     return render_template('projects/show_project.html',
                             title='Project \'{}\''.format(project.name),
                             form=form,
-                            uform=UploadBaseFilesForm(prefix='Upload'),
                             mform=ManageBaseFileForm(prefix='Manage'),
                             iform=ManageImageForm(prefix='Image'),
                             user=user,

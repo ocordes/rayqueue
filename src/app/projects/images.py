@@ -3,7 +3,7 @@
 app/projects/images.py
 
 written by: Oliver Cordes 2019-03-12
-changed by: Oliver Cordes 2019-04-04
+changed by: Oliver Cordes 2020-02-29
 
 """
 
@@ -20,7 +20,7 @@ from werkzeug.utils import secure_filename
 from app import db
 from app.projects import bp
 from app.projects.forms import CreateProjectForm, UpdateProjectForm, \
-                               ProjectListForm, UploadBaseFilesForm, \
+                               ProjectListForm,\
                                ManageBaseFileForm, ManageImageForm
 from app.projects.admin import owner_required, check_access
 from app.models import *

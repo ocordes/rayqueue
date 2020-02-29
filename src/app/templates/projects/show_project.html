@@ -149,7 +149,9 @@
         </div>
       </div>
       <div class="custom-file">
-        <input type="file" class="custom-file-input" name="file_input" id="file_input" oninput="input_filename();">
+        <input type="file" class="custom-file-input" name="file_input"
+               id="file_input" oninput="input_filename();"
+               accept=".tgz, .zip, .tar.gz">
         <label id="file_input_label" class="custom-file-label" for="image">Choose Basefile...</label>
       </div>
       <button onclick="upload('{{url_for('projects.upload_project_basefile',projectid=project.id)}}');" id="upload_btn" class="btn btn-info">Upload</button>

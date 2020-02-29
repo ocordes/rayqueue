@@ -3,7 +3,7 @@
 app/projects/forms.py
 
 written by: Oliver Cordes 2019-02-04
-changed by: Oliver Cordes 2019-03-09
+changed by: Oliver Cordes 2020-02-29
 
 """
 
@@ -39,14 +39,6 @@ class UpdateProjectForm(FlaskForm):
     is_public = BooleanField('Public' )
 
     update = SubmitField('Update')
-
-
-class UploadBaseFilesForm(FlaskForm):
-    upload = FileField('Choose Basefile ...', validators=[
-                    FileRequired(),
-                    FileAllowed(['tgz', 'zip', 'tar.gz'], 'Archives only!')
-                    ])
-    submit = SubmitField('Upload')
 
 
 class ManageBaseFileForm(FlaskForm):
