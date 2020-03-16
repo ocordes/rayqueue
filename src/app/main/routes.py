@@ -3,21 +3,24 @@
 app/main/routes.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2020-02-25
+changed by: Oliver Cordes 2020-03-06
 
 """
 
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 
-from flask import request, render_template, url_for, flash, redirect, send_from_directory, jsonify
+from flask import request, render_template, url_for, flash,  \
+                  redirect, send_from_directory, jsonify, session
 from flask_login import current_user, login_user, logout_user, login_required
-from werkzeug.urls import url_parse
+from werkzeug.urls import url_parse, url_unparse
 
 
 from app import db
 from app.main import bp
 from app.models import *
+
+#import flickrapi
 
 
 
@@ -42,6 +45,13 @@ def index():
     return render_template('index.html', title='Dashboard')
 
 
+@bp.route('/statistics')
+@login_required
+def statistics():
+    return render_template('statistics.html', title='Statistics')
+
+
+
 @bp.route("/upload", methods=['POST'])
 def upload():
     target = os.path.join(APP_ROOT, 'images/')
@@ -58,6 +68,45 @@ def upload():
         file.save(destination)
 
     return render_template("complete.html")
+
+
+@bp.route('/facebook', methods=['GET'])
+@login_required
+def facebook():
+    print('hallo:', request.authorization)
+
+    api_key = '0d648affadf9a0e7992dadbc63f49c3b'
+    api_secret = '36122fdc7b26fda2'
+    token = None
+
+    f = flickrapi.FlickrAPI(api_key, api_secret,
+               token=token,
+               store_token=False)
+
+    print(request.base_url)
+    print(url_parse(request.base_url).netloc)
+    up = url_parse(request.base_url)
+    s = url_unparse((up.scheme,up.netloc,url_for('main.flickr_oauth'),'',''))
+    print(s)
+
+    f.get_request_token(s)
+
+    url = f.auth_url(perms='write')
+    print(url)
+
+    return redirect(url)
+
+    return render_template('facebook.html', title='Facebook-Test')
+
+@bp.route('/flickr_oauth', methods=['GET'])
+@login_required
+def flickr_oauth():
+    data = request.args
+    print(data)
+    print(data['oauth_token'])
+    #print(param1)
+    #print(param2)
+    return render_template('facebook.html', title='Facebook-Test')
 
 
 """
@@ -100,12 +149,21 @@ def running_data():
     index = 0
     last_image = -1
     for image in current_user.images:
+        print(image)
+        print(image.render_image)
+        print(image.id)
+        print(image.user_id)
+        print('pid:', image.project_id)
         if image.render_image != -1:
             last_image = index
         index += 1
 
+    print('result:', last_image)
+
     if last_image != -1:
         imageid = current_user.images[last_image].id
+        print('imageid:', imageid)
+        print('render_image:', current_user.images[last_image].render_image)
 
         last_image_link = url_for('projects.get_render_image',imageid=imageid)
         last_image_src  = url_for('projects.get_render_icon',imageid=imageid)
@@ -133,3 +191,37 @@ def running_data():
 def check_update():
     is_update = False
     return jsonify( {'update' : is_update })
+
+
+@bp.route('/ajax/stats/monthly')
+@login_required
+def ajax_stats_monthly():
+    # User.query.filter(User.email.endswith('@example.com')).all()
+
+    data = { 'values': [0, 1, 2, 1, 0, 0, 5],
+             'errors': [2, 1, 0, 0, 1, 1, 2]
+           }
+    return jsonify(data)
+
+@bp.route('/ajax/stats/daily')
+@login_required
+def ajax_stats_daily():
+    today = datetime.now()
+    dt = timedelta(days=1)
+    # 7 days descending
+    values = []
+    errors = []
+    for i in range(6,-1, -1):
+        date = (today-dt*i).strftime('%Y-%m-%d')
+        stats = DayActivity.query.filter_by(date=date).first()
+        if stats is None:
+            values.append(0)
+            errors.append(0)
+        else:
+            values.append(stats.stat_total_images)
+            errors.append(stats.stat_total_errors)
+
+    data = { 'values': values,
+             'errors': errors
+           }
+    return jsonify(data)

@@ -97,6 +97,9 @@ def create_app(config_class=Config):
     from app.queueing import bp as queueing_bp
     app.app.register_blueprint(queueing_bp)
 
+    from app.social import bp as social_bp
+    app.app.register_blueprint(social_bp)
+
     from app.main import bp as main_bp
     app.app.register_blueprint(main_bp)
 

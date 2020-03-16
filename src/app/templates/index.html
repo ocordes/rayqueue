@@ -25,7 +25,14 @@
           <div class="col-2">
             Created:
           </div>
-          <div id="last_image_time" class="col-10">
+          <div id="last_image_time" class="col-3">
+          </div>
+          <div class="col-2">
+            <!-- <button onlclick="upload_to_flickr();" id="flickr_btn" class="btn btn-info">
+              <i class="fab fa-flickr"></i> flickr upload
+            </button> -->
+            <a href="{{url_for('social.flickr_upload')}}" class="btn btn-info"><i class="fab fa-flickr"></i> flickr upload</a>
+
           </div>
         </div>
       </div>
@@ -199,6 +206,10 @@
 
 {# ajax code #}
 <script>
+
+  function upload_to_flickr() {
+
+  }
 
   function update_data() {
     $.get("/ajax/running_data", function(data) {

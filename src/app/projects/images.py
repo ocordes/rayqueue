@@ -3,7 +3,7 @@
 app/projects/images.py
 
 written by: Oliver Cordes 2019-03-12
-changed by: Oliver Cordes 2020-02-29
+changed by: Oliver Cordes 2020-03-01
 
 """
 
@@ -11,11 +11,13 @@ import os
 from datetime import datetime
 
 from flask import current_app, request, render_template, \
-                  url_for, flash, redirect, send_file
+                  url_for, flash, redirect, send_file, \
+                  abort, jsonify
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 from werkzeug.utils import secure_filename
 
+import base64
 
 from app import db
 from app.projects import bp
@@ -108,6 +110,35 @@ def get_render_icon(imageid):
 
     ffile = File.query.get(image.render_image)
 
+    if ffile is None:
+        abort(404)
+
     filename = ffile.full_icon_name()
 
     return send_file(filename)
+
+
+"""
+get_render_base64
+
+"""
+@bp.route('/image/<imageid>/render_base64', methods=['GET'])
+@login_required
+def get_render_base64(imageid):
+    image = Image.query.get(imageid)
+
+    if image is None:
+        abort(404, "No image with such id")
+
+    if (image.user_id != current_user.id) and (current_user.administrator == False):
+        abort(404, 'You are not allowed to view this image!')
+
+
+    ffile = File.query.get(image.render_image)
+
+    print(ffile.full_filename())
+
+    with open(ffile.full_filename(), "rb") as img_file:
+        encoded_string = base64.b64encode(img_file.read())
+
+    return jsonify( { 'data': encoded_string.decode('utf-8')})

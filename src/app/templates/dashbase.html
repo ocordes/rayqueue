@@ -47,6 +47,12 @@
                   Profile
                 </a>
               </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{url_for('main.statistics')}}">
+                  <span data-feather="book-open"></span>
+                  Statistics
+                </a>
+              </li>
               {% if current_user.administrator %}
               <li>
                 <div class="dropdown-divider"></div>

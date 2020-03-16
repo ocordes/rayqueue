@@ -1,0 +1,40 @@
+{% extends "dashbase.html" %}
+
+{% block app_content %}
+
+<fb:login-button scope="public_profile,email,manage_pages,publish_pages" onlogin="checkLoginState();">
+</fb:login-button>
+
+<div id="status">
+</div>
+
+
+<div>
+  <a href="/image/10/render_image"><img src="/image/10/render_icon"></a>
+</div>
+
+<img src="/image/10/render_image" style="display:none;" id="full_image2" alt="">
+
+
+
+<button onclick="share()">Share to Workplace</button>
+<script>
+share = function(){
+    url = 'https://www.facebook.com/sharer.php?display=popup&u=' + window.location.href;
+    options = 'toolbar=0,status=0,resizable=1,width=626,height=436';
+    window.open(url,'sharer',options);
+}
+</script>
+
+
+
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+
+<script>
+
+</script>
+
+{% endblock %}
