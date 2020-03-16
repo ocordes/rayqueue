@@ -149,22 +149,12 @@ def running_data():
     index = 0
     last_image = -1
     for image in current_user.images:
-        print(image)
-        print(image.render_image)
-        print(image.id)
-        print(image.user_id)
-        print('pid:', image.project_id)
         if image.render_image != -1:
             last_image = index
         index += 1
 
-    print('result:', last_image)
-
     if last_image != -1:
         imageid = current_user.images[last_image].id
-        print('imageid:', imageid)
-        print('render_image:', current_user.images[last_image].render_image)
-
         last_image_link = url_for('projects.get_render_image',imageid=imageid)
         last_image_src  = url_for('projects.get_render_icon',imageid=imageid)
         last_image_time = current_user.images[last_image].finished.strftime('%Y-%m-%d %H:%M:%S')
