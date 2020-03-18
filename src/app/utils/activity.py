@@ -3,12 +3,12 @@
 app/utils/activity.py
 
 written by: Oliver Cordes 2019-04-12
-changed by: Oliver Cordes 2019-04-14
+changed by: Oliver Cordes 2020-03-17
 
 
 """
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from flask import current_app
 
@@ -41,6 +41,10 @@ class Activity(object):
         return datetime.utcnow().strftime('%Y-%m-%d')
 
 
+    def _month_strdate(self):
+        return datetime.utcnow().strftime('%Y-%m')
+
+
     """
     _total_data
 
@@ -71,6 +75,79 @@ class Activity(object):
             self._db.session.commit()
 
         return today
+
+
+    def _month_data(self, sdate):
+        month = DayActivity.query.filter_by(date=sdate).first()
+        if month is None:
+            current_app.logger.info('Month data for %s not available, repairing database!' % sdate)
+
+            # User.query.filter(User.email.endswith('@example.com')).all()
+
+            sdate2 = sdate + '-'
+            daylist = DayActivity.query.filter(DayActivity.date.startswith(sdate2)).all()
+
+            month = DayActivity(date=sdate)
+            month.stat_total_images = 0
+            month.stat_total_errors = 0
+            month.stat_total_submits = 0
+
+            for day in daylist:
+                month.stat_total_images += day.stat_total_images
+                month.stat_total_errors += day.stat_total_errors
+                month.stat_total_submits += day.stat_total_submits
+                # handle the initial render time differently
+                if month.stat_render_time is None:
+                    month.stat_render_time = day.stat_render_time
+                else:
+                    month.stat_render_time += day.stat_render_time
+
+
+            self._db.session.add(month)
+            self._db.session.commit()
+
+        return month
+
+
+    """
+    """
+    def _today_month_data(self):
+        date = self._month_strdate(self)
+        return self._month_data(date)
+
+
+    """
+    get_month_stats
+
+    return the data for a specific month, the data should be available,
+    otherwise repair the database
+    """
+    def get_month_stats(self, date):
+        stats = self._month_data(date)
+        if stats is None:
+            val = 0
+            err = 0
+        else:
+            val = stats.stat_total_images
+            err = stats.stat_total_errors
+
+        return val, err
+
+
+    """
+    get_day_stats
+
+    returns the data for a specific date, if available, otherwise 0,0
+    """
+    def get_day_stats(self, date):
+        stats = DayActivity.query.filter_by(date=date).first()
+        if stats is None:
+            val = 0
+            err = 0
+        else:
+            val = stats.stat_total_images
+            err = stats.stat_total_errors
+        return val, err
 
 
     def get_total_images(self):
@@ -175,6 +252,13 @@ class Activity(object):
             if error:
                 today.stat_total_errors += 1
             today.stat_render_time += render_time
+
+        month = self._today_month_data()
+        if month is not None:
+            month.stat_total_images += 1
+            if error:
+                month.stat_total_errors += 1
+            month.stat_render_time += render_time
 
         total = self._total_data()
         if total is not None:

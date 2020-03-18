@@ -13,6 +13,16 @@
   </div>
 </div>
 
+<div class="card mt-3">
+  <h5 class="card-header">Last 12 Month Statistics</h5>
+  <div class="card-body">
+    <div class="col-6">
+      <canvas id="monthlyChart" width="400" height="200"></canvas>
+    </div>
+  </div>
+</div>
+
+
 {% endblock %}
 
 {% block scripts %}
@@ -78,6 +88,41 @@ var dailyChart = new Chart(ctx, {
     }
 });
 
+ctx = document.getElementById('monthlyChart').getContext('2d');
+var monthlyChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        //labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        //labels: get_week(),
+        labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+        datasets: [{
+            label: '# images',
+            data: [0,1,2,3,4,5,6,7,8,9,10,11],
+            backgroundColor: 'rgba(0.1,0.1,0.1,0.5)',
+            borderColor: 'rgba(0,0,0,1)',
+            borderWidth: 1
+        },
+        {
+          label: '# error images',
+          data: [11,10,9,8,7,6,5,4,3,2,1,0],
+          backgroundColor: 'rgba(255,0,0,0.5)',
+          borderColor: 'rgba(255,0,0,1)',
+          borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+});
+
+
 function update_daily_chart() {
   dailyChart.data.labels = get_week();
   dailyChart.update(0);
@@ -90,8 +135,22 @@ function update_daily_chart() {
 }
 
 
+function update_monthly_chart() {
+  //monthlyChart.data.labels = get_week();
+  //monthlyChart.update(0);
+  $.get("/ajax/stats/monthly", function(data) {
+    monthlyChart.data.datasets[0].data = data.values;
+    monthlyChart.data.datasets[1].data = data.errors;
+    monthlyChart.data.labels = data.labels;
+    console.log(data);
+    monthlyChart.update(0);
+  });
+}
+
+
 $(document).ready(function() {
   update_daily_chart();
+  update_monthly_chart()
 });
 
 </script>

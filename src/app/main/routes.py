@@ -3,12 +3,13 @@
 app/main/routes.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2020-03-06
+changed by: Oliver Cordes 2020-03-18
 
 """
 
 import os
 from datetime import datetime, timedelta
+from dateutil.relativedelta import *
 
 from flask import request, render_template, url_for, flash,  \
                   redirect, send_from_directory, jsonify, session
@@ -16,7 +17,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse, url_unparse
 
 
-from app import db
+from app import db, activity
 from app.main import bp
 from app.models import *
 
@@ -188,10 +189,27 @@ def check_update():
 def ajax_stats_monthly():
     # User.query.filter(User.email.endswith('@example.com')).all()
 
-    data = { 'values': [0, 1, 2, 1, 0, 0, 5],
-             'errors': [2, 1, 0, 0, 1, 1, 2]
+    today = datetime.now()
+    dt = relativedelta(months=1)
+    # 7 days descending
+    values = []
+    errors = []
+    labels = []
+    for i in range(12,-1, -1):
+        date = (today-dt*i)
+        sdate = date.strftime('%Y-%m')
+        label = date.strftime('%b %y')
+        val, err = activity.get_month_stats(sdate)
+        values.append(val)
+        errors.append(err)
+        labels.append(label)
+
+    data = { 'values': values,
+             'errors': errors,
+             'labels': labels,
            }
     return jsonify(data)
+
 
 @bp.route('/ajax/stats/daily')
 @login_required
@@ -202,14 +220,10 @@ def ajax_stats_daily():
     values = []
     errors = []
     for i in range(6,-1, -1):
-        date = (today-dt*i).strftime('%Y-%m-%d')
-        stats = DayActivity.query.filter_by(date=date).first()
-        if stats is None:
-            values.append(0)
-            errors.append(0)
-        else:
-            values.append(stats.stat_total_images)
-            errors.append(stats.stat_total_errors)
+        sdate = (today-dt*i).strftime('%Y-%m-%d')
+        val, err = activity.get_day_stats(sdate)
+        values.append(val)
+        errors.append(err)
 
     data = { 'values': values,
              'errors': errors

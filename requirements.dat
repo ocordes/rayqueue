@@ -20,7 +20,9 @@ Flask-Migrate==2.5.2
 Flask-SocketIO==4.2.1
 Flask-SQLAlchemy==2.4.1
 Flask-WTF==0.14.3
+flickr-api==0.7.3
 greenlet==0.4.15
+httplib2==0.17.0
 idna==2.9
 importlib-metadata==1.5.0
 inflection==0.3.1
@@ -30,6 +32,7 @@ jsonschema==3.2.0
 Mako==1.1.1
 MarkupSafe==1.1.1
 monotonic==1.5
+oauth2==1.9.0.post1
 openapi-spec-validator==0.2.8
 Pillow==7.0.0
 PyJWT==1.7.1
