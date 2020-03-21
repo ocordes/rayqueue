@@ -3,7 +3,7 @@
 app/social/flickr.py
 
 written by: Oliver Cordes 2020-03-06
-changed by: Oliver Cordes 2020-03-07
+changed by: Oliver Cordes 2020-03-21
 
 """
 
@@ -20,14 +20,29 @@ from app import db
 from app.social import bp
 from app.models import *
 
+from app.social.forms import UploadFlickrForm
+
 import flickr_api
 
 flickr_auth_collection = {}
 
 
-@bp.route('/social/flickr_upload', methods=['GET'])
+@bp.route('/social/flickr_upload', methods=['GET', 'POST'])
 @login_required
 def flickr_upload():
+
+    uform = UploadFlickrForm(prefix='Upload')
+
+
+    # check if we are called from a POST request, then extract
+    # the variables
+    if uform.validate_on_submit():
+        print('POST request')
+        print('imageid:', uform.imageid.data)
+        session['flickr_imageid'] = uform.imageid.data
+    else:
+        print('GET request')
+
     if ('flickr_caller' not in session) or (session['flickr_caller'] is None):
         session['flickr_caller'] = request.referrer
 
@@ -66,16 +81,30 @@ def flickr_upload():
 
         return redirect(url)
     else:
-        with open('data/images/b6f5049d-dc2a-4406-8092-2cb4585bddcc_scene.png', 'rb') as f:
-            print('File open')
-
-            if current_user.username in flickr_auth_collection:
-                flickr_api.auth.set_auth_handler(flickr_auth_collection[current_user.username])
-                flickr_api.upload(photo_file = "some file name", title = "My title", photo_file_data=f)
-                flickr_api.auth.set_auth_handler(None)
+        if 'flickr_imageid' in session:
+            imageid = session['flickr_imageid']
+            session.pop('flickr_imageid')   # clean the cookie directly
+            image = Image.query.get(imageid)
+            print(image)
+            image_file = File.query.get(image.render_image)
+            if image_file is None:
+                flash('Rendered file is not available!')
             else:
-                if 'flickr_avail' in session:
-                    session.pop('flickr_avail')
+                if current_user.username in flickr_auth_collection:
+                    filename = image_file.full_filename()
+                    project = Project.query.get(image.project_id)
+                    date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    title = '{} - {}'.format(project.name, date)
+
+                    # upload image
+                    with open(filename, 'rb') as f:
+                         flickr_api.auth.set_auth_handler(flickr_auth_collection[current_user.username])
+                         flickr_api.upload(photo_file=image_file.name, title=title, photo_file_data=f)
+                         flickr_api.auth.set_auth_handler(None)
+                         flash('Image uploaded to Flickr!')
+
+        if 'flickr_avail' in session:
+            session.pop('flickr_avail')
 
 
     # clean all cookies, and more of less, destroy the oauth

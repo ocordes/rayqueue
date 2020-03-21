@@ -13,7 +13,7 @@
   <div class="col-10">
     <div class="card">
       <div class="card-header">
-        Last image
+        <a id="last_iamge_ref" href="">Last image</a>
       </div>
       <div class="card-body">
         <div class="row">
@@ -28,11 +28,12 @@
           <div id="last_image_time" class="col-3">
           </div>
           <div class="col-2">
-            <!-- <button onlclick="upload_to_flickr();" id="flickr_btn" class="btn btn-info">
+            <form id="uploadform" class="form-horizontal" role="form" method="post" action="{{url_for('social.flickr_upload')}}">
+              {{uform.hidden_tag()}}
+            </form>
+            <button id="flickr_btn" class="btn btn-info" form="uploadform">
               <i class="fab fa-flickr"></i> flickr upload
-            </button> -->
-            <a href="{{url_for('social.flickr_upload')}}" class="btn btn-info"><i class="fab fa-flickr"></i> flickr upload</a>
-
+            </button>
           </div>
         </div>
       </div>
@@ -215,9 +216,11 @@
     $.get("/ajax/running_data", function(data) {
       $("#running_projects").html(data.projects);
       $("#running_queue").html(data.queue);
-      $("#last_image_src").attr("src",data.last_image_src);
-      $("#last_image_link").attr("href",data.last_image_link);
+      $("#last_image_src").attr("src", data.last_image_src);
+      $("#last_image_link").attr("href", data.last_image_link);
+      $("#last_iamge_ref").attr("href", data.last_image_ref);
       $("#last_image_time").html(data.last_image_time);
+      $("#upload_imageid").val(data.imageid);
     });
   }
 

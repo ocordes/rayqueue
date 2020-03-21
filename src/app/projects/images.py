@@ -31,6 +31,9 @@ from app.utils.files import size2human, read_logfile
 from app.utils.backref import get_redirect_target
 
 
+from app.social.forms import UploadFlickrForm
+
+
 @bp.route('/image/<imageid>', methods=['GET'])
 @login_required
 def show_image(imageid):
@@ -52,11 +55,15 @@ def show_image(imageid):
         logfile = File.query.get(image.log_file)
         logfile_data = read_logfile(logfile.full_filename())
 
+    # for the flickr upload
+    uform = UploadFlickrForm(prefix='Upload')
+    uform.imageid.data = imageid
 
     return render_template('projects/show_image.html',
                             title='Image',
                             logfile_data=logfile_data,
-                            image=image )
+                            image=image,
+                            uform=uform )
 
 
 """

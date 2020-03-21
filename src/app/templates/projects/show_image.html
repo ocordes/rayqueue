@@ -89,6 +89,16 @@
         <img class="col-12" src="{{url_for('projects.get_render_icon',imageid=image.id)}}">
       </a>
     </div>
+    <div class="row mt-3"
+      <div class="col-2">
+        <form id="uploadform" class="form-horizontal" role="form" method="post" action="{{url_for('social.flickr_upload')}}">
+          {{uform.hidden_tag()}}
+        </form>
+        <button id="flickr_btn" class="btn btn-info" form="uploadform">
+          <i class="fab fa-flickr"></i> flickr upload
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 {% endif %}

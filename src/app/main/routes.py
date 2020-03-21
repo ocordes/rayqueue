@@ -16,6 +16,8 @@ from flask import request, render_template, url_for, flash,  \
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse, url_unparse
 
+from app.social.forms import UploadFlickrForm
+
 
 from app import db, activity
 from app.main import bp
@@ -43,7 +45,10 @@ def before_request():
 @bp.route('/index')
 @login_required
 def index():
-    return render_template('index.html', title='Dashboard')
+    uform = UploadFlickrForm(prefix='Upload')
+    return render_template('index.html',
+                            title='Dashboard',
+                            uform=uform)
 
 
 @bp.route('/statistics')
@@ -158,10 +163,13 @@ def running_data():
         imageid = current_user.images[last_image].id
         last_image_link = url_for('projects.get_render_image',imageid=imageid)
         last_image_src  = url_for('projects.get_render_icon',imageid=imageid)
+        last_image_ref  = url_for('projects.show_image', imageid=imageid)
         last_image_time = current_user.images[last_image].finished.strftime('%Y-%m-%d %H:%M:%S')
     else:
+        imageid = -1
         last_image_link = ''
         last_image_src  = ''
+        last_image_ref  = ''
         last_image_time = 'N/A'
 
     data = { 'projects': render_template('ajax/running_projects.html',
@@ -169,7 +177,9 @@ def running_data():
              'queue': render_template('ajax/running_queue.html', qes=qes),
              'last_image_link': last_image_link,
              'last_image_src' : last_image_src,
+             'last_image_ref' : last_image_ref,
              'last_image_time': last_image_time,
+             'imageid' : imageid,
            }
 
 
