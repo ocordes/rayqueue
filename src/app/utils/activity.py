@@ -3,7 +3,7 @@
 app/utils/activity.py
 
 written by: Oliver Cordes 2019-04-12
-changed by: Oliver Cordes 2020-03-17
+changed by: Oliver Cordes 2020-03-29
 
 
 """
@@ -112,7 +112,7 @@ class Activity(object):
     """
     """
     def _today_month_data(self):
-        date = self._month_strdate(self)
+        date = self._month_strdate()
         return self._month_data(date)
 
 

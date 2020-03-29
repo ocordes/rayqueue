@@ -81,34 +81,6 @@ def upload():
     return render_template("complete.html")
 
 
-@bp.route('/facebook', methods=['GET'])
-@login_required
-def facebook():
-    print('hallo:', request.authorization)
-
-    api_key = '0d648affadf9a0e7992dadbc63f49c3b'
-    api_secret = '36122fdc7b26fda2'
-    token = None
-
-    f = flickrapi.FlickrAPI(api_key, api_secret,
-               token=token,
-               store_token=False)
-
-    print(request.base_url)
-    print(url_parse(request.base_url).netloc)
-    up = url_parse(request.base_url)
-    s = url_unparse((up.scheme,up.netloc,url_for('main.flickr_oauth'),'',''))
-    print(s)
-
-    f.get_request_token(s)
-
-    url = f.auth_url(perms='write')
-    print(url)
-
-    return redirect(url)
-
-    return render_template('facebook.html', title='Facebook-Test')
-
 @bp.route('/flickr_oauth', methods=['GET'])
 @login_required
 def flickr_oauth():
@@ -177,6 +149,10 @@ def running_data():
         last_image_ref  = ''
         last_image_time = 'N/A'
 
+
+    daily_data = [activity.get_today_images(), activity.get_today_errors()]
+    total_data = [activity.get_total_images(), activity.get_total_errors()]
+
     data = { 'projects': render_template('ajax/running_projects.html',
                     projects=projects),
              'queue': render_template('ajax/running_queue.html', qes=qes),
@@ -185,6 +161,8 @@ def running_data():
              'last_image_ref' : last_image_ref,
              'last_image_time': last_image_time,
              'imageid' : imageid,
+             'daily_data' : daily_data,
+             'total_data' : total_data
            }
 
 

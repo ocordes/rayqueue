@@ -131,8 +131,9 @@
 <hr>
 
 <div class="card mt-3">
-  <h5 class="card-header">Total Activity</h5>
+  <h5 class="card-header">Activity</h5>
   <div class="card-body">
+    <!--
     <div class="row">
       <div class="col-1">
         Today:
@@ -191,6 +192,31 @@
         {{'%0.1f'| format(activity.get_total_render_time().total_seconds())}}s
       </div>
     </div>
+    -->
+    <div class="row">
+      <div class="col-3">
+        <h6><center>Daily activity</center></h6>
+      </div>
+      <div class="col-3">
+        <h6><center>Total</center></h6>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col-3">
+        <canvas id="dailyChart" width="50px" height="50px"></canvas>
+      </div>
+      <div class="col-3">
+        <canvas id="totalChart" width="50px" height="50px"></canvas>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col-3">
+        Render time: {{'%0.1f'| format(activity.get_today_render_time().total_seconds())}}s
+      </div>
+      <div class="col-3">
+        Render time: {{'%0.1f'| format(activity.get_total_render_time().total_seconds())}}s
+      </div>
+    </div>
   </div>
 </div>
 
@@ -217,12 +243,47 @@
 
 <script src="{{url_for('static', filename='clock.js')}}"></script>
 
+
+<script src="{{url_for('static', filename='scripts/Chart.js')}}"></script>
+
+
 {# ajax code #}
 <script>
 
-  function upload_to_flickr() {
 
-  }
+  var ctx = document.getElementById('dailyChart').getContext('2d');
+  var dailyChart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+          //labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+          //labels: get_week(),
+          labels: ['# images', '# errors'],
+          datasets: [{
+              data: [0,0],
+              backgroundColor: ['rgba(0.1,0.1,0.1,0.5)', 'rgba(255,0,0,0.5)'],
+              borderColor: ['rgba(0,0,0,1)', 'rgba(255,0,0,1)'],
+              borderWidth: 1
+          }],
+      },
+  });
+
+  var ctx = document.getElementById('totalChart').getContext('2d');
+  var totalChart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+          //labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+          //labels: get_week(),
+          labels: ['# images', '# errors'],
+          datasets: [{
+              data: [10,20],
+              backgroundColor: ['rgba(0.1,0.1,0.1,0.5)', 'rgba(255,0,0,0.5)'],
+              borderColor: ['rgba(0,0,0,1)', 'rgba(255,0,0,1)'],
+              borderWidth: 1
+          }],
+      },
+  });
+
+
 
   function update_data() {
     $.get("/ajax/running_data", function(data) {
@@ -234,6 +295,10 @@
       $("#last_image_time").html(data.last_image_time);
       $("#upload_imageid").val(data.imageid);
       $("#upload2_imageid").val(data.imageid);
+      dailyChart.data.datasets[0].data = data.daily_data;
+      totalChart.data.datasets[0].data = data.total_data;
+      dailyChart.update(0);
+      totalChart.update(0);
     });
   }
 
