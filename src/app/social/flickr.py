@@ -3,15 +3,15 @@
 app/social/flickr.py
 
 written by: Oliver Cordes 2020-03-06
-changed by: Oliver Cordes 2020-03-21
+changed by: Oliver Cordes 2020-03-29
 
 """
 
 import os
 from datetime import datetime
 
-from flask import request, render_template, url_for, flash,  \
-                  redirect, send_from_directory, jsonify, session, g
+from flask import current_app, request, render_template, url_for, flash,  \
+                  redirect, send_from_directory, jsonify, session
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse, url_unparse
 
@@ -30,21 +30,24 @@ flickr_auth_collection = {}
 @bp.route('/social/flickr_upload', methods=['GET', 'POST'])
 @login_required
 def flickr_upload():
-
     uform = UploadFlickrForm(prefix='Upload')
-
 
     # check if we are called from a POST request, then extract
     # the variables
     if uform.validate_on_submit():
-        print('POST request')
-        print('imageid:', uform.imageid.data)
+        #print('POST request')
+        #print('imageid:', uform.imageid.data)
         session['flickr_imageid'] = uform.imageid.data
-    else:
-        print('GET request')
+    #else:
+    #    print('GET request')
 
     if ('flickr_caller' not in session) or (session['flickr_caller'] is None):
         session['flickr_caller'] = request.referrer
+
+
+    if current_app.config['FLICKR_API_KEY'] is None:
+        flash('No flickr keys found! Please register your app and set the keys!')
+        return redirect(session['flickr_caller'])
 
 
     flickr_avail = 'flickr_avail' in session
@@ -59,12 +62,9 @@ def flickr_upload():
 
     if not flickr_avail:
         current_app.logger.info('{}: no flickr token available! Starting Oauth process!'.format(current_user.username))
-        print('No flickr token available! Starting Oauth process!')
 
-        api_key = '0d648affadf9a0e7992dadbc63f49c3b'
-        api_secret = '36122fdc7b26fda2'
-
-        flickr_api.set_keys(api_key=api_key, api_secret=api_secret)
+        flickr_api.set_keys(api_key=current_app.config['FLICKR_API_KEY'],
+                            api_secret=current_app.config['FLICKR_API_SECRET'])
 
 
         up = url_parse(request.base_url)
@@ -85,7 +85,6 @@ def flickr_upload():
             imageid = session['flickr_imageid']
             session.pop('flickr_imageid')   # clean the cookie directly
             image = Image.query.get(imageid)
-            print(image)
             image_file = File.query.get(image.render_image)
             if image_file is None:
                 flash('Rendered file is not available!')

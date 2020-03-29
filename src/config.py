@@ -3,7 +3,7 @@
 config.py
 
 written by: Oliver Cordes 2019-01-31
-changed by: Oliver Cordes 2019-04-10
+changed by: Oliver Cordes 2020-03-29
 
 """
 
@@ -42,3 +42,7 @@ class Config(object):
 
     # terminal Settings
     CMD = os.environ.get('TERMINAL_CMD') or '/bin/bash'
+
+    # flickr API keys
+    FLICKR_API_KEY = os.environ.get('FLICKR_API_KEY') or None
+    FLICKR_API_SECRET = os.environ.get('FLICKR_API_SECRET') or None

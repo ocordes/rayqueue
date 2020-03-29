@@ -3,7 +3,7 @@
 app/main/routes.py
 
 written by: Oliver Cordes 2019-01-26
-changed by: Oliver Cordes 2020-03-18
+changed by: Oliver Cordes 2020-03-29
 
 """
 
@@ -11,12 +11,12 @@ import os
 from datetime import datetime, timedelta
 from dateutil.relativedelta import *
 
-from flask import request, render_template, url_for, flash,  \
+from flask import current_app, request, render_template, url_for, flash,  \
                   redirect, send_from_directory, jsonify, session
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse, url_unparse
 
-from app.social.forms import UploadFlickrForm
+from app.social.forms import UploadFlickrForm, UploadPiwigoForm
 
 
 from app import db, activity
@@ -45,10 +45,15 @@ def before_request():
 @bp.route('/index')
 @login_required
 def index():
+    has_flickr = current_app.config['FLICKR_API_KEY'] is not None
     uform = UploadFlickrForm(prefix='Upload')
+    uform2 = UploadFlickrForm(prefix='Upload2')
+
     return render_template('index.html',
                             title='Dashboard',
-                            uform=uform)
+                            has_flickr=has_flickr,
+                            uform=uform,
+                            uform2=uform2)
 
 
 @bp.route('/statistics')

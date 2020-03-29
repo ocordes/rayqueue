@@ -3,7 +3,7 @@
 app/social/forms.py
 
 written by: Oliver Cordes 2020-03-18
-changed by: Oliver Cordes 2020-03-20
+changed by: Oliver Cordes 2020-03-28
 
 """
 
@@ -22,4 +22,16 @@ from app.models import Project
 
 class UploadFlickrForm(FlaskForm):
     imageid = HiddenField('imageid', id='upload_imageid', default=-1)
-    upload = SubmitField(u'<i class="fab fa-flickr"></i> flickr upload')
+    upload = SubmitField('flickr upload')
+
+
+class UploadPiwigoForm(FlaskForm):
+    imageid = HiddenField('imageid', id='upload_imageid', default=-1)
+    upload = SubmitField('Piwigo upload')
+
+
+class AuthPiwigoForm(FlaskForm):
+    host = StringField('Host URL', validators=[DataRequired()])
+    username = StringField('UserName', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    submit = SubmitField('Authorize')

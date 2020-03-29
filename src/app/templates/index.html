@@ -17,22 +17,34 @@
       </div>
       <div class="card-body">
         <div class="row">
-          <a id="last_image_link" href="">
-            <img class="col-12" src="" id="last_image_src">
-          </a>
-        </div>
-        <div class="row mt-3">
           <div class="col-2">
             Created:
           </div>
           <div id="last_image_time" class="col-3">
           </div>
+        </div>
+        <div class="row mt-3">
+          <a id="last_image_link" href="">
+            <img class="col-12" src="" id="last_image_src">
+          </a>
+        </div>
+        <div class="row mt-3">
+          {% if has_flickr %}
           <div class="col-2">
             <form id="uploadform" class="form-horizontal" role="form" method="post" action="{{url_for('social.flickr_upload')}}">
               {{uform.hidden_tag()}}
             </form>
             <button id="flickr_btn" class="btn btn-info" form="uploadform">
               <i class="fab fa-flickr"></i> flickr upload
+            </button>
+          </div>
+          {%endif%}
+          <div class="col-2">
+            <form id="uploadform2" class="form-horizontal" role="form" method="post" action="{{url_for('social.piwigo_upload')}}">
+              {{uform2.hidden_tag()}}
+            </form>
+            <button id="flickr_btn" class="btn btn-info" form="uploadform2">
+              <i class="fa fa-image"></i> Piwigo upload
             </button>
           </div>
         </div>
@@ -221,6 +233,7 @@
       $("#last_iamge_ref").attr("href", data.last_image_ref);
       $("#last_image_time").html(data.last_image_time);
       $("#upload_imageid").val(data.imageid);
+      $("#upload2_imageid").val(data.imageid);
     });
   }
 

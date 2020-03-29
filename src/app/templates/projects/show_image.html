@@ -89,7 +89,8 @@
         <img class="col-12" src="{{url_for('projects.get_render_icon',imageid=image.id)}}">
       </a>
     </div>
-    <div class="row mt-3"
+    <div class="row mt-3">
+      {% if has_flickr %}
       <div class="col-2">
         <form id="uploadform" class="form-horizontal" role="form" method="post" action="{{url_for('social.flickr_upload')}}">
           {{uform.hidden_tag()}}
@@ -98,7 +99,17 @@
           <i class="fab fa-flickr"></i> flickr upload
         </button>
       </div>
+      {%endif%}
+      <div class="col-2">
+        <form id="uploadform2" class="form-horizontal" role="form" method="post" action="{{url_for('social.piwigo_upload')}}">
+          {{uform2.hidden_tag()}}
+        </form>
+        <button id="flickr_btn" class="btn btn-info" form="uploadform2">
+          <i class="fa fa-image"></i> Piwigo upload
+        </button>
+      </div>
     </div>
+
   </div>
 </div>
 {% endif %}
@@ -108,8 +119,10 @@
   <h5 class="card-header">Logfile</h5>
   <div class="card-body">
     <div class="row">
-      <pre class="col-12 pre-scrollable">{{logfile_data}}
-      </pre>
+      <div class="col-12">
+        <pre class="pre-scrollable">{{logfile_data}}
+        </pre>
+      </div>
     </div>
   </div>
 </div>

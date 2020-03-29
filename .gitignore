@@ -112,3 +112,4 @@ venv.bak/
 create_docker.sh
 /client-test/worker
 *.ini
+test.py

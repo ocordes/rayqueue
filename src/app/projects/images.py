@@ -3,7 +3,7 @@
 app/projects/images.py
 
 written by: Oliver Cordes 2019-03-12
-changed by: Oliver Cordes 2020-03-01
+changed by: Oliver Cordes 2020-03-29
 
 """
 
@@ -31,7 +31,7 @@ from app.utils.files import size2human, read_logfile
 from app.utils.backref import get_redirect_target
 
 
-from app.social.forms import UploadFlickrForm
+from app.social.forms import UploadFlickrForm, UploadPiwigoForm
 
 
 @bp.route('/image/<imageid>', methods=['GET'])
@@ -56,14 +56,20 @@ def show_image(imageid):
         logfile_data = read_logfile(logfile.full_filename())
 
     # for the flickr upload
+    has_flickr = current_app.config['FLICKR_API_KEY'] is not None
     uform = UploadFlickrForm(prefix='Upload')
     uform.imageid.data = imageid
+
+    uform2 = UploadPiwigoForm(prefix='Upload')
+    uform2.imageid.data = imageid
 
     return render_template('projects/show_image.html',
                             title='Image',
                             logfile_data=logfile_data,
                             image=image,
-                            uform=uform )
+                            has_flickr=has_flickr,
+                            uform=uform,
+                            uform2=uform2 )
 
 
 """

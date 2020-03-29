@@ -2,4 +2,4 @@ from flask import Blueprint
 
 bp = Blueprint('social', __name__)
 
-from app.social import flickr
+from app.social import flickr, piwigo
