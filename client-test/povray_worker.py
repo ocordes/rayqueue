@@ -1,7 +1,7 @@
 """
 
 written by: Oliver Cordes 2019-03-06
-changed by: Oliver Cordes 2020-02-23
+changed by: Oliver Cordes 2020-04-04
 
 """
 
@@ -216,6 +216,10 @@ class PovrayWorker(object):
         options = ''
         if self._max_cores is not None:
             options += ' +WT%i' % self._max_cores
+
+        add_args = data.get('args', None)
+        if add_args is not None:
+            options += ' ' + add_args
 
         command = '{} {} -w{} -h{} -i{} -o{} {}'.format('povray',
                                                      'master.ini',
